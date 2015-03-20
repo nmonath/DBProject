@@ -73,4 +73,18 @@ public class Record {
         return attributes;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("Record(");
+        sb.append(this.source.toString());
+        sb.append(", ");
+        sb.append(this.entity.toString());
+        for (Attribute a : attributes.values()) {
+            sb.append(", ");
+            sb.append(a.toString());
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 }
