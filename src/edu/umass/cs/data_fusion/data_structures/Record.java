@@ -15,17 +15,11 @@ public class Record {
     private HashMap<String,Attribute> attributes;
     
     public Record(Source source, Entity entity) {
-        this.source = source;
-        this.entity = entity;
-        id = new Random().nextInt();
-        attributes = new HashMap<String, Attribute>();
+        this(new Random().nextInt(), source,entity,new HashMap<String, Attribute>());
     }
     
     public Record(int id, Source source, Entity entity) {
-        this.id = id;
-        this.source = source;
-        this.entity = entity;
-        attributes = new HashMap<String, Attribute>();
+       this(id, source,entity,new HashMap<String, Attribute>());
     }
 
     public Record(int id, Source source, Entity entity, HashMap<String, Attribute> attributes) {
@@ -36,10 +30,21 @@ public class Record {
     }
 
     public Record(Source source, Entity entity, HashMap<String, Attribute> attributes) {
-        id = new Random().nextInt();
+        this(new Random().nextInt(), source, entity, attributes);
+    }
+    
+    public Record(Source source, Entity entity, Iterable<Attribute> attributes) {
+        this(new Random().nextInt(), source, entity, attributes);
+    }
+    
+    public Record(int id,Source source, Entity entity, Iterable<Attribute> attributes) {
+        this.id = id;
         this.source = source;
         this.entity = entity;
-        this.attributes = attributes;
+        this.attributes = new HashMap<String, Attribute>();
+        for (Attribute a: attributes) {
+            this.addAttribute(a);
+        }
     }
 
 
