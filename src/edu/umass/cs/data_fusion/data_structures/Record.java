@@ -77,6 +77,10 @@ public class Record {
     public HashMap<String,Attribute> getAttributes() {
         return attributes;
     }
+    
+    public boolean hasAttribute(String attrName) { return attributes.containsKey(attrName);}
+    
+    public Attribute getAttribute(String attrName) { return attributes.get(attrName);}
 
     @Override
     public String toString() {

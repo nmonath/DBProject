@@ -1,9 +1,8 @@
 package edu.umass.cs.data_fusion.data_structures;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 // I didn't see this on our list of things to implement, but I thought it was something we had talked about?
 // I think it might be useful in implementing the algorithms.
@@ -53,6 +52,39 @@ public class RecordCollection {
     
     public Set<Source> getSources() {
         return  source2records.keySet();
+    }
+
+    public Set<String> getAttributes(Entity entity) {
+        ArrayList<Record> correspondingRecords = getRecords(entity);
+        Set<String> attributes = new HashSet<String>();
+        for (Record r : correspondingRecords)
+            for (String a: r.getAttributes().keySet())
+                attributes.add(a);
+        return attributes;
+    }
+    
+    public void writeToTSVFile(File file) {
+        try {
+            PrintWriter out = new PrintWriter(file,"UTF-8");
+            for (Record r : records) {
+                StringBuilder sb = new StringBuilder(100);
+                sb.append(r.getSource().getName());
+                sb.append("\t");
+                sb.append(r.getEntity().getIdentifier());
+                ArrayList<Attribute> attrs = new ArrayList<Attribute>(r.getAttributes().values());
+                Collections.sort(attrs);
+                for (Attribute a : attrs) {
+                    sb.append("\t");
+                    sb.append(a.getRawValue());
+                }
+                out.println(sb.toString());
+            }
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
     
 }
