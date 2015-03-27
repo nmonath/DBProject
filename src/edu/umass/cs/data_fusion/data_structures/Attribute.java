@@ -3,19 +3,21 @@ package edu.umass.cs.data_fusion.data_structures;
 
 import java.lang.String;
 
-// I just started on this so I could get the Record code to compile.
-// Should this have the generic type T??
 public class Attribute implements Comparable {
-    private String name;
+    protected String name;
 
-    private String rawValue;
+    protected String rawValue;
+
+    // We can change this around with Manuel's code, but for now I added this in.
+    // StringAttribute will have this set to STRING and FloatAttribute set to FLOAT
+    protected AttributeType type;
     
     public Attribute(String name, String rawValue) {
         this.name = name;
         this.rawValue = rawValue;
     }
 
-    // This is really bad. I just did it to print out the attributes in writeTSV in the same order.
+    // TODO: How should this be defined
     @Override
     public int compareTo(Object o) {
         if (o instanceof Attribute) {

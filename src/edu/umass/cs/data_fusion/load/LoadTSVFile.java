@@ -1,7 +1,5 @@
 package edu.umass.cs.data_fusion.load;
 
-
-import edu.umass.cs.data_fusion.algorithm.MajorityVote;
 import edu.umass.cs.data_fusion.data_structures.*;
 
 import java.io.*;
@@ -10,15 +8,22 @@ import java.util.ArrayList;
 public class LoadTSVFile {
 
 
-    private ArrayList<String> orderedAttributeNames;
+    private String[] orderedAttributeNames;
     
-    public LoadTSVFile() {
-        orderedAttributeNames = new ArrayList<String>();
+    private AttributeType[] attributeTypes;
+    
+    public LoadTSVFile() {};
+    
+    public LoadTSVFile(AttributeType[] attributeTypes) {
+        orderedAttributeNames = new String[0];
+        this.attributeTypes = attributeTypes;
     }
     
-    public LoadTSVFile(ArrayList<String> orderedAttributeNames) {
+    public LoadTSVFile(String[] orderedAttributeNames, AttributeType[]  attributeTypes) {
         this.orderedAttributeNames = orderedAttributeNames;
+        this.attributeTypes = attributeTypes;
     }
+    
 
     public RecordCollection load(File file) {
         try {
@@ -34,10 +39,10 @@ public class LoadTSVFile {
                     Record rec = new Record(lineNo, new Source(fields[0]), new Entity(fields[1]));
                     for (int i = 2; i < fields.length; i++) {
                         int j = i-2;
-                        if (j < orderedAttributeNames.size())
-                            rec.addAttribute(new Attribute(orderedAttributeNames.get(j),fields[i]));
+                        if (j < orderedAttributeNames.length)
+                            rec.addAttribute(getAttributeFromString(orderedAttributeNames[j],fields[i],attributeTypes[i]));
                         else
-                            rec.addAttribute(new Attribute(String.format("Attr%04d",j),fields[i]));
+                            rec.addAttribute(getAttributeFromString(String.format("Attr%04d",j),fields[i],attributeTypes[i]));
                     }
                     records.add(rec);
                 }
@@ -53,11 +58,28 @@ public class LoadTSVFile {
         return null;
     }
     
-    public static void main (String[] args) {
-        LoadTSVFile loader = new LoadTSVFile();
-        RecordCollection recordCollection = loader.load(new File(args[0]));
-        MajorityVote mv = new MajorityVote();
-        RecordCollection clean = mv.performDataFusion(recordCollection);
-        clean.writeToTSVFile(new File(args[1]));
+    // Defining it like this lets us define the cleaning methods for each data set differently
+    // I think this makes sense?
+    protected Attribute getAttributeFromString(String name, String rawValue, AttributeType type)  {
+        switch (type) {
+            case STRING: {
+                return getStringAttributeFromString(name,rawValue);
+            }
+            case FLOAT: {
+                return getFloatAttributeFromString(name,rawValue);
+            }
+        }
+        return null;
     }
+    
+    protected Attribute getStringAttributeFromString(String name, String rawValue) {
+        String value = rawValue;
+        return new Attribute(name,value); // new StringAttribute(name,rawValue,value);
+    }
+    
+    protected Attribute getFloatAttributeFromString(String name, String rawValue) {
+        double value = Double.parseDouble(rawValue);
+        return new Attribute(name,rawValue); // new FloatAttribute(name,rawValue,value) 
+    }
+    
 }
