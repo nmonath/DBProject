@@ -73,13 +73,11 @@ public class LoadTSVFile {
     }
     
     protected Attribute getStringAttributeFromString(String name, String rawValue) {
-        String value = rawValue;
-        return new Attribute(name,value); // new StringAttribute(name,rawValue,value);
+        return new StringAttribute(name,rawValue);
     }
     
     protected Attribute getFloatAttributeFromString(String name, String rawValue) {
-        double value = Double.parseDouble(rawValue);
-        return new Attribute(name,rawValue); // new FloatAttribute(name,rawValue,value) 
+        return new FloatAttribute(name,rawValue); 
     }
     
 }
