@@ -9,11 +9,11 @@ public class FloatAttribute extends Attribute {
 		super(name, rawValue);
 		
 		this.type = AttributeType.FLOAT;
-		this.floatValue = getFloatValue(rawValue);
+		this.floatValue = stringToFloat(rawValue);
 	}
 	
-	public float getFloatValue(String rawValue) {
-        return floatValue;
+	public float getFloatValue() {
+        return this.floatValue;
     }
 	
 	//returns if the raw string was correctly parsed into a float value
