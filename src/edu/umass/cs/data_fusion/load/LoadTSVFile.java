@@ -11,9 +11,9 @@ public class LoadTSVFile {
     private String[] orderedAttributeNames;
     
     private AttributeType[] attributeTypes;
-    
+
     public LoadTSVFile() {};
-    
+
     public LoadTSVFile(AttributeType[] attributeTypes) {
         orderedAttributeNames = new String[0];
         this.attributeTypes = attributeTypes;
@@ -26,10 +26,11 @@ public class LoadTSVFile {
     
 
     public RecordCollection load(File file) {
+        String line = "";
         try {
             ArrayList<Record>  records = new ArrayList<Record>(1000); // TODO: Maybe there is a way to get the number of lines easily?
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            String line = reader.readLine();
+            line = reader.readLine();
             int lineNo = 0;
             while (line != null) {
                 String[] fields = line.split("\t");
@@ -39,10 +40,12 @@ public class LoadTSVFile {
                     Record rec = new Record(lineNo, new Source(fields[0]), new Entity(fields[1]));
                     for (int i = 2; i < fields.length; i++) {
                         int j = i-2;
-                        if (j < orderedAttributeNames.length)
-                            rec.addAttribute(getAttributeFromString(orderedAttributeNames[j],fields[i],attributeTypes[i]));
-                        else
-                            rec.addAttribute(getAttributeFromString(String.format("Attr%04d",j),fields[i],attributeTypes[i]));
+                        // Handle empty attributes
+                        if (fields[i].length() > 0)
+                            if (j < orderedAttributeNames.length)
+                                rec.addAttribute(getAttributeFromString(orderedAttributeNames[j],fields[i],attributeTypes[j]));
+                            else
+                                rec.addAttribute(getAttributeFromString(String.format("Attr%04d",j),fields[i],attributeTypes[j]));
                     }
                     records.add(rec);
                 }
@@ -53,6 +56,9 @@ public class LoadTSVFile {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("ERROR READING LINE: " + line);
             e.printStackTrace();
         }
         return null;
