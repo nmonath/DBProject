@@ -209,26 +209,7 @@ public class TruthFinder extends Algorithm{
         return new RecordCollection(rec);
     }
     
-    private Set<Source> sourcesWithValue(ArrayList<Record> records, Attribute value)  {
-        Set<Source> sourcesWithValue = new HashSet<Source>();
-        String attrName = value.getName();
-        for (Record r : records) {
-            if (r.hasAttribute(attrName))
-                if (r.getAttribute(attrName).equals(value))
-                    sourcesWithValue.add(r.getSource());
-        }
-        return sourcesWithValue;
-    }
-    
-    private Set<Attribute> valuesForAttribute(ArrayList<Record> records, String attributeName) {
-        Set<Attribute> valuesForAttribute = new HashSet<Attribute>();
-        for (Record r: records) {
-            Attribute attr = r.getAttribute(attributeName);
-            if (attr != null)
-                valuesForAttribute.add(attr);
-        }
-        return valuesForAttribute;
-    }
+
         
     
     //TODO: How is this defined???
