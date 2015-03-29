@@ -86,5 +86,28 @@ public class RecordCollection {
             e.printStackTrace();
         }
     }
+
+    public void writeToTSVFile(File file, String[] attributeOrdering) {
+        try {
+            PrintWriter out = new PrintWriter(file,"UTF-8");
+            for (Record r : records) {
+                StringBuilder sb = new StringBuilder(100);
+                sb.append(r.getSource().getName());
+                sb.append("\t");
+                sb.append(r.getEntity().getIdentifier());
+                for (String attrName : attributeOrdering) {
+                    sb.append("\t");
+                    if (r.hasAttribute(attrName))
+                        sb.append(r.getAttribute(attrName));
+                }
+                out.println(sb.toString());
+            }
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
     
 }
