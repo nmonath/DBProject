@@ -1,5 +1,7 @@
 package edu.umass.cs.data_fusion.data_structures;
 
+import java.util.ArrayList;
+
 public abstract class Algorithm {
     private RecordCollection recordCollection;
     private Result result;
@@ -12,5 +14,5 @@ public abstract class Algorithm {
         return name;
     }
     
-    abstract Result execute(RecordCollection recordCollection);
+    public abstract ArrayList<Result> execute(RecordCollection recordCollection);
 }
