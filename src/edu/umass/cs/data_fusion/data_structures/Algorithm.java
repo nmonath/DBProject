@@ -15,4 +15,5 @@ public abstract class Algorithm {
     }
     
     public abstract ArrayList<Result> execute(RecordCollection recordCollection);
+
 }
