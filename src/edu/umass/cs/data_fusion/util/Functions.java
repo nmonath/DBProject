@@ -22,7 +22,7 @@ public class Functions {
         double res = 0.0;
         for (int i = 0; i < x.length; i++)
             res += Math.pow(x[i], 2);
-        return res;
+        return Math.sqrt(res);
     }
 
     public static double cosine(double[] x, double[] y) {
