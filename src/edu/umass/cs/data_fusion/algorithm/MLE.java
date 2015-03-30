@@ -14,6 +14,7 @@ public class MLE extends Algorithm {
     final private double delta;
     
     final private int MAX_ITERATIONS = 1000;
+    private Source source = new Source(this.getName());
     
     public MLE (double beta1, double r, double delta) {
         super("MLE");
@@ -102,10 +103,32 @@ public class MLE extends Algorithm {
 
         }
         
-        // TODO: Create final results
+        /*
+        Assign a final value to each attribute of each entity  
+         */
+        Set<Entity> entities = recordCollection.getEntities();
+        ArrayList<Result> results = new ArrayList<Result>(entities.size());
+        for (Entity entity: entities) {
+            Result res = new Result(this.source, entity);
+            Set<String> attributeNames = recordCollection.getAttributes(entity);
+            // The value for each attribute it is the one with the highest confidence
+            for (String attributeName : attributeNames) {
+                double max = Double.MIN_VALUE;
+                Attribute bestAttr = null;
+                for (Attribute a : confidence.get(entity).get(attributeName).keySet()) {
+                    double conf = confidence.get(entity).get(attributeName).get(a);
+                    if (conf > max) {
+                        max = conf;
+                        bestAttr = a;
+                    }
+                }
+                if (max > 0.5)
+                    res.addAttribute(bestAttr);
+            }
+            results.add(res);
+        }
         
-        
-        return null;
+        return results;
     }
 
     // TODO: How is this defined?
