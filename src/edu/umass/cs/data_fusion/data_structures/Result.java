@@ -51,6 +51,10 @@ public class Result {
          return attributes;
      }
      
+     public int getNumAttributes(){
+     	return attributes.size();
+     }
+     
      public Double getConfidence() {
          return confidence;
      }

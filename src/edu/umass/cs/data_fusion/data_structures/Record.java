@@ -78,6 +78,10 @@ public class Record {
         return attributes;
     }
     
+    public int getNumAttributes(){
+    	return attributes.size();
+    }
+    
     public boolean hasAttribute(String attrName) { return attributes.containsKey(attrName);}
     
     public Attribute getAttribute(String attrName) { return attributes.get(attrName);}
