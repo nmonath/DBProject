@@ -1,4 +1,4 @@
-pdflatex Group9Report
-bibtex Group9Report
-pdflatex Group9Report
-pdflatex Group9Report
+pdflatex Group9RelatedWork
+bibtex Group9RelatedWork
+pdflatex Group9RelatedWork
+pdflatex Group9RelatedWork
