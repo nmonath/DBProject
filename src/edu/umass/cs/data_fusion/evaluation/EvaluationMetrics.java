@@ -1,5 +1,6 @@
 package edu.umass.cs.data_fusion.evaluation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,12 +47,14 @@ public class EvaluationMetrics {
            for(String a : r.getAttributes().keySet()){
         	   totalGold++;
         	   Attribute goldAttrib = attribValues.get(a);
-        	   if(resultHash.get(entity).containsKey(a)){ 
-        		   Attribute resultAttrib = resultHash.get(entity).get(a);
-        	       if(goldAttrib.compareTo(resultAttrib)==0){
-            	        match++; 
-                    }
-                }
+               if (resultHash.containsKey(entity)) {
+                   if (resultHash.get(entity).containsKey(a)) {
+                       Attribute resultAttrib = resultHash.get(entity).get(a);
+                       if (goldAttrib.equals(resultAttrib)) {
+                           match++;
+                       }
+                   }
+               }
            }
            
         }
@@ -77,6 +80,12 @@ public class EvaluationMetrics {
     	return resultHash;
     }
     
+    public void printResults() {
+        System.out.println("Precision: " + precision);
+        System.out.println("Recall: " + recall);
+        System.out.println("F1: " + 2.0*precision*recall/(precision+recall));
+    }
+    
     
     private double getResultNumAttributes(ArrayList<Result> results) {
         double numAttributes = 0;
@@ -85,4 +94,6 @@ public class EvaluationMetrics {
         }
         return numAttributes;
     }
+    
+    
 }
