@@ -110,8 +110,9 @@ Lakshmi Nair \\
 
 %\keywords{ACM proceedings, \LaTeX, text tagging} % NOT required for Proceedings
 
+\section{Introduction}
 
-
+TODO
 
 \section{Related Work}
 The advent of data sources on the web in the last two decades has sparked the need for automated methods of combining sources into a single source. As these data sources often contain noisy and incorrect data, techniques for discerning the correct value among a set of conflicting values must be developed. These techniques solve the problem of data fusion. The process is also referred to as truth discovery \cite{waguih:truth} \cite{yin:truth} and data integration \cite{sarma:data} \cite{zhao:bayesian}. While there has been some work on how data fusion pertains to information extraction, specifically question answering \cite{wu:corroborating}, the significant body of literature pertains to the construction of databases, particularly relational databases and, recently, knowledge bases \cite{dong:data}. 
@@ -145,6 +146,41 @@ Another related research area is the collection of labels from crowdsourcing \ci
 We expect our work to differ from the previous work in that we will model source trustworthiness not only globally, i.e. for all attributes, but also locally for each attribute. In doing so, we hope to capture a more fine grained representation of source trustworthiness. We will also attempt to ensemble existing algorithms using a variety of techniques such as weighted ensemble. We hope to use semi-supervised techniques in situations where more domain-knowledge could be useful. Most of the models presented previous works such as \cite{pasternack:latent} and \cite{li:resolving} do not attempt to measure the dependence of attributes on other attributes. We hope to investigate if there is a tractable way to capture these dependencies and if we can use them to improve data fusion methods.
 
 \vspace{2cm}
+
+\section{Models}
+
+\subsection{Problem Description}
+
+We provide the following formalism for the problem of data fusion. A $record$, $r$, is provided by a $source$, $s$, about an $entity$, $e$. A $source$ is a supplier of data. For example, Expedia is a source for flight data, and Yahoo Finance is a source of stock data.  An $entity$ is a real world object about which a $source$ provides data. The entities about which Expedia provides data are flights and Yahoo Finance provides data about a company's stock price. An entity has a unique identifier. In the case of flight data this would be the flight number. In the case of stock data, this would be the company's ticker symbol. A $record$ contains one or more $attributes$, $a_1,\ a_2,\dots,\ a_n$, of an entity. Each $attribute$ has a specific domain. In the case of flights, the attribute $time$ $delay$ might be an integer and for stocks, the $opening$ $price$ might have a domain of positive real numbers.  The domain of an attribute may also be binary (true/false) or categorical. We refer to the collection of records provided by a source $s$ as $R_s$. The $schema$ of a record is the set of attributes which each entity is expected to contain.
+
+Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusio}n is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities in $R^*$.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
+
+
+\subsection{Implemented Existing Methods}
+
+In this section, we present a more detailed explanation of the methods we have implemented so far. 
+
+\subsubsection{Majority Voting}
+
+\subsubsection{Cosine}
+
+\subsubsection{2-Estimate}
+
+\subsubsection{TruthFinder}
+
+\subsection{Proposed Methods}
+
+We are in the process of developing extensions to these techniques. Our extensions fall into three main categories: ensemble methods; source-attribute pairwise trustworthiness, and attribute dependence. Based on our literature survey, we do not believe that these topics have been thoroughly investigated thus far. 
+
+\subsubsection{Ensemble Methods}
+
+Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
+
+Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. 
+
+
+
+
 
 \bibliographystyle{abbrv}
 \bibliography{references}  
