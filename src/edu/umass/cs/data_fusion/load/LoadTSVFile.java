@@ -42,10 +42,15 @@ public class LoadTSVFile {
                         int j = i-2;
                         // Handle empty attributes
                         if (fields[i].length() > 0)
-                            if (j < orderedAttributeNames.length)
-                                rec.addAttribute(getAttributeFromString(orderedAttributeNames[j],fields[i],attributeTypes[j]));
-                            else
-                                rec.addAttribute(getAttributeFromString(String.format("Attr%04d",j),fields[i],attributeTypes[j]));
+                            if (j < orderedAttributeNames.length) {
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeTypes[j]);
+                                if (attrToAdd != null)
+                                    rec.addAttribute(attrToAdd);
+                            } else {
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeTypes[j]);
+                                if (attrToAdd != null)
+                                    rec.addAttribute(attrToAdd);
+                            }
                     }
                     records.add(rec);
                 }
@@ -63,6 +68,54 @@ public class LoadTSVFile {
         }
         return null;
     }
+
+    public RecordCollection loadGold(File file) {
+        String line = "";
+        try {
+            ArrayList<Record>  records = new ArrayList<Record>(1000); // TODO: Maybe there is a way to get the number of lines easily?
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            line = reader.readLine();
+            int lineNo = 0;
+            while (line != null) {
+                String[] fields = line.split("\t");
+                if (fields.length < 1) {
+                    System.err.println("Error reading file " + file.getName() + " malformed line: " + line);
+                } else {
+                    Record rec = new Record(lineNo, new Source("Gold"), new Entity(fields[0]));
+                    for (int i = 1; i < fields.length; i++) {
+                        int j = i-1;
+                        // Handle empty attributes
+                        if (fields[i].length() > 0)
+                            if (j < orderedAttributeNames.length) {
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeTypes[j]);
+                                if (attrToAdd != null)
+                                    rec.addAttribute(attrToAdd);
+                            } else {
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeTypes[j]);
+                                if (attrToAdd != null)
+                                    rec.addAttribute(attrToAdd);
+                            }
+                    }
+                    records.add(rec);
+                }
+                line = reader.readLine();
+                lineNo += 1;
+            }
+            return new RecordCollection(records);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("ERROR READING LINE: " + line);
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    
+    
     
     // Defining it like this lets us define the cleaning methods for each data set differently
     // I think this makes sense?
@@ -83,7 +136,8 @@ public class LoadTSVFile {
     }
     
     protected Attribute getFloatAttributeFromString(String name, String rawValue) {
-        return new FloatAttribute(name,rawValue); 
+        FloatAttribute flt = new FloatAttribute(name,rawValue);
+        return (flt.isValidFloat() ? flt : null); 
     }
     
 }
