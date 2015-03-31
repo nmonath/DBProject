@@ -27,6 +27,10 @@
 % For tracking purposes - this is V3.1SP - APRIL 2009
 
 \documentclass{acm_proc_article-sp}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\algrenewcomment[1]{\(\triangleright\) #1}
 
 \begin{document}
 
@@ -180,6 +184,25 @@ Our first attempt at an ensemble method is to apply the majority voting algorith
 
 
 
+\begin{algorithm}[H]
+\caption{Example Algorithm}
+\begin{algorithmic}[1]
+\Function{ExampleAlg}{$G_1$, $G_2$, $f$} \\
+\Comment{Inputs: Two graphs $G_1 = (V_1,E_1)$ and $G_2=(V_2,E_2)$ and a function $f: V_1 \rightarrow V_2$.} \\
+\Comment{Output: Returns ...} \\
+
+
+\For{\textbf{each} $v_1$ \textbf{in} $V_1$}
+\If{$f(v_1) \not \in V_2$}
+\State \textbf{return} false
+\EndIf
+\EndFor
+\\
+
+\State \textbf{return} true
+\EndFunction
+\end{algorithmic}
+\end{algorithm}  
 
 
 \bibliographystyle{abbrv}
