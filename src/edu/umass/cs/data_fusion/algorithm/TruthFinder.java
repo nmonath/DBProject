@@ -193,7 +193,8 @@ public class TruthFinder extends Algorithm{
                         bestAttr = a;
                     }
                 }
-                res.addAttribute(bestAttr);
+                if (bestAttr != null)
+                    res.addAttribute(bestAttr);
             }
             results.add(res);
         }
