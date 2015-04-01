@@ -242,7 +242,7 @@ Specifically, let $\alpha_i^{(s)}$ be the value provided by source $s$ for the a
 \mathsf{CONF(\alpha_i^{(s)})} = \sum_{s' \in S} \mathsf{Provides}(s',\alpha_i^{(s)}) \cdot \ln(1-\mathsf{TRUST}(s'))
 \end{equation}
 
-where $\mathsf{Provides}(s',\alpha_i^{(s)})$ is an indicator function that is 1 only if $s'$ provides $\alpha_i^{(s)}$ as the value for $a_i$ and 0 otherwise. $\mathsf{CONF(\alpha_i^{(s)})}$ is the log probability that each of the sources providing the value $\alpha_i^{(s)}$ are correct and each of the sources not providing the value are incorrect. This confidence value is then used to create an $adjusted$ confidence $\mathsf{CONF^\star(\alpha_i^{(s)})}$.
+where $\mathsf{Provides}(s',\alpha_i^{(s)})$ is an indicator function that is 1 only if $s'$ provides $\alpha_i^{(s)}$ as the value for $a_i$ and 0 otherwise. $\mathsf{CONF(\alpha_i^{(s)})}$ is the log probability that each of the sources providing the value $\alpha_i^{(s)}$ are correct. This confidence value is then used to create an $adjusted$ confidence $\mathsf{CONF^\star(\alpha_i^{(s)})}$.
 
 \begin{align}
 \mathsf{CONF^\star(\alpha_i^{(s)})} &= \mathsf{CONF(\alpha_i^{(s)})} + \\ \nonumber
@@ -272,6 +272,28 @@ Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_
 
 Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. 
 
+\subsubsection{Ensemble Methods}
+
+Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
+
+Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. This approach is often referred to as \emph{stacking} in the literature. 
+
+
+\subsubsection{Source Attribute Trustworthiness}
+
+As pointed out in \cite{dong:truth}, a data source may reliably provide values for a particular attribute of an entity, but may unreliably provide values for another attribute. In response to this, we give extensions of existing algorithms which model the trustworthiness of a source--attribute pair.  The {\sc TruthFinder} algorithm can be extended by redefining the $\mathsf{CONF}$ and $\mathsf{TRUST}$ functions in the following way: 
+
+
+\begin{equation}
+\mathsf{CONF(\alpha_i^{(s)})} = \sum_{s' \in S} \mathsf{Provides}(s',\alpha_i^{(s)}) \cdot \ln(1-\mathsf{TRUST}(s',a_i))
+\end{equation}
+
+
+\begin{equation}
+\mathsf{TRUST}(s,a_i) = \frac{1}{|E|} \sum_{e \in E} \sigma(\gamma \cdot \mathsf{CONF}(\alpha_i^{(s)}))
+\end{equation}
+
+where, with a slightly abuse of notation, $\alpha_i^{(s)}$ refers to the value supplied for attribute $a_i$ for each $e$ in the summation. The  $\mathsf{TRUST}$ is now parameterized at the attribute level; the trustworthiness of an attribute from a source is the average of the confidence values for those given attributes. The rest of the {\sc TruthFinder} algorithm remains unchanged. 
 
 
 \begin{algorithm}[H]
