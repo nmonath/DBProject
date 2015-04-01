@@ -266,18 +266,12 @@ where $Z$ is the number of values (across all entities) provided by $S$ and $\si
 
 We are in the process of developing extensions to these techniques. Our extensions fall into three main categories: ensemble methods; source-attribute pairwise trustworthiness, and attribute dependence. Based on our literature survey, we do not believe that these topics have been thoroughly investigated thus far. 
 
-\subsubsection{Ensemble Methods}
-
-Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
-
-Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. 
 
 \subsubsection{Ensemble Methods}
 
 Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
 
 Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. This approach is often referred to as \emph{stacking} in the literature. 
-
 
 \subsubsection{Source Attribute Trustworthiness}
 
