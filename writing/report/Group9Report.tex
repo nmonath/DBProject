@@ -31,6 +31,8 @@
 \usepackage{algorithmicx}
 \usepackage[noend]{algpseudocode}
 \algrenewcomment[1]{\(\triangleright\) #1}
+\usepackage{hyperref}
+
 
 \begin{document}
 
@@ -159,6 +161,25 @@ We provide the following formalism for the problem of data fusion. A $record$, $
 
 Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusio}n is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities in $R^*$.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
 
+\subsection{Data Set}
+To evaluate our algorithms we consider the \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}} which was introduced in \cite{li:truth}. Some statistics of the data set is shown in table \ref{fig:stock}. This data set contains stock information obtained in July 2011 by using 55 different sources like \emph{Google Finance, Bloomberg} or \emph{NASDAQ}. From each of these sources 1000 stocks were considered. In July 2011 on each weekday the stock data of each stock was collected from each of the 55 sources. Different sources had different numbers of attributes (from 3 to 71). The \emph{clean stock data set} which we use contains 16 attributes per stock which had the best coverage across the sources. Among these 16 attributes are: \emph{change in \%, opening price, todays high/low, market capacity, dividend, etc}. For the stock \emph{stock data}, \emph{Xian Li et al.} \cite{li:truth} also generated a gold standard for evaluation.
+
+
+%todo: change vertical padding
+\begin{figure}[h]
+    \centering
+{%\footnotesize
+\begin{tabular}{  | c | c | c | c  | c | c |}		
+\hline
+ \textbf{Src} & \textbf{Period} & \textbf{Stocks} & \textbf{Attributes}  & \textbf{Items}  \\
+\hline
+ 55 & July 2011 &  1000 & 16 &  16000*55   \\
+\hline
+\end{tabular}
+}
+ \caption{Stock data collection overview}%
+    \label{fig:stock}%
+\end{figure}
 
 \subsection{Implemented Existing Methods}
 
@@ -171,6 +192,7 @@ A simple approach to data fusion is collect all of the candidate values provided
 \subsubsection{Cosine}
 
 \subsubsection{2-Estimate}
+The {\sc 2- Estimate} algorihtm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a prababilistic model to estimate the source trustworthiness and the confidence of an attibute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence ins nomralized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence.
 
 
 %% Lakshmi & Manuel please feel free to change these variable names if you want to. I'm in no way attached to them, it was just an initial stab at this. 
