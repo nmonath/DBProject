@@ -166,11 +166,79 @@ In this section, we present a more detailed explanation of the methods we have i
 
 \subsubsection{Majority Voting}
 
+A simple approach to data fusion is collect all of the candidate values provided by the sources for a particular attribute of an entity and assign the attribute the value that appears most frequently. While general idea appears in all of the following   algorithms,  it is flawed in that it ignores information about the data sources, uncertainty of the attributes and the relationships between  attributes.
+
 \subsubsection{Cosine}
 
 \subsubsection{2-Estimate}
 
+
+%% Lakshmi & Manuel please feel free to change these variable names if you want to. I'm in no way attached to them, it was just an initial stab at this. 
+\begin{table}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Variable & Description  \\
+\hline
+$s$ & Data source \\
+$S$ & Set of all sources  \\
+$e$ & Entity \\
+$E$ & Set of all entities \\
+$a_i$ & The $i^{th}$ Attribute of $e$ \\
+$\alpha_i^{(s)}$ & The value of $a_i$ given by $s$ \\
+$Attr(e)$ & The attributes of $e$ \\
+\hline
+\end{tabular}
+\caption{Definition of each variable used in the algorithms.}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Variable & Example \\
+\hline
+$s$  & MarketWatch \\
+$S$ & \{MarketWatch,YahooFinance,$\dots$\}  \\
+$e$ & GM (General Motors) \\
+$E$ & \{GM, AAPL, F, $\dots$\} \\
+$a_i$ & Opening Price \\
+$\alpha_i^{(s)}$ & \$37.50 \\
+$Attr(e)$ & \{Open Price, Avg Price, $\dots$\} \\
+\hline
+\end{tabular}
+\caption{Examples for each of the variable types.}
+\end{table}
+
 \subsubsection{TruthFinder}
+
+Yin et al present a Bayesian approach to data fusion in \cite{yin:truth}.  The likelihood of an entity's attribute having a particular value is a function of both the trustworthiness of the source providing the value as well as the values presented by other sources. The model is based on the idea that a source is trustworthy if it frequently provides a correct value and a value is often correct for an attribute if the providing source is trustworthy. However, as the algorithm is unsupervised we model the trustworthiness of a source as a function of the likelihood of correctness of the attributes it provides. 
+
+Specifically, let $\alpha_i^{(s)}$ be the value provided by source $s$ for the attribute $a_i$ of entity $e$. The $trustworthiness$ of $s$ is denoted: $\mathsf{TRUST}(s)$. Based solely on the trustworthiness of the sources, the likelihood of correctness or confidence we have that $\alpha_i^{(s)}$ is the correct value for $a_i$ is denoted $\mathsf{CONF(\alpha_i^{(s)})}$.  The confidence is defined (in log space) as:
+
+\begin{equation}
+\mathsf{CONF(\alpha_i^{(s)})} = \sum_{s' \in S} \mathsf{Provides}(s',\alpha_i^{(s)}) \cdot \ln(1-\mathsf{TRUST}(s'))
+\end{equation}
+
+where $\mathsf{Provides}(s',\alpha_i^{(s)})$ is an indicator function that is 1 only if $s'$ provides $\alpha_i^{(s)}$ as the value for $a_i$ and 0 otherwise. $\mathsf{CONF(\alpha_i^{(s)})}$ is the log probability that each of the sources providing the value $\alpha_i^{(s)}$ are correct and each of the sources not providing the value are incorrect. This confidence value is then used to create an $adjusted$ confidence $\mathsf{CONF^\star(\alpha_i^{(s)})}$.
+
+\begin{align}
+\mathsf{CONF^\star(\alpha_i^{(s)})} &= \mathsf{CONF(\alpha_i^{(s)})} + \\ \nonumber
+&  \sum_{s' \in S \setminus \{s\}} \rho \cdot \mathsf{CONF(\alpha_i^{(s')})}  \cdot \mathsf{SIM}(\alpha_i^{(s)},\alpha_i^{(s')})
+\end{align}
+
+where $\mathsf{SIM}$ is a similarity function defined unique for domain the attribute $a_i$. The function $\mathsf{CONF}^\star$ can be view as increasing  the $\mathsf{CONF}$ of the value of an attribute if trustworthy sources provide similar values and decreasing it otherwise. As mentioned before the trustworthiness of a source based on the confidence values for the attributes it provides. 
+
+\begin{equation}
+\mathsf{TRUST}(s) = \frac{1}{Z} \sum_{e \in E}\sum_{a \in Attr(e)} \sigma(\gamma \cdot \mathsf{CONF}(\alpha^{(s)}))
+\end{equation}
+
+where $Z$ is the number of values (across all entities) provided by $S$ and $\sigma$ is the sigmoid function, which is used to map $\mathsf{CONF}^\star$ to a value between 0 and 1.
+
+\begin{equation}
+\sigma(x) = \frac{1}{1 + \exp{(-x)}}
+\end{equation}
+
 
 \subsection{Proposed Methods}
 
