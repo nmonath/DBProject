@@ -151,8 +151,6 @@ Another related research area is the collection of labels from crowdsourcing \ci
 
 We expect our work to differ from the previous work in that we will model source trustworthiness not only globally, i.e. for all attributes, but also locally for each attribute. In doing so, we hope to capture a more fine grained representation of source trustworthiness. We will also attempt to ensemble existing algorithms using a variety of techniques such as weighted ensemble. We hope to use semi-supervised techniques in situations where more domain-knowledge could be useful. Most of the models presented previous works such as \cite{pasternack:latent} and \cite{li:resolving} do not attempt to measure the dependence of attributes on other attributes. We hope to investigate if there is a tractable way to capture these dependencies and if we can use them to improve data fusion methods.
 
-\vspace{2cm}
-
 \section{Models}
 
 \subsection{Problem Description}
@@ -160,6 +158,8 @@ We expect our work to differ from the previous work in that we will model source
 We provide the following formalism for the problem of data fusion. A $record$, $r$, is provided by a $source$, $s$, about an $entity$, $e$. A $source$ is a supplier of data. For example, Expedia is a source for flight data, and Yahoo Finance is a source of stock data.  An $entity$ is a real world object about which a $source$ provides data. The entities about which Expedia provides data are flights and Yahoo Finance provides data about a company's stock price. An entity has a unique identifier. In the case of flight data this would be the flight number. In the case of stock data, this would be the company's ticker symbol. A $record$ contains one or more $attributes$, $a_1,\ a_2,\dots,\ a_n$, of an entity. Each $attribute$ has a specific domain. In the case of flights, the attribute $time$ $delay$ might be an integer and for stocks, the $opening$ $price$ might have a domain of positive real numbers.  The domain of an attribute may also be binary (true/false) or categorical. We refer to the collection of records provided by a source $s$ as $R_s$. The $schema$ of a record is the set of attributes which each entity is expected to contain.
 
 Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusio}n is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities in $R^*$.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
+
+A summary of the names of the variables used in this report is given in Table \ref{tbl:vars}, and an example of each variable is given in Table \ref{tbl:varExs}. 
 
 \subsection{Data Set}
 To evaluate our algorithms we consider the \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}} which was introduced in \cite{li:truth}. Some statistics of the data set is shown in table \ref{fig:stock}. This data set contains stock information obtained in July 2011 by using 55 different sources like \emph{Google Finance, Bloomberg} or \emph{NASDAQ}. From each of these sources 1000 stocks were considered. In July 2011 on each weekday the stock data of each stock was collected from each of the 55 sources. Different sources had different numbers of attributes (from 3 to 71). The \emph{clean stock data set} which we use contains 16 attributes per stock which had the best coverage across the sources. Among these 16 attributes are: \emph{change in \%, opening price, todays high/low, market capacity, dividend, etc}. For the stock \emph{stock data}, \emph{Xian Li et al.} \cite{li:truth} also generated a gold standard for evaluation.
@@ -209,9 +209,13 @@ $E$ & Set of all entities \\
 $a_i$ & The $i^{th}$ Attribute of $e$ \\
 $\alpha_i^{(s)}$ & The value of $a_i$ given by $s$ \\
 $Attr(e)$ & The attributes of $e$ \\
+$r$ & Record (an entity and its attributes) \\
+$R$ & A collection of records \\
+$R_s$ & The records provided by a source $s$. \\
 \hline
 \end{tabular}
 \caption{Definition of each variable used in the algorithms.}
+\label{tbl:vars}
 \end{table}
 
 \begin{table}
@@ -230,6 +234,7 @@ $Attr(e)$ & \{Open Price, Avg Price, $\dots$\} \\
 \hline
 \end{tabular}
 \caption{Examples for each of the variable types.}
+\label{tbl:varExs}
 \end{table}
 
 \subsubsection{TruthFinder}
