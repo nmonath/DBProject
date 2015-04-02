@@ -291,7 +291,7 @@ where $\mathsf{Provides}(s',\alpha_i^{(s)})$ is an indicator function that is 1 
 where $\mathsf{SIM}$ is a similarity function defined unique for domain the attribute $a_i$. The function $\mathsf{CONF}^\star$ can be view as increasing  the $\mathsf{CONF}$ of the value of an attribute if trustworthy sources provide similar values and decreasing it otherwise. As mentioned before the trustworthiness of a source based on the confidence values for the attributes it provides. 
 
 \begin{equation}
-\mathsf{TRUST}(s) = \frac{1}{Z} \sum_{e \in E}\sum_{a \in Attr(e)} \sigma(\gamma \cdot \mathsf{CONF}(\alpha^{(s)}))
+\mathsf{TRUST}(s) = \frac{1}{Z} \sum_{e \in E}\sum_{a \in Attr(e)} \sigma(\gamma \cdot \mathsf{CONF}^\star(\alpha^{(s)}))
 \end{equation}
 
 where $Z$ is the number of values (across all entities) provided by $S$ and $\sigma$ is the sigmoid function, which is used to map $\mathsf{CONF}^\star$ to a value between 0 and 1.
@@ -300,6 +300,56 @@ where $Z$ is the number of values (across all entities) provided by $S$ and $\si
 \sigma(x) = \frac{1}{1 + \exp{(-x)}}
 \end{equation}
 
+The final value assigned to an entity's attribute is the value with the highest confidence. The algorithm is listed in Algorithm \ref{alg:tf} 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=9cm]{bn2.png}
+\caption{An example of the attribute dependence model which models the trustworthiness of each attribute provided by a source}
+\end{figure}
+
+\begin{algorithm}
+\caption{TruthFinder}
+\begin{algorithmic}[1]
+\small
+\Function{TruthFinder}{$R$, $\delta$, $\rho$, $\gamma$, $t_0$} \\
+\Comment{Inputs: The collection of records $R$ and the hyper parameters.} \\
+\Comment{Output: Returns the fused data $\hat{R}$} \\
+
+\For{\textbf{each} $s$ \textbf{in} $S$}
+\State $\mathsf{TRUST}(s) \leftarrow t_0$
+\EndFor
+\\
+\While{\textbf{not} Converged($\mathsf{TRUST}, \delta$)}
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $\mathsf{CONF(\alpha^{(s)})} \leftarrow \sum_{s' \in S} \mathsf{Provides}(s',\alpha^{(s)}) \cdot \ln(1-\mathsf{TRUST}(s'))$
+\EndFor
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $\mathsf{CONF^\star(\alpha^{(s)})} \leftarrow \mathsf{CONF(\alpha^{(s)})} +   \sum_{s' \in S \setminus \{s\}} \rho \cdot \mathsf{CONF(\alpha^{(s')})}  \cdot \mathsf{SIM}(\alpha^{(s)},\alpha^{(s')})$
+\EndFor
+\EndFor
+\For{\textbf{each} $s$ \textbf{in} $S$}
+\State $\mathsf{TRUST}(s) \leftarrow avg \big ( \sum_{e \in E}\sum_{a \in Attr(e)} \sigma(\gamma \cdot \mathsf{CONF}^\star(\alpha^{(s)})) \big )$
+\EndFor
+\EndWhile
+
+\\
+
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $\hat{\alpha} \leftarrow \argmax_{\alpha} \mathsf{CONF}(\alpha)$
+\EndFor
+\State Add record for $e$ with attributes \& values $(a, \hat{\alpha})$ to $\hat{R}$.
+\EndFor
+\\
+
+\State \textbf{return} $\hat{R}$
+\EndFunction
+\end{algorithmic}
+\label{alg:tf}
+\end{algorithm}  
 
 \subsection{Conflict Resolution on Heterogenous Data}
 
@@ -332,7 +382,45 @@ The assignment of each attribute's value for each entity is done by selecting th
 \alpha^{(*)} = \argmin_\alpha \sum_{s \in S} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})
 \end{align}
 
-The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergence condition is met. For each entity $e$, the $\alpha^{(*)}$ from the last iteration of the algorithm is the value assigned to the attribute $a$. This algorithm is summarized in . 
+The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergence condition is met. For each entity $e$, the $\alpha^{(*)}$ from the last iteration of the algorithm is the value assigned to the attribute $a$. This algorithm is summarized in Algorithm \ref{alg:crh}. 
+
+
+\begin{algorithm}
+\small
+\caption{Conflict Resolution on Heterogenous Data}
+\begin{algorithmic}[1]
+\Function{CRH}{$R$, $\delta$} \\
+\Comment{Inputs: The collection of records $R$ and the hyper parameter.} \\
+\Comment{Output: Returns the fused data $\hat{R}$} \\
+
+\State Initialize $W$ \\
+
+\State Initialize a value $\alpha^(*)$ for each attribute $a$ of each entity $e$ using Majority Voting or another method. 
+
+\While{\textbf{not} Converged($W, \delta$)}
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $w_s \leftarrow - \log \big ( \frac{\sum_{e \in E} \sum_{a \in Attr(e)} \ell_a(\alpha^{(*)}, \alpha^{(s)})}{\sum_{s' \in S} \sum_{e \in E}  \sum_{a \in Attr(e)} \ell_a(\alpha^{(*)}, \alpha^{(s')})} \big )$
+\State $\alpha^{(*)} \leftarrow \argmin_\alpha \sum_{s \in S} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})$
+\EndFor
+\EndFor
+\EndWhile
+
+\\
+
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $\hat{\alpha} \leftarrow \argmin_\alpha \sum_{s \in S} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})$
+\EndFor
+\State Add record for $e$ with attributes \& values $(a, \hat{\alpha})$ to $\hat{R}$.
+\EndFor
+\\
+
+\State \textbf{return} $\hat{R}$
+\EndFunction
+\end{algorithmic}
+\label{alg:crh}
+\end{algorithm}  
 
 
 \subsection{Proposed Methods}
