@@ -152,7 +152,8 @@ Recent work has focused on knowledge fusion, a closely related problem to data f
 
 Another related research area is the collection of labels from crowdsourcing \cite{nguyen:minimizing}. Particularly, techniques for using crowdsourcing to create labeled data sets \cite{sheng:get} \cite{nguyen:minimizing} and crowdsourcing for multiple choice question answering \cite{bachrach:grade}. In these approaches the number of sources/users can be much greater than for usual data fusion problems \cite{li:truth} \cite{nguyen:minimizing}.
 
-We expect our work to differ from the previous work in that we will model source trustworthiness not only globally, i.e. for all attributes, but also locally for each attribute. In doing so, we hope to capture a more fine grained representation of source trustworthiness. We will also attempt to ensemble existing algorithms using a variety of techniques such as weighted ensemble. We hope to use semi-supervised techniques in situations where more domain-knowledge could be useful. Most of the models presented previous works such as \cite{pasternack:latent} and \cite{li:resolving} do not attempt to measure the dependence of attributes on other attributes. We hope to investigate if there is a tractable way to capture these dependencies and if we can use them to improve data fusion methods.
+We expect our work to differ from the previous work in that we will model source trustworthiness not only globally, i.e. for all attributes, but also locally for each attribute. In doing so, we hope to capture a more fine grained representation of source trustworthiness. We will also attempt to ensemble existing algorithms using a variety of techniques such as weighted ensemble. We hope to use semi-supervised techniques in situations where more domain-knowledge could be useful. Most of the models presented previous works such as \cite{pasternack:latent} and \cite{li:resolving} do not attempt to measure the dependence of attributes on other attributes. We hope to investigate if there is a trac
+ way to capture these dependencies and if we can use them to improve data fusion methods.
 
 \section{Models}
 
@@ -195,10 +196,10 @@ A simple approach to data fusion is collect all of the candidate values provided
 \subsubsection{Cosine}
 
 \subsubsection{2-Estimate}
-The {\sc 2- Estimate} algorihtm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a prababilistic model to estimate the source trustworthiness and the confidence of an attibute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence ins nomralized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
+The {\sc 2- Estimate} algorithm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a probabilistic model to estimate the source trustworthiness and the confidence of an attribute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
 
 \begin{algorithm}[H]
-\caption{\sc 2-Estimates($S, E, Attr(E), \lambda, \delta$)}
+\caption{\sc 2-Estimates($S, E, Attr(e), \lambda, \delta$)}
 \label{alg:2e} 
 \begin{algorithmic}[1]
 \State $\forall s \in S: T_s \gets 0.8$
@@ -242,7 +243,8 @@ $e$ & Entity \\
 $E$ & Set of all entities \\
 $a_i$ & The $i^{th}$ Attribute of $e$ \\
 $\alpha_i^{(s)}$ & The value of $a_i$ given by $s$ \\
-$Attr(e)$ & The attributes of $e$ \\
+$Attr(e)$ & The attributes of $e$ from training data\\
+$Attr^g(e)$ & The attributes of $e$ from ground truth data\\
 $r$ & Record (an entity and its attributes) \\
 $R$ & A collection of records \\
 $R_s$ & The records provided by a source $s$. \\
@@ -501,6 +503,26 @@ We are still working on this model, particularly how to define the loss function
 \includegraphics[width=9cm]{bn2.png}
 \caption{An example of the attribute dependence model which models the trustworthiness of each attribute provided by a source}
 \end{figure}
+
+\subsection{Evaluation Methods}
+We evaluate the source fusion methods mainly with two measures , precision and recall. These methods have been popular in other fields like information retrieval and machine learning where the effectiveness of an algorithm is measured with respect to the intersection between values output by them and the actual gold values. 
+We define them more precisely as shown below.
+
+\begin{equation}
+\mathsf {Precision =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} Equal(a_g,a_o)}{\sum_{e \in E}  |(Attr(e))| }}
+\end{equation}
+
+
+
+
+ \begin{equation}
+\mathsf {Recall =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} Equal(a_g,a_o)} {\sum_{e \in E}  |(Attr^g(e))| }}
+\end{equation}
+
+where Equal($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is equal to value of $a_o$  and 0 otherwise.
+
+We also plan to relax the evaluation metric. Instead of assuming that the algorithm will output the exact ground truth value for an attribute, we will allow the value to vary within a small interval. 
+
 
 \begin{algorithm}[H]
 \caption{Example Algorithm}
