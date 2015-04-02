@@ -34,6 +34,8 @@
 \usepackage{hyperref}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 
 \begin{document}
 
@@ -299,6 +301,40 @@ where $Z$ is the number of values (across all entities) provided by $S$ and $\si
 \end{equation}
 
 
+\subsection{Conflict Resolution on Heterogenous Data}
+
+Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. We are in the process of implementing this algorithm. The algorithm poses data fusion as the following optimization problem: 
+
+\begin{align}
+\hat{R}, W^* = \argmin_{R,W} f(R, W) & = \sum_{s \in S} \sum_{e \in E} \sum_{a \in Attr(e)} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)}) \\
+& \text{s.t } ||W||_2 =1. \nonumber 
+\end{align}
+
+where: 
+
+\begin{itemize}
+\item $W$ is a $1\times|S|$ vector, $w_s$ is the value associated with source $s$. This value is a measure of the trustworthiness of the source. 
+\item $\ell_a$ is a loss function: $D_a \times D_a \rightarrow \mathbb{R}$ where $D_a$ is the space of values that $a$ can have. 
+\item $\alpha^{(*)}$ is an estimate of the true value of $a$. 
+\end{itemize}
+
+This framework suggests that an assignment of values to attributes of entities should jointly optimize the trustworthiness of the providers and minimize expected difference between the provided value and the true value. The authors prove that this optimization problem is convex and can be solved in closed form for certain loss functions. 
+
+The weight updates are performed by computing the loss between the estimated true values and values provided by the sources. 
+
+\begin{align}
+w_s = - \log \left ( \frac{\sum_{e \in E} \sum_{a \in Attr(e)} \ell_a(\alpha^{(*)}, \alpha^{(s)})}{\sum_{s' \in S} \sum_{e \in E}  \sum_{a \in Attr(e)} \ell_a(\alpha^{(*)}, \alpha^{(s')})} \right )
+\end{align}
+
+The assignment of each attribute's value for each entity is done by selecting the value which minimizes the loss : 
+
+\begin{align}
+\alpha^{(*)} = \argmin_\alpha \sum_{s \in S} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})
+\end{align}
+
+The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergence condition is met. For each entity $e$, the $\alpha^{(*)}$ from the last iteration of the algorithm is the value assigned to the attribute $a$. This algorithm is summarized in . 
+
+
 \subsection{Proposed Methods}
 
 We are in the process of developing extensions to these techniques. Our extensions fall into three main categories: ensemble methods; source-attribute pairwise trustworthiness, and attribute dependence. Based on our literature survey, we do not believe that these topics have been thoroughly investigated thus far. 
@@ -325,6 +361,45 @@ As pointed out in \cite{dong:truth}, a data source may reliably provide values f
 \end{equation}
 
 where, with a slightly abuse of notation, $\alpha_i^{(s)}$ refers to the value supplied for attribute $a_i$ for each $e$ in the summation. The  $\mathsf{TRUST}$ is now parameterized at the attribute level; the trustworthiness of an attribute from a source is the average of the confidence values for those given attributes. The rest of the {\sc TruthFinder} algorithm remains unchanged. 
+
+
+In a similar way, the algorithm presented by Li et al in \cite{li:resolving} can be extended to represent source-attribute trustworthiness. The modified objective function includes a term $w_{s,a}$ for the trustworthiness of the source-attribute pair in place of $w_s$ the source trustworthiness. 
+
+\begin{align}
+\hat{R}, W^* = \argmin_{R,W} f(R, W) & = \sum_{s \in S} \sum_{e \in E} \sum_{a \in Attr(e)} w_{s,a} \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)}) \\
+& \text{s.t } ||W||_2 =1. \nonumber 
+\end{align}
+
+where  $W$ is now a $|S|\times A$ matrix, where $w_{s,a}$ is the value associated with source $s$ and attribute $a$. This value is a measure of the trustworthiness of the source. The weight $w_{s,a}$ and attribute value $\alpha^{(*)}$ updates are now: 
+
+
+\begin{align}
+w_{s,a} = - \log \left ( \frac{\sum_{e \in E} \ell_a(\alpha^{(*)}, \alpha^{(s)})}{\sum_{s' \in S} \sum_{e \in E}  \ell_a(\alpha^{(*)}, \alpha^{(s')})} \right )
+\end{align}
+
+\begin{align}
+\alpha^{(*)} = \argmin_\alpha \sum_{s \in S} w_{s,a} \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})
+\end{align}
+
+
+\subsubsection{Attribute Dependence}
+
+(BAYESIAN NETWORK MODEL)
+
+\vspace{1cm}
+
+
+%% This was just a thought I had. We can take it out if you think its not practical.  
+Another possible way of handling dependence among attributes is an extension of Li et al's algorithm from \cite{li:resolving}. The objective function now includes a term which measures the mutual information between attributes and a second loss function for comparing the values of two attributes.  
+
+\begin{align}
+\hat{R}, W^* = \argmin_{R,W} f(R, W) & = \sum_{s \in S} \sum_{e \in E} \sum_{a \in Attr(e)} \Bigg ( w_{s,a} \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)}) \nonumber \\
+&  \cdot \sum_{a' \in Attr(e)} MI(a,a') \ell_{a,a'}(\alpha,\alpha')  \Bigg ) \\
+& \text{s.t } ||W||_2 =1. \nonumber 
+\end{align}
+
+We are still working on this model, particularly how to define the loss function $\ell_{a,a'}(\alpha,\alpha')$. 
+
 
 
 \begin{figure}
