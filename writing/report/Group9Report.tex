@@ -33,7 +33,6 @@
 \algrenewcomment[1]{\(\triangleright\) #1}
 \usepackage{hyperref}
 
-\DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
 
@@ -162,9 +161,8 @@ We provide the following formalism for the problem of data fusion. A $record$, $
 
 Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusio}n is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities in $R^*$.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
 
-\subsection{Data Sets}
-To evaluate our algorithms we consider the \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}} and the \emph{flight data set} which were introduced in \cite{li:truth}. Some statistics of the data set is shown in table \ref{fig:stock}. This stock data set contains stock information obtained in July 2011 by using 55 different sources like \emph{Google Finance, Bloomberg} or \emph{NASDAQ}. From each of these sources 1000 stocks were considered. In July 2011 on each weekday the stock data of each stock was collected from each of the 55 sources. Different sources had different numbers of attributes (from 3 to 71). The \emph{clean stock data set} which we use contains 16 attributes per stock which had the best coverage across the sources. Among these 16 attributes are: \emph{change in \%, opening price, todays high/low, market capacity, dividend, etc}. For the stock \emph{stock data}, \emph{Xian Li et al.} \cite{li:truth} also generated a gold standard for evaluation.
-The flight data set contains flight information which was collected during December 2011. Data was collected from 38 sources and 1200 flights were considered. The clean flight data set includes 6 attributes.
+\subsection{Data Set}
+To evaluate our algorithms we consider the \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}} which was introduced in \cite{li:truth}. Some statistics of the data set is shown in table \ref{fig:stock}. This data set contains stock information obtained in July 2011 by using 55 different sources like \emph{Google Finance, Bloomberg} or \emph{NASDAQ}. From each of these sources 1000 stocks were considered. In July 2011 on each weekday the stock data of each stock was collected from each of the 55 sources. Different sources had different numbers of attributes (from 3 to 71). The \emph{clean stock data set} which we use contains 16 attributes per stock which had the best coverage across the sources. Among these 16 attributes are: \emph{change in \%, opening price, todays high/low, market capacity, dividend, etc}. For the stock \emph{stock data}, \emph{Xian Li et al.} \cite{li:truth} also generated a gold standard for evaluation.
 
 
 %todo: change vertical padding
@@ -173,10 +171,9 @@ The flight data set contains flight information which was collected during Decem
 {%\footnotesize
 \begin{tabular}{  | c | c | c | c  | c | c |}		
 \hline
-\textbf{} & \textbf{Src} & \textbf{Period} & \textbf{Entitys} & \textbf{Attrs}  & \textbf{Items}  \\
+ \textbf{Src} & \textbf{Period} & \textbf{Stocks} & \textbf{Attributes}  & \textbf{Items}  \\
 \hline
- Stock & 55 & July 2011 &  1000 & 16 &  16000*55   \\
- Flight & 38 & Dec 2011 &  1200 & 6 &  72000*38   \\
+ 55 & July 2011 &  1000 & 16 &  16000*55   \\
 \hline
 \end{tabular}
 }
@@ -195,39 +192,8 @@ A simple approach to data fusion is collect all of the candidate values provided
 \subsubsection{Cosine}
 
 \subsubsection{2-Estimate}
-The {\sc 2- Estimate} algorihtm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a prababilistic model to estimate the source trustworthiness and the confidence of an attibute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence ins nomralized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
+The {\sc 2- Estimate} algorihtm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a prababilistic model to estimate the source trustworthiness and the confidence of an attibute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence ins nomralized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence.
 
-\begin{algorithm}[H]
-\caption{\sc 2-Estimates($S, E, Attr(E), \lambda, \delta$)}
-\label{alg:2e} 
-\begin{algorithmic}[1]
-\State $\forall s \in S: T_s \gets 0.8$
-
-\While{not Converged($T_s, \delta$)}
-	\For{\textbf{each} $e \in E$}
-		\For{\textbf{each} $a \in Attr(e)$}
-			\State $pos \gets \sum_{s\in S_a}{(1- T_s)}$
-			\State $neg \gets \sum_{s\in S_{\overline a}}{T_s}$ 
-			\State $C_a \gets \frac{pos + neg}{\rvert S_d \rvert}$ 
-		\EndFor
-	\EndFor
-	\State $List(C_a) \gets Normalize(List(\{C_a \rvert \forall a\}),\lambda)$
-
-	\For{\textbf{each} $s \in S$}
-		\State $pos \gets \sum_{a\in Attr(s)}{(1- C_a)}$
-		\State $neg \gets \sum_{s\in S_{\overline a}}{C_a}$ 
-		\State $T_s \gets \frac{pos + neg}{\rvert Attr(e)_s \rvert}$ 
-	\EndFor
-	\State $List(T_s) \gets Normalize(List(\{T_s \rvert \forall s\}),\lambda)$
-
-	\For{\textbf{each} $e \in E$}
-		\State $trueValue(E) \gets \argmax_{a\in Attr(e)}C_a$
-	\EndFor
-
-\EndWhile
-
-\end{algorithmic}
-\end{algorithm}  
 
 %% Lakshmi & Manuel please feel free to change these variable names if you want to. I'm in no way attached to them, it was just an initial stab at this. 
 \begin{table}
@@ -324,7 +290,17 @@ As pointed out in \cite{dong:truth}, a data source may reliably provide values f
 where, with a slightly abuse of notation, $\alpha_i^{(s)}$ refers to the value supplied for attribute $a_i$ for each $e$ in the summation. The  $\mathsf{TRUST}$ is now parameterized at the attribute level; the trustworthiness of an attribute from a source is the average of the confidence values for those given attributes. The rest of the {\sc TruthFinder} algorithm remains unchanged. 
 
 
+\begin{figure}
+\centering
+\includegraphics[width=5cm]{bn1.png}
+\caption{An example of the attribute dependence model, which models source trustworthiness.}
+\end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[width=9cm]{bn2.png}
+\caption{An example of the attribute dependence model which models the trustworthiness of each attribute provided by a source}
+\end{figure}
 
 \begin{algorithm}[H]
 \caption{Example Algorithm}
