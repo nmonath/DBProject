@@ -1,0 +1,21 @@
+package edu.umass.cs.data_fusion.util.math;
+
+
+import edu.umass.cs.data_fusion.data_structures.Attribute;
+import edu.umass.cs.data_fusion.data_structures.FloatAttribute;
+
+public class BasicCRHLoss implements AttributeLossFunction {
+
+    public ZeroOneLoss categoricalLoss = new ZeroOneLoss();
+    public AbsoluteWeightedDeviation continuousLoss = new AbsoluteWeightedDeviation();
+    
+    @Override
+    public String getName() {
+        return "BasicCRHLoss";
+    }
+
+    @Override
+    public double loss(Attribute one, Attribute two) {
+        return (one instanceof FloatAttribute) && (two instanceof FloatAttribute) ? continuousLoss.loss(one,two) : categoricalLoss.loss(one,two);
+    }
+}

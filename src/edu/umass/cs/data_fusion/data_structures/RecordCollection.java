@@ -53,6 +53,14 @@ public class RecordCollection {
     public Set<Source> getSources() {
         return  source2records.keySet();
     }
+    
+    public Set<String> getAttributes() {
+        Set<String> attrs = new HashSet<String>();
+        for (Entity e : getEntities()) {
+            attrs.addAll(getAttributes(e));
+        }
+        return attrs;
+    }
 
     public Set<String> getAttributes(Entity entity) {
         ArrayList<Record> correspondingRecords = getRecords(entity);
@@ -90,6 +98,12 @@ public class RecordCollection {
     public void writeToTSVFile(File file, String[] attributeOrdering) {
         try {
             PrintWriter out = new PrintWriter(file,"UTF-8");
+            Collections.sort(records, new Comparator<Record>() {
+                @Override
+                public int compare(Record o1, Record o2) {
+                    return o1.getEntity().getIdentifier().compareTo(o2.getEntity().getIdentifier());
+                }
+            });
             for (Record r : records) {
                 StringBuilder sb = new StringBuilder(100);
                 sb.append(r.getSource().getName());
