@@ -187,14 +187,11 @@ The flight data set contains flight information which was collected during Decem
     \label{fig:stock}%
 \end{figure}
 
-\subsection{Implemented Existing Methods}
-
-In this section, we present a more detailed explanation of the methods we have implemented so far. 
+\subsection{Existing Methods}
 
 \subsubsection{Majority Voting}
 
 A simple approach to data fusion is collect all of the candidate values provided by the sources for a particular attribute of an entity and assign the attribute the value that appears most frequently. While general idea appears in all of the following   algorithms,  it is flawed in that it ignores information about the data sources, uncertainty of the attributes and the relationships between  attributes.
-
 
 
 \subsubsection{2-Estimate}
@@ -316,7 +313,7 @@ where $\mathsf{Provides}(s',\alpha_i^{(s)})$ is an indicator function that is 1 
 &  \sum_{s' \in S \setminus \{s\}} \rho \cdot \mathsf{CONF(\alpha_i^{(s')})}  \cdot \mathsf{SIM}(\alpha_i^{(s)},\alpha_i^{(s')})
 \end{align}
 
-where $\mathsf{SIM}$ is a similarity function defined unique for domain the attribute $a_i$. The function $\mathsf{CONF}^\star$ can be view as increasing  the $\mathsf{CONF}$ of the value of an attribute if trustworthy sources provide similar values and decreasing it otherwise. As mentioned before the trustworthiness of a source based on the confidence values for the attributes it provides. 
+where $\mathsf{SIM}$ is a similarity function defined  for domain the attribute $a_i$. The function $\mathsf{CONF}^\star$ can be view as increasing  the $\mathsf{CONF}$ of the value of an attribute if trustworthy sources provide similar values and decreasing it otherwise. As mentioned before the trustworthiness of a source based on the confidence values for the attributes it provides. 
 
 \begin{equation}
 \mathsf{TRUST}(s) = \frac{1}{Z} \sum_{e \in E}\sum_{a \in Attr(e)} \sigma(\gamma \cdot \mathsf{CONF}^\star(\alpha^{(s)}))
@@ -330,14 +327,7 @@ where $Z$ is the number of values (across all entities) provided by $S$ and $\si
 
 The final value assigned to an entity's attribute is the value with the highest confidence. The algorithm is listed in Algorithm \ref{alg:tf} 
 
-
-\begin{figure}
-\centering
-\includegraphics[width=9cm]{bn2.png}
-\caption{An example of the attribute dependence model which models the trustworthiness of each attribute provided by a source}
-\end{figure}
-
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{TruthFinder}
 \begin{algorithmic}[1]
 \small
