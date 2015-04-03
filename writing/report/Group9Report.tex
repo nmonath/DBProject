@@ -575,9 +575,9 @@ A joint distribution of a network can be written as
 P(x) = \prod_{i=1}^n P(x_i|x_{p(i)})
 \end{equation}
 
-where $x_{p(i)}$ is the parent node of node $x_i$.
+where $x_{p(i)}$ are the parent nodes of node $x_i$.
 
-Figure 3 shows a bayesian representation of attribute dependence. The edges between the attributes show how attributes influence each other and the edges from source to attribute captures the influence of source on the attribute values. This model captures the overall trustworthiness of the source in contributing to the attribute values.  We propose a modification of this model shown in Figure 4. Instead of modeling the overall source trustworthiness, we model the trustworthiness of each attribute provided by the source. 
+Figure \ref{fig:sourcet} shows a bayesian representation of attribute dependence. The edges between the attributes show how attributes influence each other and the edges from source to attribute captures the influence of source on the attribute values. This model captures the overall trustworthiness of the source in contributing to the attribute values.  We propose a modification of this model shown in Figure \ref{fig:attrt}. Instead of modeling the overall source trustworthiness, we model the trustworthiness of each attribute provided by the source. 
 
 For example:
 
@@ -614,7 +614,7 @@ Another possible way of handling dependence among attributes is an extension of 
 
 \begin{align}
 \hat{R}, W^* = \argmin_{R,W} f(R, W) & = \sum_{s \in S} \sum_{e \in E} \sum_{a \in Attr(e)} \Bigg ( w_{s,a} \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)}) \nonumber \\
-&  \cdot \sum_{a' \in Attr(e)} MI(a,a') \ell_{a,a'}(\alpha,\alpha')  \Bigg ) \\
+&  \cdot \sum_{a' \in Attr(e)} I(a,a') \ell_{a,a'}(\alpha,\alpha')  \Bigg ) \\
 & \text{s.t } ||W||_2 =1. \nonumber 
 \end{align}
 
@@ -626,12 +626,14 @@ We are still working on this model, particularly how to define the loss function
 \centering
 \includegraphics[width=5cm]{bn1.png}
 \caption{An example of the attribute dependence model, which models source trustworthiness.}
+\label{fig:sourcet}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=9cm]{bn2.png}
 \caption{An example of the attribute dependence model which models the trustworthiness of each attribute provided by a source}
+\label{fig:attrt}
 \end{figure}
 
 \subsection{Evaluation Methods}
