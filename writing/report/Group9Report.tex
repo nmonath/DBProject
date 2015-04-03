@@ -574,10 +574,47 @@ w_{s,a} = - \log \left ( \frac{\sum_{e \in E} \ell_a(\alpha^{(*)}, \alpha^{(s)})
 
 \subsubsection{Attribute Dependence}
 
-(BAYESIAN NETWORK MODEL)
+A Bayesian network is a directed acyclic graph(DAG) whose nodes are random variables and whose edges correspond to influence of one node on another. A directed edge from node a to b (a is then called the parent of b) models the conditional dependence between a and b ie the random variable associated with a child node follows a probabilistic conditional distribution that takes values conditioned on the parent nodes.
 
-\vspace{1cm}
+A joint distribution of a network can be written as 
 
+\begin{equation}
+P(x) = \prod_{i=1}^n P(x_i|x_{p(i)})
+\end{equation}
+
+where $x_{p(i)}$ is the parent node of node $x_i$.
+
+Figure 3 shows a bayesian representation of attribute dependence. The edges between the attributes show how attributes influence each other and the edges from source to attribute captures the influence of source on the attribute values. This model captures the overall trustworthiness of the source in contributing to the attribute values.  We propose a modification of this model shown in Figure 4. Instead of modeling the overall source trustworthiness, we model the trustworthiness of each attribute provided by the source. 
+
+For example:
+
+
+\begin{align}
+P(AAPL Open Price|AAPL Close Price, CNN Money,\nonumber  
+\\Yahoo Finance, Market Watch) 
+\end{align}
+
+is extended to 
+
+\begin{align}
+P(AAPL Open Price|AAPL Close Price, CNN Money \nonumber  
+\\Open Price,Yahoo Finance Open Price, \nonumber  
+\\Market Watch Open Price) 
+\end{align}
+
+Representing the exact distribution $P(x)$ using the full DAG involves a huge number of parameters. This can be approximated by a tree structure $P'(x)$ where the KL-Divergence $D(P,P')$ between the two is minimum.  
+
+\begin{equation}
+D(P,P') = \sum_x P(x) log \frac{P(x)}{P'(x)}
+\end{equation}
+
+As demonstrated by Chow et al. \cite{chow1968approximating}, the best approximation $P'(x)$ is obtained by calculating the Maximum Weight Spanning Tree over nodes in X, where the weight on an edge($X_i$,$X_j$) is  defined by mutual information measure. 
+
+\begin{equation}
+I(X_i,X_j) = \sum_{x_i,x_j} P(x_i,x_j) log\frac{P(x_i,x_j)}{P(x_i) P(x_j)}
+\end{equation}
+
+We can then perform inference on the approximated tree representation.
 
 %% This was just a thought I had. We can take it out if you think its not practical.  
 Another possible way of handling dependence among attributes is an extension of Li et al's algorithm from \cite{li:resolving}. The objective function now includes a term which measures the mutual information between attributes and a second loss function for comparing the values of two attributes.  
