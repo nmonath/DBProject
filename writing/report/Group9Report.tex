@@ -196,37 +196,60 @@ A simple approach to data fusion is collect all of the candidate values provided
 
 
 \subsubsection{2-Estimate}
-The {\sc 2- Estimate} algorithm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a probabilistic model to estimate the source trustworthiness and the confidence of an attribute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
+The {\sc 2- Estimate} algorithm was proposed by Galland et al. in \cite{galland:corro}. This algorithm is related to a probabilistic model to estimate the source trustworthiness and the confidence of an attribute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
+
+In the following algorithm, $\mathsf{Provides}(s,\alpha)$ is an indicator function, which is 1 if a source provides the value $\alpha$ for attribute $a$ and 0 otherwise, and $\mathsf{Provides}(s,a)$ is an indicator function, which is 1 if a source provides any value for attribute $a$ and 0 otherwise. 
 
 \begin{algorithm}[H]
-\caption{\sc 2-Estimates($S, E, Attr(e), \lambda, \delta$)}
+	\small
+\caption{2-Estimates}
 \label{alg:2e} 
 \begin{algorithmic}[1]
-\State $\forall s \in S: T_s \gets 0.8$
+	\Function{2-Estimates}{$R$, $\delta$, $\lambda$, $t_0$} \\
+	\Comment{Inputs: The collection of records $R$ and the hyper parameters.} \\
+\Comment{Output: Returns the fused data $\hat{R}$} \\
+	\For{\textbf{each} $s$ \textbf{in} $S$}
+		\State  $\mathsf{TRUST}(s) \gets t_0$
+	\EndFor
 
-\While{not Converged($T_s, \delta$)}
+\While{\textbf{not} $Converged$($\mathsf{TRUST},\ \delta$)}
 	\For{\textbf{each} $e \in E$}
 		\For{\textbf{each} $a \in Attr(e)$}
-			\State $pos \gets \sum_{s\in S_a}{(1- T_s)}$
-			\State $neg \gets \sum_{s\in S_{\overline a}}{T_s}$ 
-			\State $C_a \gets \frac{pos + neg}{\rvert S_d \rvert}$ 
+			\State $pos \leftarrow \sum_{s\in S} \mathsf{Provides}(s,\alpha){(1- \mathsf{TRUST}(s))}$
+			\State $neg \gets \sum_{s\in S} (1-\mathsf{Provides}(s,\alpha)){\mathsf{TRUST}(s)}$
+			\State $\mathsf{CONF}(\alpha) \gets \frac{pos + neg}{\sum_{s \in S} \mathsf{Provides}(S,a)}$ 
 		\EndFor
 	\EndFor
-	\State $List(C_a) \gets Normalize(List(\{C_a \rvert \forall a\}),\lambda)$
+	\State $\mathsf{CONF} \leftarrow {\sc Normalize}(\mathsf{CONF},\lambda)$
 
 	\For{\textbf{each} $s \in S$}
-		\State $pos \gets \sum_{a\in Attr(s)}{(1- C_a)}$
-		\State $neg \gets \sum_{s\in S_{\overline a}}{C_a}$ 
-		\State $T_s \gets \frac{pos + neg}{\rvert Attr(e)_s \rvert}$ 
+		\State $pos \gets \sum_{a\in Attr(\cdot)}{\mathsf{Provides}(s,a)(1- \mathsf{CONF}(a))}$
+		\State $neg \gets \sum_{a\in Attr(\cdot)}\mathsf{Provides}(s,a)\cdot{\mathsf{CONF}(a)}$ 
+		\State $\mathsf{TRUST}(s) \gets \frac{pos + neg}{\sum_{a\in Attr(\cdot)}{\mathsf{Provides}(s,a)}}$ 
 	\EndFor
-	\State $List(T_s) \gets Normalize(List(\{T_s \rvert \forall s\}),\lambda)$
+	\State $\mathsf{TRUST} \gets Normalize(\mathsf{TRUST},\lambda)$
 
-	\For{\textbf{each} $e \in E$}
-		\State $trueValue(E) \gets \argmax_{a\in Attr(e)}C_a$
+	\State Initialize $\hat{R}$ to an empty collection of records
+	\For{\textbf{each}  $e$ \textbf{in} $E$}
+		\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+		\State $\hat{\alpha} \leftarrow \argmax_{\alpha} \mathsf{CONF}(\alpha)$
+		\EndFor
+		\State Add record for $e$ with attrs \& vals $(a, \hat{\alpha})$ to $\hat{R}$.
 	\EndFor
 
 \EndWhile
+\State \textbf{return} $\hat{R}$
+\EndFunction
 
+ \\
+
+\Function{Normalize}{$A$, $\lambda$} \\
+\Comment{Inputs: A vector $A$ and value $\lambda$} \\
+\Comment{Outputs: A normalized version $A$.} \\
+
+\State \textbf{return} $\lambda \cdot \left (\frac{A - \min(A)}{\max(A)-\min(A)} \right) + (1-\lambda) \cdot ${\sc Round}$( A )$
+
+\EndFunction
 \end{algorithmic}
 \end{algorithm}  
 
@@ -245,6 +268,7 @@ $a_i$ & The $i^{th}$ Attribute of $e$ \\
 $\alpha_i^{(s)}$ & The value of $a_i$ given by $s$ \\
 $Attr(e)$ & The attributes of $e$ from training data\\
 $Attr^g(e)$ & The attributes of $e$ from ground truth data\\
+$Attr(\cdot)$ & The attributes of all of the entities, $\cup_{e \in E} Attr(e)$ \\
 $r$ & Record (an entity and its attributes) \\
 $R$ & A collection of records \\
 $R_s$ & The records provided by a source $s$. \\
@@ -338,12 +362,13 @@ The final value assigned to an entity's attribute is the value with the highest 
 \EndWhile
 
 \\
+\State Initialize $\hat{R}$ to an empty collection of records
 
 \For{\textbf{each}  $e$ \textbf{in} $E$}
 \For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
 \State $\hat{\alpha} \leftarrow \argmax_{\alpha} \mathsf{CONF}(\alpha)$
 \EndFor
-\State Add record for $e$ with attributes \& values $(a, \hat{\alpha})$ to $\hat{R}$.
+\State Add record for $e$ with attrs \& values $(a, \hat{\alpha})$ to $\hat{R}$.
 \EndFor
 \\
 
