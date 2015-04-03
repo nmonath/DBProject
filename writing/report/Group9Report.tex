@@ -522,7 +522,7 @@ The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergenc
 
 We are in the process of developing extensions to these techniques. Our extensions fall into three main categories: ensemble methods; source-attribute pairwise trustworthiness, and attribute dependence. Based on our literature survey, we do not believe that these topics have been thoroughly investigated thus far. 
 
-
+\vspace{1 cm}
 \subsubsection{Ensemble Methods}
 
 Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
@@ -531,7 +531,7 @@ Our first attempt at an ensemble method is to apply the majority voting algorith
 
 \subsubsection{Source Attribute Trustworthiness}
 
-As pointed out in \cite{dong:truth}, a data source may reliably provide values for a particular attribute of an entity, but may unreliably provide values for another attribute. In response to this, we give extensions of existing algorithms which model the trustworthiness of a source--attribute pair.  The {\sc TruthFinder} algorithm can be extended by redefining the $\mathsf{CONF}$ and $\mathsf{TRUST}$ functions in the following way: 
+As pointed out in \cite{li:truth}, a data source may reliably provide values for a particular attribute of an entity, but may unreliably provide values for another attribute. In response to this, we give extensions of existing algorithms which model the trustworthiness of a source--attribute pair.  The {\sc TruthFinder} algorithm can be extended by redefining the $\mathsf{CONF}$ and $\mathsf{TRUST}$ functions in the following way: 
 
 
 \begin{equation}
