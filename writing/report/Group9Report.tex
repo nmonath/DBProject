@@ -637,7 +637,7 @@ We are still working on this model, particularly how to define the loss function
 \end{figure}
 
 \subsection{Evaluation Methods}
-We evaluate the source fusion methods mainly with two measures , precision and recall. These methods have been popular in other fields like information retrieval and machine learning where the effectiveness of an algorithm is measured with respect to the intersection between values output by them and the actual gold values. 
+We evaluate the source fusion methods mainly with two measures , precision and recall. These methods have been popular in other fields like information retrieval and machine learning where the effectiveness of an algorithm is measured with respect to the intersection between values output by them and the actual ground truth values. 
 We define them more precisely as shown below.
 
 \begin{equation}
@@ -656,25 +656,7 @@ where Equal($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is
 We also plan to relax the evaluation metric. Instead of assuming that the algorithm will output the exact ground truth value for an attribute, we will allow the value to vary within a small interval. 
 
 
-\begin{algorithm}[H]
-\caption{Example Algorithm}
-\begin{algorithmic}[1]
-\Function{ExampleAlg}{$G_1$, $G_2$, $f$} \\
-\Comment{Inputs: Two graphs $G_1 = (V_1,E_1)$ and $G_2=(V_2,E_2)$ and a function $f: V_1 \rightarrow V_2$.} \\
-\Comment{Output: Returns ...} \\
 
-
-\For{\textbf{each} $v_1$ \textbf{in} $V_1$}
-\If{$f(v_1) \not \in V_2$}
-\State \textbf{return} false
-\EndIf
-\EndFor
-\\
-
-\State \textbf{return} true
-\EndFunction
-\end{algorithmic}
-\end{algorithm}  
 
 
 \bibliographystyle{abbrv}
