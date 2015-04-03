@@ -446,7 +446,7 @@ Wang et al. \cite{wang2012truth} proposed a  method to jointly estimate the maxi
 
 
 
-\subsection{Conflict Resolution on Heterogenous Data}
+\subsubsection{Conflict Resolution on Heterogenous Data}
 
 Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. The algorithm poses data fusion as the following optimization problem: 
 
@@ -656,7 +656,9 @@ where Equal($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is
 We also plan to relax the evaluation metric. Instead of assuming that the algorithm will output the exact ground truth value for an attribute, we will allow the value to vary within a small interval. 
 
 
+\section{Current Progress}
 
+We have defined the framework, which can be used for all of the algorithms. We have implemented the Majority Voting, Maximum Likelihood Estimation, TruthFinder, and the proposed extension to TruthFinder. We have begun our implementation of the Conflict Resolution on Heterogenous Data algorithm. Our framework in place easily facilitates the ensemble methods.  We are in the process evaluating these methods. 
 
 
 \bibliographystyle{abbrv}
