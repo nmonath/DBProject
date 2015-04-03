@@ -193,7 +193,7 @@ In this section, we present a more detailed explanation of the methods we have i
 
 A simple approach to data fusion is collect all of the candidate values provided by the sources for a particular attribute of an entity and assign the attribute the value that appears most frequently. While general idea appears in all of the following   algorithms,  it is flawed in that it ignores information about the data sources, uncertainty of the attributes and the relationships between  attributes.
 
-\subsubsection{Cosine}
+
 
 \subsubsection{2-Estimate}
 The {\sc 2- Estimate} algorithm was proposed by \emph{Galland et al.} in \cite{galland:corro}. This algorithm is related to a probabilistic model to estimate the source trustworthiness and the confidence of an attribute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
@@ -352,6 +352,81 @@ The final value assigned to an entity's attribute is the value with the highest 
 \end{algorithmic}
 \label{alg:tf}
 \end{algorithm}  
+
+
+
+
+
+\subsubsection{Maximum Likelihood Estimation}
+Wang et al. \cite{wang2012truth} proposed a  method to jointly estimate the maximum likelihood of both source trustworthiness and attribute value correctness. Expectation maximization (EM) algorithm is used for estimating these values.  This algorithm only deals with positive Boolean-valued attributes, however categorical attribute values can be cast into this framework. A pair of parameters is associated with each source. Let $t(s)$ denotes the probability that a source reports a value to be true when its value is actually true and $f(s)$ denotes the probability that a source reports a value to be true when its value is actually false.  Let ${t_a}$ and ${f_a}$ denotes the conditional probability of attribute value $a$ being true given the source probabilities $t(s)$ and $f(s)$.  The algorithm works by alternately computing the attribute value probabilities based on source probabilities in the expectation step and then using these probabilities to update the source parameters in the maximization step.  The confidence values associated with each attribute are also computed in the expectation step. This is continued until convergence.  The pseudo code for this algorithm is shown in \ref{alg:ml} .
+
+
+\begin{algorithm}
+\caption{Maximum Likelihood Estimation}
+\begin{algorithmic}[1]
+\small
+\Function{MLE}{$R$, $\beta$, $\delta$, $r$} \\
+\Comment{Inputs: The collection of records $R$ and the hyper parameters.} \\
+\Comment{Output: Returns the fused data $\hat{R}$} \\
+
+
+\For{\textbf{each} $s$ \textbf{in} $S$}
+\State $ k(s) \leftarrow \frac{|a_i^s|}{\sum_s|a_i^s|} $
+\State $ t(s) \leftarrow \frac{r  \cdot k(s)}{\beta} $
+\State $ f(s) \leftarrow \frac{(1-r) \cdot k(s)}{1-\beta} $
+\EndFor
+
+\\
+\While{\textbf{not} Converged($\mathsf{a}, {b},\delta$)}
+\State $\mathsf{CONF_{sum}} \leftarrow 0 $
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+\State $ t_a \leftarrow 1 $
+\State $ f_a \leftarrow 1 $
+
+\For{\textbf{each} $s$ \textbf{in} $S$}
+ \If{$a$ \textbf{in} $s$ }  
+\State $ t_a \leftarrow t_a  \cdot t(s) $
+\State $ f_a \leftarrow f_a   \cdot f(s) $
+\Else
+\State $ t_a \leftarrow t_a  \cdot (1-t(s)) $
+\State $ f_a \leftarrow f_a   \cdot (1-f(s)) $
+\EndIf
+\EndFor
+\State $ \mathsf{CONF}(a) \leftarrow \frac{t_a \cdot \beta}{t_a \cdot \beta + f_a \cdot (1-\beta)} $
+\State $\mathsf{CONF_{sum}} \leftarrow \mathsf{CONF_{sum}} + \mathsf{CONF}(a) $
+\EndFor
+\EndFor
+
+\For{\textbf{each} $s$ \textbf{in} $S$}
+\State $\mathsf{CONF_s}(sum) \leftarrow \sum_i CONF(a_i^s)  $
+\State $ t(s) \leftarrow \frac{\mathsf{CONF}_s(sum)}{\mathsf{CONF}_{sum}}  $
+\State $ f(s) \leftarrow  |a_i^s| - \frac{\mathsf{CONF_s}(sum)}{\sum_s|a_i^s| - \mathsf{CONF_{sum}}}  $
+\EndFor
+
+
+\EndWhile
+
+\\
+
+\For{\textbf{each}  $e$ \textbf{in} $E$}
+\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+ \If{CONF(a) > 0.5}
+  \State Add record for $e$ with attributes $a$ to $\hat{R}$.
+\EndIf
+\EndFor
+\EndFor
+\\
+
+\State \textbf{return} $\hat{R}$
+\EndFunction
+\end{algorithmic}
+\label{alg:ml}
+\end{algorithm}  
+
+
+
+
 
 \subsection{Conflict Resolution on Heterogenous Data}
 
