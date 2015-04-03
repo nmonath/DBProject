@@ -448,7 +448,7 @@ Wang et al. \cite{wang2012truth} proposed a  method to jointly estimate the maxi
 
 \subsection{Conflict Resolution on Heterogenous Data}
 
-Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. We are in the process of implementing this algorithm. The algorithm poses data fusion as the following optimization problem: 
+Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. The algorithm poses data fusion as the following optimization problem: 
 
 \begin{align}
 \hat{R}, W^* = \argmin_{R,W} f(R, W) & = \sum_{s \in S} \sum_{e \in E} \sum_{a \in Attr(e)} w_s \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)}) \\
@@ -490,7 +490,7 @@ The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergenc
 
 \State Initialize $W$ \\
 
-\State Initialize a value $\alpha^(*)$ for each attribute $a$ of each entity $e$ using Majority Voting or another method. 
+\State Initialize a value $\alpha^{(*)}$ for each attribute $a$ of each entity $e$ using Majority Voting or another method. 
 
 \While{\textbf{not} Converged($W, \delta$)}
 \For{\textbf{each}  $e$ \textbf{in} $E$}
