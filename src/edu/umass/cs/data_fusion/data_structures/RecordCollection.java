@@ -32,6 +32,8 @@ public class RecordCollection {
         return records;
     }
     
+    
+    
     public ArrayList<Record> getRecords(Source source) {
         if (source2records.containsKey(source))
             return source2records.get(source);
@@ -60,6 +62,18 @@ public class RecordCollection {
             attrs.addAll(getAttributes(e));
         }
         return attrs;
+    }
+    
+    public int getRecordsCount() {
+    	return records.size();
+    }
+    
+    public int getSourcesCount() {
+    	return source2records.size();
+    }
+    
+    public int getEntitiesCount() {
+    	return entity2records.size();
     }
 
     public Set<String> getAttributes(Entity entity) {
