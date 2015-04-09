@@ -8,10 +8,12 @@ import java.util.Set;
 public abstract class Algorithm {
     private RecordCollection recordCollection;
     private Result result;
-    private String name;
+    protected String name;
+    protected Source source;
     
     protected Algorithm(String name) {
         this.name = name;
+        this.source = new Source(name);
     }
     protected String getName() {
         return name;
