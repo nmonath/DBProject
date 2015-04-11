@@ -45,6 +45,9 @@ public class Attribute implements Comparable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Attribute) && this.name.equals(((Attribute) obj).getName()) && this.rawValue.equals(((Attribute) obj).getRawValue());
+        return (obj instanceof Attribute) && this.name.equals(((Attribute) obj).getName()) && this.rawValue.equals(((Attribute) obj).getRawValue()) && this.type.equals(((Attribute) obj).getType());
     }
+	public AttributeType getType(){
+	    return type;
+	}
 }
