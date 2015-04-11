@@ -38,8 +38,9 @@ public class Upperbound extends Algorithm {
             List<Record> recordsForEntity = recordCollection.getRecords(entity);
             
             // Find the gold record about the entity
-            List<Record> goldRecords = recordCollection.getRecords(entity);
-            assert goldRecords.size() == 1; // "There should only be 1 gold record for each entity";
+            List<Record> goldRecords = gold.getRecords(entity);
+            if (goldRecords.size() != 1)
+                System.err.println("WARNING: More than one gold record for entity" + entity);
             Record goldRecord = goldRecords.get(0);
 
             // make a new result record for the entity
