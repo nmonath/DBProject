@@ -51,4 +51,12 @@ public abstract class Algorithm {
         return numValuesForSource;
     }
 
+    public RecordCollection convert(ArrayList<Result> results) {
+        ArrayList<Record> rec = new ArrayList<Record>(results.size());
+        for (Result r : results) {
+            rec.add(new Record(r.getSource(),r.getEntity(),r.getAttributes()));
+        }
+        return new RecordCollection(rec);
+    }
+
 }
