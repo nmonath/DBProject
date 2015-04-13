@@ -12,7 +12,7 @@ public class LoadTSVFile {
     
     private AttributeType[] attributeTypes;
 
-    public LoadTSVFile() {};
+    public LoadTSVFile() {}
 
     public LoadTSVFile(AttributeType[] attributeTypes) {
         orderedAttributeNames = new String[0];
@@ -28,14 +28,23 @@ public class LoadTSVFile {
     public RecordCollection load(File file) {
         String line = "";
         try {
-            ArrayList<Record>  records = new ArrayList<Record>(1000); // TODO: Maybe there is a way to get the number of lines easily?
+            System.out.println("Loading file: " + file.getAbsolutePath());
+            ArrayList<Record>  records = new ArrayList<Record>(10000); // TODO: Maybe there is a way to get the number of lines easily?
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             line = reader.readLine();
             int lineNo = 0;
+            String lineCount = "Lines Read: " + lineNo;
+            System.out.print(lineCount);
             while (line != null) {
+                if (lineNo % 100 == 0) {
+                    for (int i = 0; i < lineCount.length(); i++)
+                        System.out.print("\b");
+                    System.out.print(lineCount);
+                }
+                lineCount = "Lines Read: " + lineNo;
                 String[] fields = line.split("\t");
                 if (fields.length < 2) {
-                    System.err.println("Error reading file " + file.getName() + " malformed line: " + line);
+                    System.err.println("\nError reading file " + file.getName() + " malformed line: " + line);
                 } else {
                     Record rec = new Record(lineNo, new Source(fields[0]), new Entity(fields[1]));
                     for (int i = 2; i < fields.length; i++) {
