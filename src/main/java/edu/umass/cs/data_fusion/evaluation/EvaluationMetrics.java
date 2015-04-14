@@ -3,7 +3,8 @@ package main.java.edu.umass.cs.data_fusion.evaluation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Map;
+import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
 import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
 import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
 import main.java.edu.umass.cs.data_fusion.data_structures.Entity;
@@ -41,8 +42,8 @@ public class EvaluationMetrics {
     public void calcErrorRate(){
     	
     	double match = 0;
-    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash(resultRecords);
-    	double totalOutput = getResultNumAttributes(resultRecords);
+    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash();
+    	double totalOutput = getResultNumAttributes();
         ArrayList<Record> records = goldRecords.getRecords();
         for(Record r: records){
            Entity entity = r.getEntity();
@@ -68,8 +69,8 @@ public class EvaluationMetrics {
     	
     	double totalGold= 0;
     	double match = 0;
-    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash(resultRecords);
-    	double totalOutput = getResultNumAttributes(resultRecords);
+    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash();
+    	double totalOutput = getResultNumAttributes();
         ArrayList<Record> records = goldRecords.getRecords();
         for(Record r: records){
            Entity entity = r.getEntity();
@@ -95,7 +96,64 @@ public class EvaluationMetrics {
     }
     
     public void calcMNAD(){
+    	float totalnormalizedDist = 0;
+    	int totalnumAttributeValues = 0;
     	
+    	HashMap<String, ArrayList<Float>> attributeValueDistances = new HashMap<String, ArrayList<Float>>();
+    	HashMap<String,Float> attributeValueSum = new HashMap<String, Float>();
+    	
+    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash();
+    	
+        ArrayList<Record> records = goldRecords.getRecords();
+        for(Record r: records){
+           Entity entity = r.getEntity();
+           HashMap<String,Attribute> attribValues = r.getAttributes();
+           for(String a : r.getAttributes().keySet()){
+        	   Attribute goldAttrib = attribValues.get(a);
+        	   if(goldAttrib.getClass()  == FloatAttribute.class){
+        		 FloatAttribute floatgoldAttrib = (FloatAttribute)goldAttrib;
+                 if (resultHash.containsKey(entity)) {
+                   if (resultHash.get(entity).containsKey(a)) {
+                       Attribute resultAttrib = resultHash.get(entity).get(a);
+                       if(resultAttrib.getClass()  == FloatAttribute.class){
+                    	   FloatAttribute floatresultAttrib = (FloatAttribute)resultAttrib; 
+                           Float distance = Math.abs(floatgoldAttrib.getFloatValue()-floatresultAttrib.getFloatValue()); 
+                           if(attributeValueDistances.containsKey(a)){
+                        	   ArrayList<Float> d = attributeValueDistances.get(a);
+                        	   d.add(distance);
+                        	   attributeValueDistances.put(a, d);
+                        	   attributeValueSum.put(a, attributeValueSum.get(a)+distance);
+                           }
+                           else{
+                        	   ArrayList<Float> d = new ArrayList<Float>();
+                        	   d.add(distance);
+                        	   attributeValueDistances.put(a,d);
+                        	   attributeValueSum.put(a, distance);
+                           }
+                       
+                      }
+                   }
+               }
+           }
+          } 
+        }
+        for (Map.Entry<String, ArrayList<Float>> entry : attributeValueDistances.entrySet()) {
+            
+            String attrName = entry.getKey();
+            float recordNum = (float)entry.getValue().size();
+            float sum = attributeValueSum.get(attrName);
+            float variance = 0;
+            float mean = sum/recordNum;
+            for(Float f : entry.getValue()){
+            	variance += Math.pow(f-mean,2); 
+            }
+            variance /= (recordNum-1);
+            for(Float f : entry.getValue()){
+            	totalnormalizedDist += f/variance;
+            	totalnumAttributeValues+=1;
+            }
+        }
+        mnad = totalnormalizedDist/(float)totalnumAttributeValues;
     }
     
     
@@ -111,9 +169,13 @@ public class EvaluationMetrics {
     	return errorRate;
     }
     
-    private HashMap<Entity,HashMap<String,Attribute>> getResultHash(ArrayList<Result> results) {
+    public double getMNAD(){
+    	return mnad;
+    }
+    
+    private HashMap<Entity,HashMap<String,Attribute>> getResultHash() {
     	HashMap<Entity,HashMap<String,Attribute>> resultHash = new HashMap<Entity, HashMap<String,Attribute>>();
-        for (Result r : results) {
+        for (Result r : resultRecords) {
              resultHash.put(r.getEntity(),r.getAttributes());
         }
     	return resultHash;
@@ -124,16 +186,21 @@ public class EvaluationMetrics {
         System.out.println("Recall: " + recall);
         System.out.println("F1: " + 2.0*precision*recall/(precision+recall));
         System.out.println("Error Rate: " + errorRate);
+        System.out.println("Mean Normalized Absolute Distance: " + mnad);
     }
     
     
-    private double getResultNumAttributes(ArrayList<Result> results) {
+    private double getResultNumAttributes() {
         double numAttributes = 0;
-    	for (Result r : results) {
+    	for (Result r : resultRecords) {
             numAttributes+=r.getAttributes().size();
         }
         return numAttributes;
     }
+    
+
+    
+    
     
     
 }
