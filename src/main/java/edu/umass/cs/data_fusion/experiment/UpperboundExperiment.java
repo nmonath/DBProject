@@ -1,11 +1,11 @@
-package edu.umass.cs.data_fusion.experiment;
+package main.java.edu.umass.cs.data_fusion.experiment;
 
-import edu.umass.cs.data_fusion.algorithm.Upperbound;
-import edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import edu.umass.cs.data_fusion.data_structures.Result;
-import edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
-import edu.umass.cs.data_fusion.load.LoadStocks;
-import edu.umass.cs.data_fusion.util.HTMLOutput;
+import main.java.edu.umass.cs.data_fusion.algorithm.Upperbound;
+import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
+import main.java.edu.umass.cs.data_fusion.data_structures.Result;
+import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
+import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
+import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 
 import java.io.File;
 import java.util.ArrayList;

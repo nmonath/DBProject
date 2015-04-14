@@ -1,12 +1,12 @@
-package edu.umass.cs.data_fusion.load;
+package main.java.edu.umass.cs.data_fusion.load;
 
-import edu.umass.cs.data_fusion.algorithm.TruthFinder;
-import edu.umass.cs.data_fusion.data_structures.Attribute;
-import edu.umass.cs.data_fusion.data_structures.AttributeType;
-import edu.umass.cs.data_fusion.data_structures.FloatAttribute;
-import edu.umass.cs.data_fusion.data_structures.Record;
-import edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import edu.umass.cs.data_fusion.data_structures.StringAttribute;
+import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
+import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
+import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.Record;
+import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
+import main.java.edu.umass.cs.data_fusion.data_structures.StringAttribute;
 
 import java.io.File;
 import java.util.ArrayList;

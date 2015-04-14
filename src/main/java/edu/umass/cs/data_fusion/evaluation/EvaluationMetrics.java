@@ -1,15 +1,15 @@
-package edu.umass.cs.data_fusion.evaluation;
+package main.java.edu.umass.cs.data_fusion.evaluation;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.umass.cs.data_fusion.data_structures.Attribute;
-import edu.umass.cs.data_fusion.data_structures.AttributeType;
-import edu.umass.cs.data_fusion.data_structures.Entity;
-import edu.umass.cs.data_fusion.data_structures.Record;
-import edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import edu.umass.cs.data_fusion.data_structures.Result;
+import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
+import main.java.edu.umass.cs.data_fusion.data_structures.Entity;
+import main.java.edu.umass.cs.data_fusion.data_structures.Record;
+import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
+import main.java.edu.umass.cs.data_fusion.data_structures.Result;
 
 // this code has to be tested with actual output
 

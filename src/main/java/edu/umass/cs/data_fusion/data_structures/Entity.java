@@ -1,4 +1,4 @@
-package edu.umass.cs.data_fusion.data_structures;
+package main.java.edu.umass.cs.data_fusion.data_structures;
 
 
 import java.lang.Object;

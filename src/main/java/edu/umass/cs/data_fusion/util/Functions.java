@@ -1,4 +1,4 @@
-package edu.umass.cs.data_fusion.util;
+package main.java.edu.umass.cs.data_fusion.util;
 
 
 public class Functions {

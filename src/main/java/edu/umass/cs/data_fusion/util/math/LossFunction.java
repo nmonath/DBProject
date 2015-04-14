@@ -1,4 +1,4 @@
-package edu.umass.cs.data_fusion.util.math;
+package main.java.edu.umass.cs.data_fusion.util.math;
 
 
 public interface LossFunction<T> {

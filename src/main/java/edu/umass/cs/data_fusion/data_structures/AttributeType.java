@@ -1,4 +1,4 @@
-package edu.umass.cs.data_fusion.data_structures;
+package main.java.edu.umass.cs.data_fusion.data_structures;
 
 
 // We can change this around with Manuel's code, but for now I added this in

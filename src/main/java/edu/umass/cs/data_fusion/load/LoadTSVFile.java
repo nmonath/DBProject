@@ -1,6 +1,6 @@
-package edu.umass.cs.data_fusion.load;
+package main.java.edu.umass.cs.data_fusion.load;
 
-import edu.umass.cs.data_fusion.data_structures.*;
+import main.java.edu.umass.cs.data_fusion.data_structures.*;
 
 import java.io.*;
 import java.util.ArrayList;

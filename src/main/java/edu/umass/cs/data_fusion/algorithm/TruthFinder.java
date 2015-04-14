@@ -1,8 +1,8 @@
-package edu.umass.cs.data_fusion.algorithm;
+package main.java.edu.umass.cs.data_fusion.algorithm;
 
  
-import edu.umass.cs.data_fusion.data_structures.*;
-import edu.umass.cs.data_fusion.util.Functions;
+import main.java.edu.umass.cs.data_fusion.data_structures.*;
+import main.java.edu.umass.cs.data_fusion.util.Functions;
 
 import java.util.*;
 
