@@ -84,5 +84,19 @@ public class FloatAttribute extends Attribute {
 		
 		return returnFloat;
 	}
+    @Override
+    public String toString() {
+        return String.format("%g", floatValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.name + this.toString()).hashCode();
+    } // todo: is this ok?
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof FloatAttribute) && this.name.equals(((FloatAttribute) obj).getName()) && this.floatValue == ((FloatAttribute) obj).getFloatValue();
+    }
 
 }
