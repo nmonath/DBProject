@@ -11,17 +11,21 @@ public class LoadTSVFile {
     private String[] orderedAttributeNames;
     
     private AttributeDataType[] attributeDataTypes;
+    
+    private AttributeType[] attributeTypes;
 
     public LoadTSVFile() {}
 
-    public LoadTSVFile(AttributeDataType[] attributeDataTypes) {
+    public LoadTSVFile(AttributeDataType[] attributeDataTypes, AttributeType[] attributeTypes) {
         orderedAttributeNames = new String[0];
         this.attributeDataTypes = attributeDataTypes;
+        this.attributeTypes = attributeTypes;
     }
     
-    public LoadTSVFile(String[] orderedAttributeNames, AttributeDataType[] attributeDataTypes) {
+    public LoadTSVFile(String[] orderedAttributeNames, AttributeDataType[] attributeDataTypes, AttributeType[] attributeTypes) {
         this.orderedAttributeNames = orderedAttributeNames;
         this.attributeDataTypes = attributeDataTypes;
+        this.attributeTypes = attributeTypes;
     }
     
 
@@ -52,11 +56,11 @@ public class LoadTSVFile {
                         // Handle empty attributes
                         if (fields[i].length() > 0)
                             if (j < orderedAttributeNames.length) {
-                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j],attributeTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             } else {
-                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j],attributeTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             }
@@ -97,11 +101,11 @@ public class LoadTSVFile {
                         // Handle empty attributes
                         if (fields[i].length() > 0)
                             if (j < orderedAttributeNames.length) {
-                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j],attributeTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             } else {
-                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j],attributeTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             }
@@ -123,30 +127,25 @@ public class LoadTSVFile {
         return null;
     }
     
-    
-    
-    
-    
-    // Defining it like this lets us define the cleaning methods for each data set differently
-    // I think this makes sense?
-    protected Attribute getAttributeFromString(String name, String rawValue, AttributeDataType type)  {
-        switch (type) {
+
+    protected Attribute getAttributeFromString(String name, String rawValue, AttributeDataType dataType, AttributeType type)  {
+        switch (dataType) {
             case STRING: {
-                return getStringAttributeFromString(name,rawValue);
+                return getStringAttributeFromString(name,rawValue,type);
             }
             case FLOAT: {
-                return getFloatAttributeFromString(name,rawValue);
+                return getFloatAttributeFromString(name,rawValue,type);
             }
         }
         return null;
     }
     
-    protected Attribute getStringAttributeFromString(String name, String rawValue) {
-        return new StringAttribute(name,rawValue);
+    protected Attribute getStringAttributeFromString(String name, String rawValue, AttributeType type) {
+        return new StringAttribute(name,rawValue,type);
     }
     
-    protected Attribute getFloatAttributeFromString(String name, String rawValue) {
-        FloatAttribute flt = new FloatAttribute(name,rawValue);
+    protected Attribute getFloatAttributeFromString(String name, String rawValue, AttributeType type) {
+        FloatAttribute flt = new FloatAttribute(name,rawValue,type);
         return (flt.isValidFloat() ? flt : null); 
     }
     

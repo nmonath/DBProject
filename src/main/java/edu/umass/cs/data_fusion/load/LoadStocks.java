@@ -1,12 +1,7 @@
 package main.java.edu.umass.cs.data_fusion.load;
 
 import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
-import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.AttributeDataType;
-import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.Record;
-import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import main.java.edu.umass.cs.data_fusion.data_structures.StringAttribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,8 +16,10 @@ public class LoadStocks extends LoadTSVFile {
     	"52wk Low", "Shares Outstanding", "P/E", 
     	"Market Cap", "Yield", "Dividend", 
     	"EPS"};
-    public static AttributeDataType[] types = {AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT};
-//    public static AttributeType[] types = {
+    public static AttributeDataType[] dataTypes = {AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT};
+	public static AttributeType[] types = {AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL};
+
+//    public static AttributeType[] dataTypes = {
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //   	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
@@ -30,7 +27,7 @@ public class LoadStocks extends LoadTSVFile {
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING};
     public LoadStocks() {
-        super(names,types);
+        super(names,dataTypes,types);
     }
     
     public static void testRegex()

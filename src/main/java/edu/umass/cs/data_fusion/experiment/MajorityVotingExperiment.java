@@ -49,6 +49,8 @@ public class MajorityVotingExperiment {
         // Evaluate the data
         EvaluationMetrics eval = new EvaluationMetrics(results, gold);
         eval.calcMetrics();
+        eval.calcErrorRate();
+        eval.calcMNAD();
         eval.printResults();
 
         // Write out the output

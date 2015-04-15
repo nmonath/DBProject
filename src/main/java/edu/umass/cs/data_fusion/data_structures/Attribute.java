@@ -9,6 +9,8 @@ public class Attribute implements Comparable {
     protected String rawValue;
 
     protected AttributeDataType dataType;
+    
+    protected AttributeType type;
 
     public Attribute(String name, String rawValue) {
         this.name = name;
@@ -45,7 +47,10 @@ public class Attribute implements Comparable {
     public boolean equals(Object obj) {
         return (obj instanceof Attribute) && this.name.equals(((Attribute) obj).getName()) && this.rawValue.equals(((Attribute) obj).getRawValue()) && this.dataType.equals(((Attribute) obj).getDataType());
     }
+    
 	public AttributeDataType getDataType(){
 	    return dataType;
 	}
+    
+    public AttributeType getType() {return type;}
 }

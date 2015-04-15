@@ -3,13 +3,17 @@ package main.java.edu.umass.cs.data_fusion.data_structures;
 public class FloatAttribute extends Attribute {
 	protected float floatValue;
 	
-	public FloatAttribute(String name, String rawValue) {
+	public FloatAttribute(String name, String rawValue, AttributeType type) {
 		super(name, rawValue);
-		
 		this.dataType = AttributeDataType.FLOAT;
 		this.floatValue = stringToFloat(rawValue);
+		this.type = type;
 	}
 	
+	public FloatAttribute(String name, String rawValue) {
+		this(name,rawValue,AttributeType.CONTINUOUS);
+	}
+
 	public float getFloatValue() {
         return this.floatValue;
     }
