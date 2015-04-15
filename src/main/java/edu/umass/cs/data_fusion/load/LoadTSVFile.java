@@ -66,6 +66,7 @@ public class LoadTSVFile {
                 line = reader.readLine();
                 lineNo += 1;
             }
+            System.out.println("\n Done Loading.");
             return new RecordCollection(records);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

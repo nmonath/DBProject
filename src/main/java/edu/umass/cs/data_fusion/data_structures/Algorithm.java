@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Algorithm {
-    private RecordCollection recordCollection;
-    private Result result;
     protected String name;
     protected Source source;
     
@@ -57,6 +55,14 @@ public abstract class Algorithm {
             rec.add(new Record(r.getSource(),r.getEntity(),r.getAttributes()));
         }
         return new RecordCollection(rec);
+    }
+    
+    public String toString() {
+        return "Algorithm(" + name + ")";
+    }
+    
+    public String infoString(RecordCollection collection) {
+        return "Running " + this + " on RecordCollection with " + collection.getEntitiesCount() + " entities, each with ~" + collection.getAttributes().size() + " attributes.";
     }
 
 }

@@ -73,9 +73,9 @@ public class HTMLOutput {
             if (predicted.hasAttribute(attrName)) {
                 Attribute attr = predicted.getAttribute(attrName);
                 if (attr instanceof StringAttribute)
-                    sb.append("<font color=").append(color).append(">").append(((StringAttribute) attr).getStringValue()).append("</font");
+                    sb.append("<font color=").append(color).append(">").append(((StringAttribute) attr).getStringValue()).append("</font>");
                 else if (attr instanceof FloatAttribute)
-                    sb.append("<font color=").append(color).append(">").append(String.format("%g", ((FloatAttribute) attr).getFloatValue())).append("</font");
+                    sb.append("<font color=").append(color).append(">").append(String.format("%g", ((FloatAttribute) attr).getFloatValue())).append("</font>");
             } else {
                 sb.append("---");
             }

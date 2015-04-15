@@ -25,7 +25,7 @@ public class LoadStocks extends LoadTSVFile {
 //    public static AttributeType[] types = {
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
-//    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
+//   	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING};
