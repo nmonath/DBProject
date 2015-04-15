@@ -1,12 +1,11 @@
 package main.java.edu.umass.cs.data_fusion.evaluation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
 import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
+import main.java.edu.umass.cs.data_fusion.data_structures.AttributeDataType;
 import main.java.edu.umass.cs.data_fusion.data_structures.Entity;
 import main.java.edu.umass.cs.data_fusion.data_structures.Record;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
@@ -50,7 +49,7 @@ public class EvaluationMetrics {
            HashMap<String,Attribute> attribValues = r.getAttributes();
            for(String a : r.getAttributes().keySet()){
         	   Attribute goldAttrib = attribValues.get(a);
-        	   if(goldAttrib.getType().equals(AttributeType.STRING)){
+        	   if(goldAttrib.getDataType().equals(AttributeDataType.STRING)){
                  if (resultHash.containsKey(entity)) {
                    if (resultHash.get(entity).containsKey(a)) {
                        Attribute resultAttrib = resultHash.get(entity).get(a);

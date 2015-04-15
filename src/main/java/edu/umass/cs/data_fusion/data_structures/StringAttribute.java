@@ -6,7 +6,7 @@ public class StringAttribute extends Attribute {
 	public StringAttribute(String name, String rawValue) {
 		super(name, rawValue);
 		
-		this.type = AttributeType.STRING;
+		this.dataType = AttributeDataType.STRING;
 		this.stringValue = rawValue.trim();
 	}
 	

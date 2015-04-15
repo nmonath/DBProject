@@ -8,10 +8,8 @@ public class Attribute implements Comparable {
 
     protected String rawValue;
 
-    // We can change this around with Manuel's code, but for now I added this in.
-    // StringAttribute will have this set to STRING and FloatAttribute set to FLOAT
-    protected AttributeType type;
-    
+    protected AttributeDataType dataType;
+
     public Attribute(String name, String rawValue) {
         this.name = name;
         this.rawValue = rawValue;
@@ -45,9 +43,9 @@ public class Attribute implements Comparable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Attribute) && this.name.equals(((Attribute) obj).getName()) && this.rawValue.equals(((Attribute) obj).getRawValue()) && this.type.equals(((Attribute) obj).getType());
+        return (obj instanceof Attribute) && this.name.equals(((Attribute) obj).getName()) && this.rawValue.equals(((Attribute) obj).getRawValue()) && this.dataType.equals(((Attribute) obj).getDataType());
     }
-	public AttributeType getType(){
-	    return type;
+	public AttributeDataType getDataType(){
+	    return dataType;
 	}
 }

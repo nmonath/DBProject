@@ -10,18 +10,18 @@ public class LoadTSVFile {
 
     private String[] orderedAttributeNames;
     
-    private AttributeType[] attributeTypes;
+    private AttributeDataType[] attributeDataTypes;
 
     public LoadTSVFile() {}
 
-    public LoadTSVFile(AttributeType[] attributeTypes) {
+    public LoadTSVFile(AttributeDataType[] attributeDataTypes) {
         orderedAttributeNames = new String[0];
-        this.attributeTypes = attributeTypes;
+        this.attributeDataTypes = attributeDataTypes;
     }
     
-    public LoadTSVFile(String[] orderedAttributeNames, AttributeType[]  attributeTypes) {
+    public LoadTSVFile(String[] orderedAttributeNames, AttributeDataType[] attributeDataTypes) {
         this.orderedAttributeNames = orderedAttributeNames;
-        this.attributeTypes = attributeTypes;
+        this.attributeDataTypes = attributeDataTypes;
     }
     
 
@@ -52,11 +52,11 @@ public class LoadTSVFile {
                         // Handle empty attributes
                         if (fields[i].length() > 0)
                             if (j < orderedAttributeNames.length) {
-                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             } else {
-                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             }
@@ -97,11 +97,11 @@ public class LoadTSVFile {
                         // Handle empty attributes
                         if (fields[i].length() > 0)
                             if (j < orderedAttributeNames.length) {
-                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(orderedAttributeNames[j], fields[i], attributeDataTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             } else {
-                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeTypes[j]);
+                                Attribute attrToAdd = getAttributeFromString(String.format("Attr%04d", j), fields[i], attributeDataTypes[j]);
                                 if (attrToAdd != null)
                                     rec.addAttribute(attrToAdd);
                             }
@@ -129,7 +129,7 @@ public class LoadTSVFile {
     
     // Defining it like this lets us define the cleaning methods for each data set differently
     // I think this makes sense?
-    protected Attribute getAttributeFromString(String name, String rawValue, AttributeType type)  {
+    protected Attribute getAttributeFromString(String name, String rawValue, AttributeDataType type)  {
         switch (type) {
             case STRING: {
                 return getStringAttributeFromString(name,rawValue);

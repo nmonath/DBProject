@@ -1,14 +1,12 @@
 package main.java.edu.umass.cs.data_fusion.data_structures;
 
-import java.util.regex.Pattern;
-
 public class FloatAttribute extends Attribute {
 	protected float floatValue;
 	
 	public FloatAttribute(String name, String rawValue) {
 		super(name, rawValue);
 		
-		this.type = AttributeType.FLOAT;
+		this.dataType = AttributeDataType.FLOAT;
 		this.floatValue = stringToFloat(rawValue);
 	}
 	

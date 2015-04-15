@@ -2,7 +2,7 @@ package main.java.edu.umass.cs.data_fusion.load;
 
 import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
 import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
+import main.java.edu.umass.cs.data_fusion.data_structures.AttributeDataType;
 import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
 import main.java.edu.umass.cs.data_fusion.data_structures.Record;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
@@ -21,7 +21,7 @@ public class LoadStocks extends LoadTSVFile {
     	"52wk Low", "Shares Outstanding", "P/E", 
     	"Market Cap", "Yield", "Dividend", 
     	"EPS"};
-    public static AttributeType[] types = {AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT,AttributeType.FLOAT};
+    public static AttributeDataType[] types = {AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT};
 //    public static AttributeType[] types = {
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,
