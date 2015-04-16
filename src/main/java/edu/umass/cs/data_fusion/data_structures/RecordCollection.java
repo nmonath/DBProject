@@ -84,6 +84,20 @@ public class RecordCollection {
                 attributes.add(a);
         return attributes;
     }
+
+    /**
+     * The number of (entity,attr) pairs in the collection. * 
+     * @return
+     */
+    public int getTotalNumberOfAttributes() {
+        int num = 0;
+        for (Entity e: entity2records.keySet()) {
+	   for (Record r : entity2records.get(e)) {
+             num += r.getAttributes().keySet().size();
+	   }
+        }
+        return num;
+    }
     
     public void writeToTSVFile(File file) {
         try {

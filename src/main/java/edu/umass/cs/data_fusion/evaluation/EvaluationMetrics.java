@@ -3,13 +3,8 @@ package main.java.edu.umass.cs.data_fusion.evaluation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.AttributeDataType;
-import main.java.edu.umass.cs.data_fusion.data_structures.Entity;
-import main.java.edu.umass.cs.data_fusion.data_structures.Record;
-import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import main.java.edu.umass.cs.data_fusion.data_structures.Result;
+
+import main.java.edu.umass.cs.data_fusion.data_structures.*;
 
 // this code has to be tested with actual output
 
@@ -36,25 +31,27 @@ public class EvaluationMetrics {
         
     }
     
-    
+
     
     public void calcErrorRate(){
     	
     	double match = 0;
-    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash();
-    	double totalOutput = getResultNumAttributes();
+    	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash(); // We could alternatively use the RecordCollection which has this automatically.
+        double totalOutput = goldRecords.getTotalNumberOfAttributes(); // I think that the denominator should be the # of attributes provided in the gold set right? Not the predicted.
         ArrayList<Record> records = goldRecords.getRecords();
         for(Record r: records){
            Entity entity = r.getEntity();
            HashMap<String,Attribute> attribValues = r.getAttributes();
            for(String a : r.getAttributes().keySet()){
         	   Attribute goldAttrib = attribValues.get(a);
-        	   if(goldAttrib.getDataType().equals(AttributeDataType.STRING)){
+        	   if(goldAttrib.getType().equals(AttributeType.CATEGORICAL)){ // Only take the categorical ones
                  if (resultHash.containsKey(entity)) {
                    if (resultHash.get(entity).containsKey(a)) {
                        Attribute resultAttrib = resultHash.get(entity).get(a);
-                       if (goldAttrib.equals(resultAttrib)) {
-                           match++;
+                       if (resultAttrib.getType().equals(AttributeType.CATEGORICAL)) {
+                           if (goldAttrib.equals(resultAttrib)) {
+                               match++;
+                           }
                        }
                    }
                }
