@@ -6,7 +6,6 @@ package main.java.edu.umass.cs.data_fusion.experiment;
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Result;
-import main.java.edu.umass.cs.data_fusion.evaluation.EvalMetrics;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetricsWithTolerance;
 import main.java.edu.umass.cs.data_fusion.load.LoadStocks;

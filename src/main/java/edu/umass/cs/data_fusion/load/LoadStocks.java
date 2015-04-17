@@ -16,6 +16,7 @@ public class LoadStocks extends LoadTSVFile {
     	"52wk Low", "Shares Outstanding", "P/E", 
     	"Market Cap", "Yield", "Dividend", 
     	"EPS"};
+    // similarity
     public static AttributeDataType[] dataTypes = {
 			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT,
 			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, 
@@ -23,6 +24,7 @@ public class LoadStocks extends LoadTSVFile {
 			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT,
 			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, 
 			AttributeDataType.FLOAT};
+    // evaluation
 	public static AttributeType[] types = {
 			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
 			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
