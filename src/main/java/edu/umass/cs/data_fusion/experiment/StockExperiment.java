@@ -6,7 +6,9 @@ package main.java.edu.umass.cs.data_fusion.experiment;
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Result;
+import main.java.edu.umass.cs.data_fusion.evaluation.EvalMetrics;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
+import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetricsWithTolerance;
 import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
 import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 
@@ -18,7 +20,7 @@ public class StockExperiment {
 
     private Algorithm algorithm;
     private String inputFilename = new File(new File("data", "stock"), "clean_stock_rawdata").getAbsolutePath();
-    private String goldFilename = new File(new File("data", "stock"), "nasdaq_truth_golddata").getAbsolutePath();
+    private String goldFilename = new File(new File("data", "stock"), "pop_truth_golddata").getAbsolutePath();
     private String outputDirname = new File("output", new Date(System.currentTimeMillis()).toString()).getAbsolutePath();
 
     public StockExperiment(Algorithm algorithm) {
@@ -50,16 +52,17 @@ public class StockExperiment {
         RecordCollection gold = loader.loadGold(new File(goldFilename));
 
         // Evaluate the data
-        EvaluationMetrics eval = new EvaluationMetrics(results, gold);
+        EvaluationMetrics eval = new EvaluationMetricsWithTolerance(results, collection, gold);
         eval.calcMetrics();
         eval.calcErrorRate();
         eval.calcMNAD();
         eval.printResults();
+        
 
         // Write out the output
         new File(outputDirname).mkdirs();
         RecordCollection resultsCollection = algorithm.convert(results);
-        HTMLOutput.writeHTMLOutput(resultsCollection, gold, new File(outputDirname, "report.html").getAbsolutePath(), true);
+        HTMLOutput.writeHTMLOutput(resultsCollection, gold, new File(outputDirname, "report.html").getAbsolutePath(), true,eval);
         resultsCollection.writeToTSVFile(new File(outputDirname, "output.tsv"), LoadStocks.names);
         // TODO: Write Score to a file
 

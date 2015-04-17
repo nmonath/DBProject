@@ -98,6 +98,41 @@ public class RecordCollection {
         }
         return num;
     }
+
+    /**
+     * Return the number of attributes with a type in the appears given set
+     * @param attributeTypes
+     * @return
+     */
+    public int getNumberOfAttributes(Set<AttributeType> attributeTypes) {
+        int num = 0;
+        for (Entity e: entity2records.keySet()) {
+            for (Record r : entity2records.get(e)) {
+                for (Attribute a: r.getAttributes().values()) {
+                    if (attributeTypes.contains(a.getType()))
+                        num ++;
+                }
+            }
+        }
+        return num;
+    }
+
+    /**
+     * Return the values for the given entity & attribute  
+     * @param entity - the entity
+     * @param attributeName - the name of the attribute 
+     * @return
+     */
+    public Set<Attribute> valuesForAttribute(Entity entity, String attributeName) {
+        Set<Attribute> valuesForAttribute = new HashSet<Attribute>();
+        List<Record> recordsForEntity = getRecords(entity);
+        for (Record r: recordsForEntity) {
+            Attribute attr = r.getAttribute(attributeName);
+            if (attr != null)
+                valuesForAttribute.add(attr);
+        }
+        return valuesForAttribute;
+    }
     
     public void writeToTSVFile(File file) {
         try {

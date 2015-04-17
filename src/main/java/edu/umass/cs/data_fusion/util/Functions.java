@@ -1,6 +1,9 @@
 package main.java.edu.umass.cs.data_fusion.util;
 
 
+import java.util.Collections;
+import java.util.List;
+
 public class Functions {
 
     public static double dot(double[] x, double[] y) {
@@ -60,6 +63,19 @@ public class Functions {
             System.arraycopy(dist[1], 0, dist[0], 0, dist[0].length);
         }
         return dist[1][two.length()];
+    }
+    
+    //TODO: Implement the linear time algorithm w/o sorting
+    public static float getMedian(List<Float> floats) {
+        Collections.sort(floats);
+        // If odd, take the middle element
+        // otherwise take the average of the two middle elements. Is this right?
+        int len = floats.size();
+        if (len % 2 == 1) {
+            return floats.get( (int) Math.ceil(len/2) );
+        } else {
+            return (floats.get( (int) Math.ceil(len/2) - 1 ) + floats.get( (int) Math.ceil(len/2) ))/2.0f;
+        }
     }
 
 }

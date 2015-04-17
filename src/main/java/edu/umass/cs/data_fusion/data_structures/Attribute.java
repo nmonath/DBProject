@@ -53,4 +53,21 @@ public class Attribute implements Comparable {
 	}
     
     public AttributeType getType() {return type;}
+
+    public static AttributeDataType getDataType(Iterable<Attribute> attributes) {
+
+        boolean first = true;
+        AttributeDataType attributeDataType = null;
+        for (Attribute a : attributes) {
+            AttributeDataType next = a.getDataType();
+            if (first)
+                attributeDataType = next;
+            else if(!next.equals(attributeDataType)) {
+                System.err.println("[Attribute.getDataType] ERROR: the collection of attributes passed into getDataType do not have a common data type.");
+                return null;
+            }
+            first = false;
+        }
+        return attributeDataType;
+    }
 }

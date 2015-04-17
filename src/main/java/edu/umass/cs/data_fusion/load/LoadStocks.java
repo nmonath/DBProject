@@ -16,8 +16,20 @@ public class LoadStocks extends LoadTSVFile {
     	"52wk Low", "Shares Outstanding", "P/E", 
     	"Market Cap", "Yield", "Dividend", 
     	"EPS"};
-    public static AttributeDataType[] dataTypes = {AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT};
-	public static AttributeType[] types = {AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL};
+    public static AttributeDataType[] dataTypes = {
+			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT,
+			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, 
+			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT,
+			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT,
+			AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.FLOAT, 
+			AttributeDataType.FLOAT};
+	public static AttributeType[] types = {
+			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL};
 
 //    public static AttributeType[] dataTypes = {
 //    	AttributeType.STRING,AttributeType.STRING,AttributeType.STRING,

@@ -1,6 +1,7 @@
 package main.java.edu.umass.cs.data_fusion.experiment;
 
 
+import main.java.edu.umass.cs.data_fusion.algorithm.MajorityVote;
 import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Result;
@@ -25,35 +26,7 @@ public class TruthFinderExperiment {
 
     // Usage TruthFinderExperiment <path-to-data-dir> <output-dir>
     public static void main(String[] args) {
-
-        // CMD arguments
-        File dataPath = new File(args[0]);
-        File outputDir = new File(args[1]);
-
-
-        // Make output dir if it doesn't exist
-        outputDir.mkdirs();
-
-        // Load the data to fuse
-        LoadStocks loader = new LoadStocks();
-        RecordCollection collection = loader.load(new File(dataPath, "data/stock/clean_stock_rawdata"));
-
-        // Run the algorithm
-        TruthFinder tf = new TruthFinder();
-        ArrayList<Result> results = tf.execute(collection);
-
-        // Load the gold data
-        RecordCollection gold = loader.loadGold(new File("nasdaq_truth/stock-2011-07-01-nasdaq-com.txt"));
-
-        // Evaluate the data
-        EvaluationMetrics eval = new EvaluationMetrics(results, gold);
-        eval.calcMetrics();
-        eval.printResults();
-
-        // Write out the output
-        RecordCollection resultsCollection = tf.convert(results);
-        HTMLOutput.writeHTMLOutput(resultsCollection, gold, new File(outputDir, "report.html").getAbsolutePath(), true);
-        resultsCollection.writeToTSVFile(new File(outputDir, "output.tsv"), LoadStocks.names);
-        // TODO: Write Score to a file
+        StockExperiment exp = new StockExperiment(new TruthFinder(),"clean_stock/stock-2011-07-07.txt","nasdaq_truth/stock-2011-07-07-nasdaq-com.txt","output/july7");
+        exp.run();
     }
 }

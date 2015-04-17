@@ -1,8 +1,6 @@
 package main.java.edu.umass.cs.data_fusion.evaluation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import main.java.edu.umass.cs.data_fusion.data_structures.*;
 
@@ -31,13 +29,18 @@ public class EvaluationMetrics {
         
     }
     
+    public boolean matches(Entity entity, Attribute predicted, Attribute gold) {
+        return predicted.equals(gold);
+    }
 
     
     public void calcErrorRate(){
     	
     	double match = 0;
     	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash(); // We could alternatively use the RecordCollection which has this automatically.
-        double totalOutput = goldRecords.getTotalNumberOfAttributes(); // I think that the denominator should be the # of attributes provided in the gold set right? Not the predicted.
+        Set<AttributeType> types = new HashSet<AttributeType>();
+        types.add(AttributeType.CATEGORICAL);
+        double totalOutput = goldRecords.getNumberOfAttributes(types); // I think that the denominator should be the # of attributes provided in the gold set right? Not the predicted.
         ArrayList<Record> records = goldRecords.getRecords();
         for(Record r: records){
            Entity entity = r.getEntity();
@@ -49,7 +52,7 @@ public class EvaluationMetrics {
                    if (resultHash.get(entity).containsKey(a)) {
                        Attribute resultAttrib = resultHash.get(entity).get(a);
                        if (resultAttrib.getType().equals(AttributeType.CATEGORICAL)) {
-                           if (goldAttrib.equals(resultAttrib)) {
+                           if (matches(entity,resultAttrib,goldAttrib)) {
                                match++;
                            }
                        }
@@ -77,7 +80,7 @@ public class EvaluationMetrics {
                if (resultHash.containsKey(entity)) {
                    if (resultHash.get(entity).containsKey(a)) {
                        Attribute resultAttrib = resultHash.get(entity).get(a);
-                       if (goldAttrib.equals(resultAttrib)) {
+                       if (matches(entity, resultAttrib, goldAttrib)) {
                            match++;
                        }
                    }
