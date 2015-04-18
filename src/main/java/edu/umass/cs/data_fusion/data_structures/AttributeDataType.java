@@ -12,7 +12,7 @@ public enum AttributeDataType {
             return FLOAT;
         else if (str.equalsIgnoreCase("author_list"))
             return AUTHOR_LIST;
-        else 
+        else
             return null;
     }
 }

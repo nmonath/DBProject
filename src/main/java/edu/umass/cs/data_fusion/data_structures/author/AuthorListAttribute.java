@@ -2,6 +2,7 @@ package main.java.edu.umass.cs.data_fusion.data_structures.author;
 
 
 import main.java.edu.umass.cs.data_fusion.data_structures.Attribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.AttributeDataType;
 import main.java.edu.umass.cs.data_fusion.data_structures.AttributeType;
 
 import java.util.HashSet;
@@ -18,6 +19,11 @@ public class AuthorListAttribute extends Attribute {
         super(name, rawValue);
         this.type = type;
         authors = getAuthors(rawValue);
+        dataType = AttributeDataType.AUTHOR_LIST;
+    }
+
+    public Set<AuthorName> getAuthors() {
+        return authors;
     }
 
     public String addDelimeters(String listOfNames) {
@@ -49,28 +55,28 @@ public class AuthorListAttribute extends Attribute {
     }
 
     public Set<AuthorName> getAuthors(String rawString) {
-        String string = addDelimeters(rawString);
+        String string = addDelimeters(rawString.toLowerCase());
 
         Set<AuthorName> names = new HashSet<AuthorName>();
 
         // Case 1: Last, First MI
-        Pattern case1 = Pattern.compile("\\b[a-zA-Z]+(\\b)?,(\\s)?[a-zA-Z]+\\s[a-zA-Z](\\.)?\\b");
+        Pattern case1 = Pattern.compile("\\b[a-z]+(\\b)?,(\\s)?[a-z]+\\s[a-z](\\.)?\\b");
         // Case 2: Last, First Middle
-        Pattern case2 = Pattern.compile("\\b[a-zA-Z]+(\\b)?,(\\s)?[a-zA-Z]+\\s[a-zA-Z]+\\b");
+        Pattern case2 = Pattern.compile("\\b[a-z]+(\\b)?,(\\s)?[a-z]+\\s[a-z]+\\b");
         // Case 2: Last, First 
-        Pattern case3 = Pattern.compile("\\b[a-zA-Z]+(\\b)?,(\\s)?[a-zA-Z]+\\b");
+        Pattern case3 = Pattern.compile("\\b[a-z]+(\\b)?,(\\s)?[a-z]+\\b");
         // Case 3: First MI Last
-        Pattern case4 = Pattern.compile("\\b[a-zA-Z]+\\s[a-zA-Z](\\.)?\\s[a-zA-Z]+");
+        Pattern case4 = Pattern.compile("\\b[a-z]+\\s[a-z](\\.)?\\s[a-z]+");
         // Case 4: First Middle Last
-        Pattern case5 = Pattern.compile("\\b[a-zA-Z]+\\s[a-zA-Z]+\\s[a-zA-Z]+");
+        Pattern case5 = Pattern.compile("\\b[a-z]+\\s[a-z]+\\s[a-z]+");
         // Case 5: First Last
-        Pattern case6 = Pattern.compile("\\b[a-zA-Z]+\\s[a-zA-Z]+");
+        Pattern case6 = Pattern.compile("\\b[a-z]+\\s[a-z]+");
         // Case 6: FI Last
-        Pattern case7 = Pattern.compile("\\b[a-zA-Z](\\.)?\\s[a-zA-Z]+");
+        Pattern case7 = Pattern.compile("\\b[a-z](\\.)?\\s[a-z]+");
         // Case 7: Init1 Init2 Last
-        Pattern case8 = Pattern.compile("\\b[a-zA-Z][\\s\\.][a-zA-Z][\\s\\.]([a-zA-Z](\\.)?)?\\s[a-zA-Z]+");
+        Pattern case8 = Pattern.compile("\\b[a-z][\\s\\.][a-z][\\s\\.]([a-z](\\.)?)?\\s[a-z]+");
         // Case 8: Single word
-        Pattern case9 = Pattern.compile("\\b[a-zA-Z]\\b");
+        Pattern case9 = Pattern.compile("\\b[a-z]+\\b");
 
         // conditions for being done 1) No matches found, 2) reached end of the string
         boolean done = false;
@@ -214,17 +220,23 @@ public class AuthorListAttribute extends Attribute {
             stringBuffer.append(", ").append(authorNameIterator.next());
         return stringBuffer.toString();
     }
-    
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof AuthorListAttribute) && ((AuthorListAttribute) obj).authors.equals(this.authors);
+    }
+
     public static void main(String[] args) {
 
-        AuthorListAttribute a = new AuthorListAttribute("blah", "tea", AttributeType.CATEGORICAL);
+        AuthorListAttribute a = new AuthorListAttribute("blah", "Dan ", AttributeType.CATEGORICAL);
 
-        String[] names = {"Dan Farmer Wietse Venema", "Farmer, Dan; Venema, Wietse", "Farmer, Dan, Venema, Wietse", "Farmer, Dan Venema, Wietse"};
-        for (String n : names) {
-            Set<AuthorName> ns = a.getAuthors(n);
-            System.out.println(ns);
-        }
+        System.out.println(a.toString());
+        // String[] names = {"Dan Farmer Wietse Venema", "Farmer, Dan; Venema, Wietse", "Farmer, Dan, Venema, Wietse", "Farmer, Dan Venema, Wietse"};
+//        for (String n : names) {
+//            Set<AuthorName> ns = a.getAuthors(n);
+//            System.out.println(ns);
+//        }
+//    }
     }
 
 }
