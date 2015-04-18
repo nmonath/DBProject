@@ -13,15 +13,16 @@ public class TruthFinder extends Algorithm{
     private double rho;
     private double gamma;
 
-    final private double MAX_ITERATIONS = 10;
+    final private double MAX_ITERATIONS = 1000;
+    final private double MIN_ITERATIONS = 10;
 
     private Source source = new Source(this.getName());
     
     public TruthFinder() {
         super("TruthFinder");
-        this.initialTrustworthiness = 0.8;
-        this.delta = 0.9;
-        this.rho = 0.5;
+        this.initialTrustworthiness = 0.5; // TODO: Grid search these values
+        this.delta = 0.001;
+        this.rho = 0.3;
         this.gamma = 0.1;
     }
     
@@ -35,6 +36,13 @@ public class TruthFinder extends Algorithm{
 
     public ArrayList<Result> execute(RecordCollection collection) {
 
+        /*
+        The range of values of the similarity function is very sensitive for performance. 
+        Since the range of the stock values dramatically differs from attribute to attribute
+        we perform max-min scaling of attribute values.
+         */
+        normalizeAttributeValues(collection);
+        
         /*
         Each unique <Entity, AttributeValue> pair is assigned a confidence. Note that if two sources
         present the same value for an attribute this pair will have the same confidence for both sources
@@ -71,13 +79,17 @@ public class TruthFinder extends Algorithm{
         The number of iterators completed so far
          */
         int numIterations = 0;
+
+        String iterationString;
         
         /*
         Repeat this process until convergence or the number of iterations exceeds the limit
          */
-        while (!converged && numIterations < MAX_ITERATIONS) {
-            
-            
+        while ((!converged && numIterations < MAX_ITERATIONS) || numIterations < MIN_ITERATIONS) {
+
+            iterationString = "[TruthFinder] Number of completed iterations: " + numIterations;
+            System.out.println(iterationString);
+
             /*
             The algorithm operates over pairs of <Entity, Attribute>
              */
@@ -170,10 +182,16 @@ public class TruthFinder extends Algorithm{
             Check for convergence
              */
             converged = converged(previousTrustworthiness,currentTrustworthiness,delta);
+            if (converged)
+                System.out.println("[TruthFinder] Convergence condition met.");
             previousTrustworthiness = currentTrustworthiness;
             numIterations += 1;
         }
 
+        if (!converged)
+            System.out.println("[TruthFinder] Max Iterations condition met.");
+
+        System.out.println("[TruthFinder] Algorithm complete, assigning values to each attribute.");
         /*
         Assign a final value to each attribute of each entity  
          */
@@ -198,21 +216,29 @@ public class TruthFinder extends Algorithm{
             }
             results.add(res);
         }
+        System.out.println("[TruthFinder] Done.");
         return results;
     }
-    
 
-    
-    //TODO: How is this defined???
+
+    /**
+     * This function deserves some serious thought. Right now this definition seems to 
+     * give results comparable to the Li et al 2014 paper, but not as good as Dong et al 2012  
+     * @param attr1
+     * @param attr2
+     * @return
+     */
     public double similarity(Attribute attr1, Attribute attr2) {
-        if (attr1 instanceof FloatAttribute && attr2 instanceof FloatAttribute)
-            return -((FloatAttribute) attr1).getFloatValue() - ((FloatAttribute) attr2).getFloatValue();
-        else if (attr1 instanceof StringAttribute && attr2 instanceof StringAttribute)
+        if (attr1 instanceof FloatAttribute && attr2 instanceof FloatAttribute) {
+            float one = ((FloatAttribute) attr1).getNormalizedValue();
+            float two = ((FloatAttribute) attr2).getNormalizedValue();
+            return -Math.abs(one - two);
+        }else if (attr1 instanceof StringAttribute && attr2 instanceof StringAttribute)
             return -1.0*Functions.editDistance(((StringAttribute) attr1).getStringValue(),((StringAttribute) attr2).getStringValue());
         return 0.0;
     }
     
-    public boolean converged(HashMap<Source,Double> previous, HashMap<Source,Double> current, double delta) {
+    public double cosineSim(HashMap<Source,Double> previous, HashMap<Source,Double> current) {
         assert previous.keySet().containsAll(current.keySet());
         double[] previousVec = new double[previous.size()];
         double[] currentVec = new double[previous.size()];
@@ -222,8 +248,65 @@ public class TruthFinder extends Algorithm{
             currentVec[i] = current.get(s);
             i += 1;
         }
-        return Functions.cosine(previousVec, currentVec) > delta;
+        double cos = Functions.cosine(previousVec, currentVec);
+        System.out.println("[TruthFinder] Cosine similarity: " + cos);
+        return cos;
     }
 
+    public double L1dist(HashMap<Source,Double> previous, HashMap<Source,Double> current) {
+        assert previous.keySet().containsAll(current.keySet());
+        double[] previousVec = new double[previous.size()];
+        double[] currentVec = new double[previous.size()];
+        int i = 0;
+        for (Source s: previous.keySet()) {
+            previousVec[i] = previous.get(s);
+            currentVec[i] = current.get(s);
+            i += 1;
+        }
+        double dd = Functions.L1dist(previousVec, currentVec);
+        System.out.println("[TruthFinder] L1 Distance: " + dd);
+        return dd;
+    }
+    
+    // NOTE: While the paper suggests the cosine distance btw the source trustworthiness vectors 
+    // is used as a criteria, I did not understand how it would work. They give a delta of 0.01%
+    // but what is this a percent of?? It is unclear to me. So instead I use L1dist and threshold less than delta.
+    public boolean converged(HashMap<Source,Double> previous, HashMap<Source,Double> current, double delta) {
+        return L1dist(previous,current) < delta;
+    }
+
+    // performs the min-max scaling.
+    public void normalizeAttributeValues(RecordCollection collection) {
+        for (Entity entity : collection.getEntities()) {
+            Set<String> attributeNames = collection.getAttributes(entity);
+            ArrayList<Record> recordsForEntity = collection.getRecords(entity);
+            for (String attrName : attributeNames) {
+                ArrayList<Float> values  = new ArrayList<Float>(recordsForEntity.size());
+                for (Record r: recordsForEntity) {
+                    Attribute attr = r.getAttribute(attrName);
+                    if (attr != null) {
+                        if (attr instanceof FloatAttribute)
+                            values.add(((FloatAttribute) attr).getFloatValue());
+                    }
+                }
+                
+                float min = Functions.min(values);
+                float max = Functions.max(values);
+                
+                //float mu = Functions.mean(values);
+                //float var = Functions.variance(values,mu);
+                for (Record r: recordsForEntity) {
+                    Attribute attr = r.getAttribute(attrName);
+                    if (attr != null) {
+                        if (attr instanceof FloatAttribute)
+                            if (max - min == 0)
+                                ((FloatAttribute) attr).setNormalizedValue( 0.0f );
+                            else
+                                ((FloatAttribute) attr).setNormalizedValue( (((FloatAttribute) attr).getFloatValue() - min) / (max - min)  ) ;
+                    }
+                }
+            }
+        }
+    }
     
 }

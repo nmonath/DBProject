@@ -33,6 +33,25 @@ public class Functions {
         return dot(x, y) / (L2Norm(x) * L2Norm(y));
     }
 
+    public static double L1dist(double[] x, double[] y) {
+        assert x.length == y.length;
+        double dist = 0.0;
+        for (int i = 0; i < x.length; i++) {
+            dist += Math.abs(x[i]-y[i]);
+        }
+        return dist;
+    }
+    
+    public static double L2dist(double[] x, double[] y) {
+        assert x.length == y.length;
+        double dist = 0.0;
+        for (int i = 0; i < x.length; i++) {
+            dist += Math.pow(x[i]-y[i],2);
+        }
+        dist = Math.sqrt(dist);
+        return dist;
+    }
+
     /**
      * Based on Algorithm presented in: http://people.cs.clemson.edu/~bcdean/dp_practice/dp_8.swf
      * Computes the editDistance between the two strings. The minimum number of characters to delete, insert or swap
@@ -77,5 +96,42 @@ public class Functions {
             return (floats.get( (int) Math.ceil(len/2) - 1 ) + floats.get( (int) Math.ceil(len/2) ))/2.0f;
         }
     }
+    
+    public static float mean(List<Float> floats) {
+        float mu = 0.0f;
+        for (float f: floats) {
+            mu += f;
+        }
+        return mu/floats.size();
+    }
+    
+    public static float variance(List<Float> floats, float mu) {
+        float sigma_sqd = 0.0f;
+        for (float f: floats) {
+            sigma_sqd += Math.pow(f - mu, 2);
+        }
+        return sigma_sqd/floats.size();
+    }
 
+    public static float variance(List<Float> floats) {
+        return variance(floats,mean(floats));
+    }
+    
+    public static float min(List<Float> floats) {
+        float min = Float.MAX_VALUE;
+        for (Float f: floats) {
+            if (f < min)
+                min =f;
+        }
+        return min;
+    }
+
+    public static float max(List<Float> floats) {
+        float max = Float.MIN_VALUE;
+        for (Float f: floats) {
+            if (f > max)
+                max =f;
+        }
+        return max;
+    }
 }

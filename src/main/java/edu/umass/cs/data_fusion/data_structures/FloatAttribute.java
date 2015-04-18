@@ -3,6 +3,9 @@ package main.java.edu.umass.cs.data_fusion.data_structures;
 public class FloatAttribute extends Attribute {
 	protected float floatValue;
 	
+	protected float normalizedValue;
+	
+	
 	public FloatAttribute(String name, String rawValue, AttributeType type) {
 		super(name, rawValue);
 		this.dataType = AttributeDataType.FLOAT;
@@ -35,7 +38,7 @@ public class FloatAttribute extends Attribute {
 		//to handle percent, million, billion and k
 		float multiplyer = 1;
 		
-		String processed = rawValue.trim();
+		String processed = rawValue.trim().toLowerCase();
 		processed = processed.replace(" ", "");
 		processed = processed.replace("$", "");
 		processed = processed.replace(",", "");
@@ -100,5 +103,13 @@ public class FloatAttribute extends Attribute {
     public boolean equals(Object obj) {
         return (obj instanceof FloatAttribute) && this.name.equals(((FloatAttribute) obj).getName()) && this.floatValue == ((FloatAttribute) obj).getFloatValue();
     }
+	
+	public void setNormalizedValue(float normalizedValue){
+		this.normalizedValue = normalizedValue;
+	}
+	
+	public float getNormalizedValue() {
+		return normalizedValue;
+	}
 
 }
