@@ -61,7 +61,7 @@ public class StockExperiment {
         // Write out the output
         new File(outputDirname).mkdirs();
         RecordCollection resultsCollection = algorithm.convert(results);
-        HTMLOutput.writeHTMLOutput(resultsCollection, gold, new File(outputDirname, "report.html").getAbsolutePath(), true,eval);
+        HTMLOutput.writeHTMLOutput(LoadStocks.names, resultsCollection, gold, new File(outputDirname, "report.html").getAbsolutePath(), true,eval);
         resultsCollection.writeToTSVFile(new File(outputDirname, "output.tsv"), LoadStocks.names);
         // TODO: Write Score to a file
 

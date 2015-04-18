@@ -2,9 +2,11 @@ package main.java.edu.umass.cs.data_fusion.util;
 
 
 import main.java.edu.umass.cs.data_fusion.data_structures.*;
+import main.java.edu.umass.cs.data_fusion.data_structures.author.AuthorListAttribute;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetricsWithTolerance;
 import main.java.edu.umass.cs.data_fusion.evaluation.tolerance.ToleranceMatchFunction;
+import main.java.edu.umass.cs.data_fusion.load.LoadBooks;
 import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
 
 import java.io.FileNotFoundException;
@@ -18,11 +20,11 @@ public class HTMLOutput {
     private static String  incorrectColor = "\"red\"";
     private static String  unknownColor = "\"black\"";
     
-    public static void writeHTMLOutput(RecordCollection predicted, RecordCollection gold, String filename, boolean goldOnly,EvaluationMetrics eval) {
+    public static void writeHTMLOutput(String[] orderedNames, RecordCollection predicted, RecordCollection gold, String filename, boolean goldOnly,EvaluationMetrics eval) {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(filename);
-            writer.print(htmlOutput(predicted, gold, goldOnly,eval));
+            writer.print(htmlOutput(orderedNames, predicted, gold, goldOnly,eval));
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -31,8 +33,7 @@ public class HTMLOutput {
         }
     }
     
-    public static String htmlOutput(RecordCollection predicted, RecordCollection gold, boolean goldOnly,EvaluationMetrics eval) {
-        String[] orderedNames = LoadStocks.names;
+    public static String htmlOutput(String[] orderedNames, RecordCollection predicted, RecordCollection gold, boolean goldOnly,EvaluationMetrics eval) {
         StringBuffer sb = new StringBuffer(1000);
         sb.append("<html><body>\n<table border=\"3\">\n<tr>");
         sb.append("<td><b>Entity</b></td>");
@@ -85,6 +86,8 @@ public class HTMLOutput {
                     sb.append("<font color=").append(color).append(">").append(((StringAttribute) attr).getStringValue()).append("</font>");
                 else if (attr instanceof FloatAttribute)
                     sb.append("<font color=").append(color).append(">").append(String.format("%g", ((FloatAttribute) attr).getFloatValue())).append("</font>");
+                else if (attr instanceof AuthorListAttribute)
+                    sb.append("<font color=").append(color).append(">").append(String.format("%s", ((AuthorListAttribute) attr).toString())).append("</font>");
             } else {
                 sb.append("---");
             }
@@ -97,6 +100,8 @@ public class HTMLOutput {
                     sb.append(((StringAttribute) attr).getStringValue());
                 else if (attr instanceof FloatAttribute)
                     sb.append(String.format("%g %s", ((FloatAttribute) attr).getFloatValue(),tolerance));
+                else if (attr instanceof AuthorListAttribute)
+                    sb.append(((AuthorListAttribute) attr).toString());
                 sb.append("</b>");
             }  else {
                 sb.append("<br><br><b>---</b>");
