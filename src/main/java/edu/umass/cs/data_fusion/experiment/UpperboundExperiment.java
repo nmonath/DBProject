@@ -22,7 +22,7 @@ public class UpperboundExperiment {
         EvaluationMetrics eval = new EvaluationMetrics(results,gold);
         eval.calcMetrics();
         eval.printResults();
-        HTMLOutput.writeHTMLOutput(up.convert(results),gold,"htmltest.html",true,eval);
+        HTMLOutput.writeHTMLOutput(LoadStocks.names, up.convert(results),gold,"htmltest.html",true,eval);
     }
 
 }
