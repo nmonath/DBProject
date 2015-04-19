@@ -11,8 +11,7 @@ import java.util.*;
 
 public class CRH extends Algorithm {
 
-    private AttributeLossFunction loss;
-    private double delta;
+    private double delta = 5;
     
     final private int MAX_ITERATIONS = 1000;
     final private int MIN_ITERATIONS = 10;
@@ -35,14 +34,12 @@ public class CRH extends Algorithm {
         Set<Entity> entities = recordCollection.getEntities();
         int numCompleted = 0;
         int numTotalEntities = recordCollection.getEntitiesCount();
-        String countString = "[CRH] Initialized loss function for " + numCompleted + "of " + numTotalEntities + " entities.";
+        String countString;
 
         for (Entity e : entities) {
             if (numCompleted % 100 == 0) {
-                for (int i = 0; i < countString.length(); i++)
-                    System.out.print("\b");
                 countString = "[CRH] Initialized loss function for " + numCompleted + "of " + numTotalEntities + " entities.";
-                System.out.print(countString);
+                System.out.println(countString);
             }
             Set<String> attributeNames = recordCollection.getAttributes(e);
             ArrayList<Record> recordsForE = recordCollection.getRecords(e);
@@ -51,7 +48,7 @@ public class CRH extends Algorithm {
                 Map<Attribute, Integer> count = getCount(recordsForE, attrName);
                 AttributeType type = Attribute.getType(count.keySet());
                 if (type == AttributeType.CATEGORICAL) {
-                    lossFunctionMap.put(lossFunctionMapKey(e,attrName), categoricalLoss);
+                    map.put(lossFunctionMapKey(e,attrName), categoricalLoss);
                 } else {
                     AttributeDataType dataType = Attribute.getDataType(count.keySet());
                     if (dataType == AttributeDataType.FLOAT) {
@@ -62,7 +59,7 @@ public class CRH extends Algorithm {
                                 floats.add(value);
                         }
                         float var = Functions.variance(floats);
-                        lossFunctionMap.put(lossFunctionMapKey(e,attrName), new AbsoluteWeightedDeviation((float) Math.sqrt(var)));
+                        map.put(lossFunctionMapKey(e,attrName), new AbsoluteWeightedDeviation((float) Math.sqrt(var)));
                     }
                 }
             }
@@ -87,14 +84,12 @@ public class CRH extends Algorithm {
         Set<Entity> entities = recordCollection.getEntities();
         int numCompleted = 0;
         int numTotalEntites = recordCollection.getEntitiesCount();
-        String countString = "[CRH] Initialized values for " + numCompleted + "of " + numTotalEntites + " entities.";
-        
+        String countString;
+
         for (Entity e: entities) {
             if (numCompleted % 100 == 0) {
-                for (int i = 0; i < countString.length();i++)
-                    System.out.print("\b");
-                countString = "[CRH] Initialized values for " + numCompleted + "of " + numTotalEntites + " entities.";
-                System.out.print(countString);
+                countString = "[CRH] Initialized values for " + numCompleted + " of " + numTotalEntites + " entities.";
+                System.out.println(countString);
             }
             Record initialPrediction = new Record(source,e);
             Set<String> attributeNames = recordCollection.getAttributes(e);
@@ -124,10 +119,8 @@ public class CRH extends Algorithm {
             numCompleted++;
         }
         if (numCompleted % 100 == 0) {
-            for (int i = 0; i < countString.length();i++)
-                System.out.print("\b");
             countString = "[CRH] Initialized values for " + numCompleted + "of " + numTotalEntites + " entities.";
-            System.out.print(countString);
+            System.out.println(countString);
         }
         System.out.println("\n[CRH] Initialization complete.");
         return prediction;
@@ -187,8 +180,8 @@ public class CRH extends Algorithm {
             numComplete += 1;
             updateStr = "[CRH] Computed losses for " + numComplete + " of " + numSources+  " sources";
         }
-
-       return toWeights(categoricalLosses,continuousLosses);
+        System.out.println(updateStr);
+        return toWeights(categoricalLosses,continuousLosses);
     }
     
     private Map<Source,Float> toWeights(Map<Source,Float> categorical,Map<Source,Float> continuous) {
@@ -236,16 +229,12 @@ public class CRH extends Algorithm {
         Set<Entity> entities = recordCollection.getEntities();
         int numCompleted = 0;
         int numTotalEntites = recordCollection.getEntitiesCount();
-        String countString = "[CRH] Updated prediction for " + numCompleted + "of " + numTotalEntites + " entities.";
-        System.out.print(countString);
-
-
+        String countString;
+        
         for (Entity e : entities) {
             if (numCompleted % 100 == 0) {
-                for (int i = 0; i < countString.length(); i++)
-                    System.out.print("\b");
-                countString = "[CRH] Initialized values for " + numCompleted + "of " + numTotalEntites + " entities.";
-                System.out.print(countString);
+                countString = "[CRH] Updated predictions for " + numCompleted + " of " + numTotalEntites + " entities.";
+                System.out.println(countString);
             }
             Record newPrediction = new Record(source, e);
             Set<String> attributeNames = recordCollection.getAttributes(e);
@@ -263,10 +252,14 @@ public class CRH extends Algorithm {
                         newPrediction.addAttribute(new FloatAttribute(attrName, getWeightedMedian(recordsForE, attrName, weights),AttributeType.CONTINUOUS));
                     else
                         System.err.println("[CRH] No support for non-float continuous attributes, cannot predict values.");
+                } else {
+                    System.err.println("[CRH][updatePrediction] Unknown type for attributes");
                 }
             }
-
+            nextPrediction.put(e,newPrediction);
+            numCompleted++;
         }
+        System.out.println("[CRH] Finished updating predictions");
         return nextPrediction;
     }
     
@@ -334,7 +327,7 @@ public class CRH extends Algorithm {
             
             prevObjective = objective;
             objective = objectiveFunction(predictedTruth,weights,recordCollection);
-            change = objective - prevObjective;
+            change = Math.abs(objective - prevObjective);
             System.out.println("[CRH] Objective Function Score: " + objective + ". Change: " + change);
             converged = change < delta;
         }
