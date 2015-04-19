@@ -12,6 +12,8 @@ import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 import java.io.File;
 import java.util.ArrayList;
 
+// SEE THE NEW Experiment.java code!
+
 public class MajorityVotingExperiment {
     
     /*
@@ -26,7 +28,6 @@ public class MajorityVotingExperiment {
 
     // Usage TruthFinderExperiment <path-to-data-dir> <output-dir>
     public static void main(String[] args) {
-
         StockExperiment exp = new StockExperiment(new MajorityVote(),"clean_stock/stock-2011-07-07.txt","nasdaq_truth/stock-2011-07-07-nasdaq-com.txt","output/july7");
         exp.run();
         

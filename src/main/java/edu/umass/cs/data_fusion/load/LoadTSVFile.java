@@ -162,5 +162,8 @@ public class LoadTSVFile {
         AuthorListAttribute authorListAttribute = new AuthorListAttribute(name,rawValue,type);
         return (authorListAttribute.getAuthors().isEmpty()) ? null : authorListAttribute;
     }
-    
+
+    public String[] getOrderedAttributeNames() {
+        return orderedAttributeNames;
+    }
 }

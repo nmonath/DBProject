@@ -12,6 +12,8 @@ import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 import java.io.File;
 import java.util.ArrayList;
 
+// SEE THE NEW Experiment.java code!
+
 public class TruthFinderExperiment {
     
     /*

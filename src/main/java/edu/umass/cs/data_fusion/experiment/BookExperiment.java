@@ -1,8 +1,6 @@
 package main.java.edu.umass.cs.data_fusion.experiment;
 
 
-
-
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Result;
@@ -15,6 +13,8 @@ import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+
+// SEE THE NEW Experiment.java code!
 
 public class BookExperiment {
 

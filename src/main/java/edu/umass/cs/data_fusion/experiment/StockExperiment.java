@@ -15,6 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
+
+// SEE THE NEW Experiment.java code!
+
 public class StockExperiment {
 
     private Algorithm algorithm;
