@@ -12,7 +12,7 @@ public class ZeroOneLoss implements AttributeLossFunction {
     }
 
     @Override
-    public double loss(Attribute one, Attribute two) {
+    public float loss(Attribute one, Attribute two) {
         return (one.equals(two)) ? 1 : 0;
     }
 }

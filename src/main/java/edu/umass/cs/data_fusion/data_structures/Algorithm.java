@@ -1,9 +1,6 @@
 package main.java.edu.umass.cs.data_fusion.data_structures;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Algorithm {
     protected String name;
@@ -62,7 +59,62 @@ public abstract class Algorithm {
     }
     
     public String infoString(RecordCollection collection) {
-        return "Running " + this + " on RecordCollection with " + collection.getEntitiesCount() + " entities, each with ~" + collection.getAttributes().size() + " attributes.";
+        return "[Algorithm] Running " + this + " on RecordCollection with " + collection.getEntitiesCount() + " entities, each with ~" + collection.getAttributes().size() + " attributes.";
+    }
+
+    public HashMap<Attribute, Integer> getCount(List<Record> records, String attrName) {
+        HashMap<Attribute,Integer> votes = new HashMap<Attribute, Integer>();
+        for (Record r: records) {
+            if (r.hasAttribute(attrName)) {
+                Attribute a = r.getAttribute(attrName);
+                if (!votes.containsKey(a)) {
+                    votes.put(a,0);
+                }
+                votes.put(a,votes.get(a)+1);
+            }
+        }
+        return votes;
+    }
+
+    // TODO: Is there a faster implementation?
+    public Attribute getMajorityVote(Map<Attribute,Integer> votes) {
+        int max = -1;
+        Attribute maxAttr = null;
+        for (Attribute a : votes.keySet()) {
+            int aCount = votes.get(a);
+            if (aCount > max) {
+                max = aCount;
+                maxAttr = a;
+            }
+        }
+        return maxAttr;
+    }
+
+    public HashMap<Attribute, Float> getWeightedCount(List<Record> records, String attrName, Map<Source,Float> weights) {
+        HashMap<Attribute,Float> votes = new HashMap<Attribute, Float>();
+        for (Record r: records) {
+            if (r.hasAttribute(attrName)) {
+                Attribute a = r.getAttribute(attrName);
+                if (!votes.containsKey(a)) {
+                    votes.put(a,0.0f);
+                }
+                votes.put(a,votes.get(a)+ weights.get(r.getSource()));
+            }
+        }
+        return votes;
+    }
+
+    public Attribute getMajorityWeightedVote(Map<Attribute,Float> votes) {
+        float max = Float.MIN_VALUE;
+        Attribute maxAttr = null;
+        for (Attribute a : votes.keySet()) {
+            float aCount = votes.get(a);
+            if (aCount > max) {
+                max = aCount;
+                maxAttr = a;
+            }
+        }
+        return maxAttr;
     }
 
 }

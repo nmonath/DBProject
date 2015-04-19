@@ -16,6 +16,14 @@ public class FloatAttribute extends Attribute {
 	public FloatAttribute(String name, String rawValue) {
 		this(name,rawValue,AttributeType.CONTINUOUS);
 	}
+	
+	public FloatAttribute(String name, float value, AttributeType type) {
+		super(name,String.format("%g",value));
+		this.floatValue = value;
+		this.type = type;
+		this.dataType = AttributeDataType.FLOAT;
+		
+	}
 
 	public float getFloatValue() {
         return this.floatValue;

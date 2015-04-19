@@ -1,7 +1,9 @@
 package main.java.edu.umass.cs.data_fusion.util;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Functions {
@@ -37,7 +39,7 @@ public class Functions {
         assert x.length == y.length;
         double dist = 0.0;
         for (int i = 0; i < x.length; i++) {
-            dist += Math.abs(x[i]-y[i]);
+            dist += Math.abs(x[i] - y[i]);
         }
         return dist;
     }
@@ -134,4 +136,77 @@ public class Functions {
         }
         return max;
     }
+    
+    public static float sum(List<Float> floats) {
+        float sum = 0.0f;
+        for (Float f: floats) {
+            sum += f;
+        }
+        return sum;
+    }
+    public static float sum(float[] floats, int start, int end) {
+        float sum = 0.0f;
+        for (int i = start; i < end; i++) {
+            sum += floats[i];
+        }
+        return sum;
+    }
+    
+    public static float weightedMedian(List<Float> weights, final List<Float> values) {
+        
+        List<Integer> idx = new ArrayList<Integer>(weights.size());
+        for (int i = 0 ; i < weights.size(); i++) {
+            idx.add(i);
+        }
+        
+        float sum = sum(weights);
+        Collections.sort(idx, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return (int) Math.ceil(values.get(o1) - values.get(o2));
+            }
+        });
+
+        float[] sorted = new float[values.size()];
+        for (int i = 0; i < values.size();i++) {
+            sorted[i] = values.get(idx.get(i));
+        }
+        
+        float[] normalized = new float[values.size()];
+        for (int i = 0; i < values.size();i++) {
+            normalized[i] = weights.get(idx.get(i))/sum;
+        }
+        
+        
+        for (int i = 0; i < normalized.length; i++) {
+            float sumTo_i = sum(normalized, 0, i + 1);
+            if (sumTo_i >= 0.5) {
+                return sorted[i];
+            }
+            
+        }
+        System.out.println("[weightedMedian] Something went wrong, returning NaN.");
+        return Float.NaN;
+    }
+    
+    public static void main(String[] args) {
+        List<Float> weights = new ArrayList<Float>();
+        weights.add(0.9f);
+        weights.add(0.4f);
+        weights.add(0.3f);
+        weights.add(0.8f);
+        weights.add(0.3f);
+        weights.add(0.1f);
+        weights.add(0.8f);
+        List<Float> values = new ArrayList<Float>();
+        values.add(100.0f);
+        values.add(1.0f);
+        values.add(122.0f);
+        values.add(133.0f);
+        values.add(12f);
+        values.add(44f);
+        values.add(333f);
+        System.out.println("wm " + weightedMedian(weights, values));
+    }
+    
 }

@@ -5,5 +5,5 @@ public interface LossFunction<T> {
     
     public String getName();
     
-    public double loss(T one, T two);
+    public float loss(T one, T two);
 }

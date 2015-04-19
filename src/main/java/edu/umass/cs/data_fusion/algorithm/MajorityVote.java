@@ -13,33 +13,7 @@ public class MajorityVote extends Algorithm {
         super("MajorityVote");
     }
 
-    public HashMap<Attribute, Integer> getCount(ArrayList<Record> records, String attrName) {
-        HashMap<Attribute,Integer> votes = new HashMap<Attribute, Integer>();
-        for (Record r: records) {
-            if (r.hasAttribute(attrName)) {
-                Attribute a = r.getAttribute(attrName);
-                if (!votes.containsKey(a)) {
-                    votes.put(a,0);
-                }
-                votes.put(a,votes.get(a)+1);
-            }
-        }
-        return votes;
-    }
-    
-    // TODO: Is there a faster implementation?
-    public Attribute getMajorityVote(HashMap<Attribute,Integer> votes) {
-        int max = -1;
-        Attribute maxAttr = null;
-        for (Attribute a : votes.keySet()) {
-            int aCount = votes.get(a);
-            if (aCount > max) {
-                max = aCount;
-                maxAttr = a;
-            }
-        }
-        return maxAttr;
-    }
+
 
     @Override
     public ArrayList<Result> execute(RecordCollection recordCollection) {
