@@ -1,9 +1,12 @@
 package main.java.edu.umass.cs.data_fusion.data_structures;
 
 
-// We can change this around with Manuel's code, but for now I added this in
+/**
+ * A representation of what kind of values the attribute stores, i.e.
+ * what datatype the values are stored in. E.g. string, float, etc
+ */
 public enum AttributeDataType {
-    STRING,FLOAT,AUTHOR_LIST,BAG_OF_WORDS;
+    STRING,FLOAT,AUTHOR_LIST;
     
     public static AttributeDataType fromString(String str) {
         if (str.equalsIgnoreCase("string"))

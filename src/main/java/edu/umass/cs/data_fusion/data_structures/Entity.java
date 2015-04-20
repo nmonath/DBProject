@@ -5,6 +5,13 @@ import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
 
+/**
+ * Entities in this project correspond to keys in a relational database. 
+ * That is each entity can be distinguished from each other entity. In the case
+ * of stock data, an entity would refer to a particular company on a particular day. 
+ * In the case of flight data, it would correspond to a particular flight on a
+ * particular day
+ */
 public class Entity {
 
     private String identifier = "";

@@ -1,7 +1,10 @@
 package main.java.edu.umass.cs.data_fusion.data_structures;
 
 
-// We can change this around with Manuel's code, but for now I added this in
+/**
+ * Used mostly for evaluation purposes, denotes whether the
+ * attribute can take on a finite or infinite number of values
+ */
 public enum AttributeType {
     CONTINUOUS,CATEGORICAL;
 
