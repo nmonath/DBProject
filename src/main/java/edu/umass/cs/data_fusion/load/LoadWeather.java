@@ -59,9 +59,6 @@ public class LoadWeather {
 
                 line = reader.readLine();
                 lineNo += 1;
-                
-                if (lineNo == 10)
-                	break;
 	        }
             System.out.println("\n Done Loading.");
             return new RecordCollection(records);
