@@ -7,6 +7,7 @@ import main.java.edu.umass.cs.data_fusion.util.math.AbsoluteWeightedDeviation;
 import main.java.edu.umass.cs.data_fusion.util.math.AttributeLossFunction;
 import main.java.edu.umass.cs.data_fusion.util.math.ZeroOneLoss;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class CRH extends Algorithm {
@@ -59,7 +60,7 @@ public class CRH extends Algorithm {
                                 floats.add(value);
                         }
                         float var = Functions.variance(floats);
-                        map.put(lossFunctionMapKey(e,attrName), new AbsoluteWeightedDeviation((float) Math.sqrt(var)));
+                        map.put(lossFunctionMapKey(e,attrName), new AbsoluteWeightedDeviation((float) Math.sqrt(var) +  0.1f)); // add 0.1 as in CRH to prevent div by 0
                     }
                 }
             }
@@ -303,6 +304,7 @@ public class CRH extends Algorithm {
         lossFunctionMap = initializeLossFunctionMap(recordCollection);
         
         Map<Entity,Record> predictedTruth = initializePredictions(recordCollection);
+        writePredictions("initialPredictions.txt", predictedTruth);
         Map<Source,Float> weights = initializeWeights(recordCollection);
         
         boolean converged = false;
@@ -323,6 +325,7 @@ public class CRH extends Algorithm {
             prevWeights.putAll(weights);
             weights = updateWeights(predictedTruth,recordCollection);
             predictedTruth = updatePrediction(predictedTruth,weights,recordCollection);
+            writePredictions("iter" + numIters + ".txt", predictedTruth);
             numIters++;
             
             prevObjective = objective;
@@ -342,5 +345,30 @@ public class CRH extends Algorithm {
             results.add(new Result(r.getSource(),r.getEntity(),r.getAttributes()));
         }
         return results;
+    }
+    
+    public void writePredictions(String filename, Map<Entity,Record> map) {
+        try {
+            PrintWriter writer = new PrintWriter(filename);
+            ArrayList<Entity> entities = new ArrayList<Entity>(map.keySet());
+            Collections.sort(entities, new Comparator<Entity>() {
+                @Override
+                public int compare(Entity o1, Entity o2) {
+                    return Integer.parseInt(o1.getIdentifier()) - Integer.parseInt(o2.getIdentifier());
+                }
+            });
+            for (Entity e : entities) {
+                writer.print(e.getIdentifier());
+                writer.print("\t");
+                Record r = map.get(e);
+                Attribute attr = r.getAttributes().values().iterator().next();
+                writer.print(attr.toString());
+                writer.println();
+            }
+            writer.flush();
+            writer.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
