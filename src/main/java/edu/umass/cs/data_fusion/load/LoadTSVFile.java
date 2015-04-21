@@ -9,13 +9,11 @@ import java.util.ArrayList;
 public class LoadTSVFile {
 
 
-    private String[] orderedAttributeNames;
-    
-    private AttributeDataType[] attributeDataTypes;
-    
-    private AttributeType[] attributeTypes;
+    protected String[] orderedAttributeNames;
 
-    public LoadTSVFile() {}
+    protected AttributeDataType[] attributeDataTypes;
+
+    protected AttributeType[] attributeTypes;
 
     public LoadTSVFile(AttributeDataType[] attributeDataTypes, AttributeType[] attributeTypes) {
         orderedAttributeNames = new String[0];

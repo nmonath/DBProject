@@ -8,20 +8,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
-import main.java.edu.umass.cs.data_fusion.data_structures.Entity;
-import main.java.edu.umass.cs.data_fusion.data_structures.FloatAttribute;
-import main.java.edu.umass.cs.data_fusion.data_structures.Record;
-import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
-import main.java.edu.umass.cs.data_fusion.data_structures.Source;
-import main.java.edu.umass.cs.data_fusion.data_structures.StringAttribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.*;
 
 
+public class LoadWeather extends LoadTSVFile {
 
-public class LoadWeather {
-	
-	public static RecordCollection load(File file)
-	{
+	private static String[] names = {"Weather (Categorical)", "Weather (Continuous)"};
+
+	private static AttributeDataType[] dataTypes = {AttributeDataType.STRING,AttributeDataType.FLOAT};
+
+	private static AttributeType[] types = {AttributeType.CATEGORICAL,AttributeType.CONTINUOUS};
+
+	public LoadWeather() {
+		super(names, dataTypes, types);
+	}
+	@Override
+	public RecordCollection load(File file) {
 		String line = "";
 		try {
 			ArrayList<Record>  records = new ArrayList<Record>(10000);
@@ -33,14 +35,14 @@ public class LoadWeather {
 	        while (line != null) {
                 String[] fields = line.split("\t");
                 
-                Record rec = new Record(lineNo, new Source(fields[2]), new Entity("sameEntity"));
+                Record rec = new Record(lineNo, new Source(fields[2]), new Entity(fields[0]));
 
         		String s = fields[1];
         		if('w' == s.charAt(0))//this is categorical
         		{
-        			String rawValue = s.substring(2, s.length());
+        			String rawValue = s; // Keep the W to match output results
         			String name = fields[0];
-        			StringAttribute strAttr = new StringAttribute(name, rawValue);
+        			StringAttribute strAttr = new StringAttribute(orderedAttributeNames[0], rawValue, AttributeType.CATEGORICAL);
                     rec.addAttribute(strAttr);
 
                     System.out.print(name+"\t" +rawValue+"\t" );
@@ -50,7 +52,8 @@ public class LoadWeather {
         		{
         			String name = fields[0];
         			String rawValue = fields[1];
-        			FloatAttribute floatAttr = new FloatAttribute(name, rawValue);
+					float value = Float.parseFloat(rawValue); // Since the FloatAttribute takes the abs value of the attributes & we don't want that here use the simple parseFloat
+        			FloatAttribute floatAttr = new FloatAttribute(orderedAttributeNames[1], value, AttributeType.CONTINUOUS);
                     rec.addAttribute(floatAttr);
 
                     System.out.print(name+"\t" +rawValue+"\t" );
@@ -73,11 +76,69 @@ public class LoadWeather {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		RecordCollection collection = load(new File("/Users/Manuel/Documents/Development/github/DBProject/dataset/CRH/data/weather_data_set.txt"));
-		TruthFinder tf = new TruthFinder();
-        RecordCollection cleaner = tf.convert(tf.execute(collection));
-        cleaner.writeToTSVFile(new File("outputTest.txt"));
+	@Override
+	public RecordCollection loadGold(File file) {
+		String line = "";
+		try {
+			ArrayList<Record>  records = new ArrayList<Record>(10000);
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			line = reader.readLine();
+			int lineNo = 0;
+			String lineCount = "Lines Read: " + lineNo;
+			while (line != null) {
+				String[] fields = line.split("\t");
+
+				Record rec = new Record(lineNo, new Source("gold"), new Entity(fields[0]));
+
+				String s = fields[1];
+				if('w' == s.charAt(0))//this is categorical
+				{
+					String rawValue = s.trim();
+					String name = fields[0];
+					StringAttribute strAttr = new StringAttribute(orderedAttributeNames[0], rawValue, AttributeType.CATEGORICAL);
+					rec.addAttribute(strAttr);
+
+					System.out.print(name+"\t" +rawValue+"\t" );
+
+				}
+				else //continuous
+				{
+					String name = fields[0];
+					String rawValue = fields[1];
+					float value = Float.parseFloat(rawValue);  // Since the FloatAttribute takes the abs value of the attributes & we don't want that here use the simple parseFloat
+					FloatAttribute floatAttr = new FloatAttribute(orderedAttributeNames[1], value,AttributeType.CONTINUOUS);
+					rec.addAttribute(floatAttr);
+
+					System.out.print(name+"\t" +rawValue+"\t" );
+				}
+				records.add(rec);
+
+				line = reader.readLine();
+				lineNo += 1;
+
+				System.out.println(lineCount);
+			}
+			System.out.println("\n Done Loading.");
+			return new RecordCollection(records);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("ERROR READING LINE: " + line);
+			e.printStackTrace();
+		}
+		return null;
+		
+		
 	}
+
+//	public static void main(String[] args) {
+//		RecordCollection collection = load(new File("/Users/Manuel/Documents/Development/github/DBProject/dataset/CRH/data/weather_data_set.txt"));
+//		TruthFinder tf = new TruthFinder();
+//        RecordCollection cleaner = tf.convert(tf.execute(collection));
+//        cleaner.writeToTSVFile(new File("outputTest.txt"));
+//	}
 
 }
