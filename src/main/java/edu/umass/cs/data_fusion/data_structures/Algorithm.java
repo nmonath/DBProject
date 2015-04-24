@@ -65,6 +65,27 @@ public abstract class Algorithm {
         }
         return sourcesWithValue;
     }
+    
+    /**
+     * Returns all of the sources appearing the list of records which DO NOT provide the given
+     * attribute value (regardless of which entity the value appears for). Note that 
+     * if you want to find the sources providing a value for a particular entity. Then
+     * use the method in RecordCollection getRecordsForEntity to get only those records 
+     * for a given entity in constant time. 
+     * @param records - the records to search through for sources
+     * @param value - the value of interest
+     * @return - the sources providing the given attribute value in the list of records
+     */
+    protected Set<Source> sourcesWithOutValue(List<Record> records, Attribute value)  {
+        Set<Source> sourcesWithOutValue = new HashSet<Source>();
+        String attrName = value.getName();
+        for (Record r : records) {
+            if (r.hasAttribute(attrName))
+                if (!r.getAttribute(attrName).equals(value))
+                	sourcesWithOutValue.add(r.getSource());
+        }
+        return sourcesWithOutValue;
+    }
 
     /**
      * Returns all of the unique values given for the attribute with the passed in name 
