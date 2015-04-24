@@ -27,10 +27,10 @@ public class LoadStocks extends LoadTSVFile {
     // evaluation
 	public static AttributeType[] types = {
 			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CONTINUOUS, AttributeType.CATEGORICAL,
 			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
-			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
-			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
-			AttributeType.CATEGORICAL, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
+			AttributeType.CATEGORICAL, AttributeType.CONTINUOUS, AttributeType.CATEGORICAL,
+			AttributeType.CONTINUOUS, AttributeType.CATEGORICAL, AttributeType.CATEGORICAL,
 			AttributeType.CATEGORICAL};
 
 //    public static AttributeType[] dataTypes = {

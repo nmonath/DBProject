@@ -93,7 +93,7 @@ public class EvaluationMetrics {
     	this.precision = match/totalOutput;
     	 
     }
-    
+
     public void calcMNAD(){
     	float totalnormalizedDist = 0;
     	int totalnumAttributeValues = 0;
@@ -109,12 +109,12 @@ public class EvaluationMetrics {
            HashMap<String,Attribute> attribValues = r.getAttributes();
            for(String a : r.getAttributes().keySet()){
         	   Attribute goldAttrib = attribValues.get(a);
-        	   if(goldAttrib.getClass()  == FloatAttribute.class){
+        	   if(goldAttrib.getType() == AttributeType.CONTINUOUS && goldAttrib.getClass()  == FloatAttribute.class){
         		 FloatAttribute floatgoldAttrib = (FloatAttribute)goldAttrib;
                  if (resultHash.containsKey(entity)) {
                    if (resultHash.get(entity).containsKey(a)) {
                        Attribute resultAttrib = resultHash.get(entity).get(a);
-                       if(resultAttrib.getClass()  == FloatAttribute.class){
+                       if(goldAttrib.getType() == AttributeType.CONTINUOUS && resultAttrib.getClass()  == FloatAttribute.class){
                     	   FloatAttribute floatresultAttrib = (FloatAttribute)resultAttrib; 
                            Float distance = Math.abs(floatgoldAttrib.getFloatValue()-floatresultAttrib.getFloatValue()); 
                            if(attributeValueDistances.containsKey(a)){
@@ -146,9 +146,9 @@ public class EvaluationMetrics {
             for(Float f : entry.getValue()){
             	variance += Math.pow(f-mean,2); 
             }
-            variance /= (recordNum-1);
+            variance /= (recordNum-1); // TODO: Why -1?
             for(Float f : entry.getValue()){
-            	totalnormalizedDist += f/variance;
+            	totalnormalizedDist += f; ///variance (seems to give better results?);
             	totalnumAttributeValues+=1;
             }
         }
