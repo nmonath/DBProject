@@ -304,7 +304,6 @@ public class CRH extends Algorithm {
         lossFunctionMap = initializeLossFunctionMap(recordCollection);
         
         Map<Entity,Record> predictedTruth = initializePredictions(recordCollection);
-        writePredictions("initialPredictions.txt", predictedTruth);
         Map<Source,Float> weights = initializeWeights(recordCollection);
         
         boolean converged = false;
@@ -325,7 +324,6 @@ public class CRH extends Algorithm {
             prevWeights.putAll(weights);
             weights = updateWeights(predictedTruth,recordCollection);
             predictedTruth = updatePrediction(predictedTruth,weights,recordCollection);
-            writePredictions("iter" + numIters + ".txt", predictedTruth);
             numIters++;
             
             prevObjective = objective;
@@ -347,28 +345,4 @@ public class CRH extends Algorithm {
         return results;
     }
     
-    public void writePredictions(String filename, Map<Entity,Record> map) {
-        try {
-            PrintWriter writer = new PrintWriter(filename);
-            ArrayList<Entity> entities = new ArrayList<Entity>(map.keySet());
-            Collections.sort(entities, new Comparator<Entity>() {
-                @Override
-                public int compare(Entity o1, Entity o2) {
-                    return Integer.parseInt(o1.getIdentifier()) - Integer.parseInt(o2.getIdentifier());
-                }
-            });
-            for (Entity e : entities) {
-                writer.print(e.getIdentifier());
-                writer.print("\t");
-                Record r = map.get(e);
-                Attribute attr = r.getAttributes().values().iterator().next();
-                writer.print(attr.toString());
-                writer.println();
-            }
-            writer.flush();
-            writer.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
