@@ -84,6 +84,23 @@ public abstract class Algorithm {
     }
 
     /**
+     * Returns all of the values (including duplicates) given for the attribute with the passed in name
+     * which appear in the list of records.
+     * @param records - the list of data records
+     * @param attributeName - the attribute of interest
+     * @return - all of the unique values for the attribute with name attributeName in records
+     */
+    protected List<Attribute> allValuesForAttribute(List<Record> records, String attributeName) {
+        List<Attribute> valuesForAttribute = new ArrayList<Attribute>(100);
+        for (Record r: records) {
+            Attribute attr = r.getAttribute(attributeName);
+            if (attr != null)
+                valuesForAttribute.add(attr);
+        }
+        return valuesForAttribute;
+    }
+
+    /**
      * Returns the total number of attribute values (i.e. the number of (entity,attribute) pairs) 
      * provided by a given source in the RecordCollection 
      * @param collection - the data collection
