@@ -290,8 +290,8 @@ public class TruthFinder extends Algorithm{
                     }
                 }
                 
-                float min = Functions.min(values);
-                float max = Functions.max(values);
+                float min = Functions.minFloats(values);
+                float max = Functions.maxFloats(values);
                 
                 //float mu = Functions.mean(values);
                 //float var = Functions.variance(values,mu);

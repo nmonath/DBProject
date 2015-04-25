@@ -7,7 +7,6 @@ import main.java.edu.umass.cs.data_fusion.util.math.AbsoluteWeightedDeviation;
 import main.java.edu.umass.cs.data_fusion.util.math.AttributeLossFunction;
 import main.java.edu.umass.cs.data_fusion.util.math.ZeroOneLoss;
 
-import java.io.PrintWriter;
 import java.util.*;
 
 public class CRH extends Algorithm {
@@ -215,7 +214,7 @@ public class CRH extends Algorithm {
 
     private Map<Source,Float> normalizeByMax(Map<Source,Float> map) {
         ArrayList<Float> floats = new ArrayList<Float>(map.values());
-        float max = Functions.max(floats);
+        float max = Functions.maxFloats(floats);
         if (max > Float.MIN_VALUE) {
             for (Source e: map.keySet()) {
                 map.put(e, map.get(e)/max);

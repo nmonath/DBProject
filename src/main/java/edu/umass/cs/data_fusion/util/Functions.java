@@ -119,7 +119,7 @@ public class Functions {
         return variance(floats,mean(floats));
     }
     
-    public static float min(List<Float> floats) {
+    public static float minFloats(List<Float> floats) {
         float min = Float.MAX_VALUE;
         for (Float f: floats) {
             if (f < min)
@@ -137,7 +137,7 @@ public class Functions {
         return min;
     }
 
-    public static float max(List<Float> floats) {
+    public static float maxFloats(List<Float> floats) {
         float max = Float.MIN_VALUE;
         for (Float f: floats) {
             if (f > max)
