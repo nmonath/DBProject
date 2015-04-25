@@ -11,22 +11,22 @@ import java.util.*;
 
 public class CRH extends Algorithm {
 
-    private double delta = 5;
+    protected double delta = 5;
     
-    final private int MAX_ITERATIONS = 1000;
-    final private int MIN_ITERATIONS = 10;
+    final protected int MAX_ITERATIONS = 1000;
+    final protected int MIN_ITERATIONS = 10;
 
 
     public CRH() {
         super("CRH");
     }
 
-    private AttributeLossFunction categoricalLoss = new ZeroOneLoss();
+    protected AttributeLossFunction categoricalLoss = new ZeroOneLoss();
 
     // EntityId \t AttrName => LossFn
-    private Map<String, AttributeLossFunction> lossFunctionMap;
+    protected Map<String, AttributeLossFunction> lossFunctionMap;
     
-    private Map<String,AttributeLossFunction> initializeLossFunctionMap(RecordCollection recordCollection) {
+    protected Map<String,AttributeLossFunction> initializeLossFunctionMap(RecordCollection recordCollection) {
         System.out.println("[CRH] Initializing loss functions for all entity-attribute pairs.");
 
         Map<String, AttributeLossFunction> map = new HashMap<String, AttributeLossFunction>();
@@ -38,7 +38,7 @@ public class CRH extends Algorithm {
 
         for (Entity e : entities) {
             if (numCompleted % 100 == 0) {
-                countString = "[CRH] Initialized loss function for " + numCompleted + "of " + numTotalEntities + " entities.";
+                countString = "[CRH] Initialized loss function for " + numCompleted + " of " + numTotalEntities + " entities.";
                 System.out.println(countString);
             }
             Set<String> attributeNames = recordCollection.getAttributes(e);
@@ -67,12 +67,16 @@ public class CRH extends Algorithm {
         }
         return map;
     }
-    
-    private String lossFunctionMapKey(Entity e, String attrName) {
+
+    protected String lossFunctionMapKey(Entity e, String attrName) {
         return e.getIdentifier() + "\t" + attrName;
     }
-    private String lossFunctionMapKey(Entity e, Attribute a) {
+    protected String lossFunctionMapKey(Entity e, Attribute a) {
         return lossFunctionMapKey(e,a.getName());
+    }
+    
+    protected String weightsMapKey(Source s, String attrName) {
+        return s.getName();
     }
     
     public Map<Entity,Record> initializePredictions(RecordCollection recordCollection) {
@@ -126,20 +130,20 @@ public class CRH extends Algorithm {
         return prediction;
     }
     
-    public Map<Source,Float> initializeWeights(RecordCollection recordCollection) {
+    public Map<String,Float> initializeWeights(RecordCollection recordCollection) {
         Set<Source> sources = recordCollection.getSources();
-        Map<Source,Float> weights = new HashMap<Source, Float>(sources.size());
+        Map<String,Float> weights = new HashMap<String, Float>(sources.size());
         int numSources = sources.size();
         for (Source s: sources) {
-            weights.put(s,1.0f/numSources);
+            weights.put(weightsMapKey(s,""),1.0f/numSources);
         }
         return weights;
     }
 
     
-    public Map<Source,Float> updateWeights(Map<Entity,Record> prediction, RecordCollection recordCollection) {
-        Map<Source,Float> categoricalLosses = new HashMap<Source, Float>();
-        Map<Source,Float> continuousLosses = new HashMap<Source, Float>();
+    public Map<String,Float> updateWeights(Map<Entity,Record> prediction, RecordCollection recordCollection) {
+        Map<String,Float> categoricalLosses = new HashMap<String, Float>();
+        Map<String,Float> continuousLosses = new HashMap<String, Float>();
         
         int numComplete = 0;
         int numSources = recordCollection.getSourcesCount();
@@ -149,8 +153,8 @@ public class CRH extends Algorithm {
         for (Source source: recordCollection.getSources() ) {
             System.out.println(updateStr);
             // initialize 
-            categoricalLosses.put(source,0.0f);
-            continuousLosses.put(source,0.0f);
+            categoricalLosses.put(source.getName(),0.0f);
+            continuousLosses.put(source.getName(),0.0f);
             
             int numberOfCategoricalAttributes = 0;
             int numberOfContinuousAttributes = 0;
@@ -161,10 +165,10 @@ public class CRH extends Algorithm {
                     if (record.hasAttribute(predAttr.getName())) {
                         Attribute recordAttr = record.getAttribute(predAttr.getName());
                         if (predAttr.getType() == AttributeType.CATEGORICAL && recordAttr.getType() == AttributeType.CATEGORICAL) {
-                            categoricalLosses.put(source, categoricalLosses.get(source) + lossFunctionMap.get(lossFunctionMapKey(record.getEntity(), predAttr)).loss(recordAttr, predAttr));
+                            categoricalLosses.put(source.getName(), categoricalLosses.get(source.getName()) + lossFunctionMap.get(lossFunctionMapKey(record.getEntity(), predAttr)).loss(recordAttr, predAttr));
                             numberOfCategoricalAttributes += 1;
                         } else if (predAttr.getType() == AttributeType.CONTINUOUS && recordAttr.getType() == AttributeType.CONTINUOUS) {
-                            continuousLosses.put(source, continuousLosses.get(source) + lossFunctionMap.get(lossFunctionMapKey(record.getEntity(),predAttr)).loss(recordAttr, predAttr));
+                            continuousLosses.put(source.getName(), continuousLosses.get(source.getName()) + lossFunctionMap.get(lossFunctionMapKey(record.getEntity(),predAttr)).loss(recordAttr, predAttr));
                             numberOfContinuousAttributes += 1;
                         } else {
                             System.out.println("[CRH] ERROR: Something has gone wrong, attributes with the same name have different types.");
@@ -174,9 +178,9 @@ public class CRH extends Algorithm {
             }
             
             if (numberOfCategoricalAttributes > 0)
-                categoricalLosses.put(source, categoricalLosses.get(source)/numberOfCategoricalAttributes);
+                categoricalLosses.put(source.getName(), categoricalLosses.get(source.getName())/numberOfCategoricalAttributes);
             if (numberOfContinuousAttributes > 0)
-                continuousLosses.put(source, continuousLosses.get(source)/numberOfContinuousAttributes);
+                continuousLosses.put(source.getName(), continuousLosses.get(source.getName())/numberOfContinuousAttributes);
             numComplete += 1;
             updateStr = "[CRH] Computed losses for " + numComplete + " of " + numSources+  " sources";
         }
@@ -184,56 +188,60 @@ public class CRH extends Algorithm {
         return toWeights(categoricalLosses,continuousLosses);
     }
     
-    private Map<Source,Float> toWeights(Map<Source,Float> categorical,Map<Source,Float> continuous) {
+    protected <T> Map<T,Float> toWeights(Map<T,Float> categorical,Map<T,Float> continuous) {
         normalizeByMax(normalizeBySum(categorical));
         normalizeByMax(normalizeBySum(continuous));
-        Map<Source,Float> weights = new HashMap<Source, Float>();
-        for (Source s: categorical.keySet())
+        Map<T,Float> weights = new HashMap<T, Float>();
+        for (T s: categorical.keySet())
             weights.put(s,categorical.get(s));
-        for (Source s : continuous.keySet()) {
+        for (T s : continuous.keySet()) {
             if (!weights.containsKey(s))
                 continuous.put(s,0.0f);
             weights.put(s,continuous.get(s) + weights.get(s));
         }
+        for (T s : weights.keySet()) {
+            weights.put(s,weights.get(s) +  + 0.00001f); // Prevent a weight ever being 0
+        }
         normalizeByMax(weights);
-        for (Source s : weights.keySet()) 
-            weights.put(s,-1.0f * (float) Math.log(weights.get(s)) + 0.00001f);
-        return weights;
+        Map<T,Float> newWeights = new HashMap<T, Float>(weights.size());
+        for (T s : weights.keySet())
+            newWeights.put(s,-1.0f * (float) Math.log(weights.get(s)) + 0.00001f);
+        return newWeights;
     }
     
-    private Map<Source,Float> normalizeBySum(Map<Source,Float> map) {
+    private <T> Map<T,Float> normalizeBySum(Map<T,Float> map) {
         ArrayList<Float> floats = new ArrayList<Float>(map.values());
         float sum = Functions.sum(floats);
         if (sum > 0.0) {
-            for (Source e: map.keySet()) {
+            for (T e: map.keySet()) {
                 map.put(e, map.get(e)/sum);
             }
         }
         return map;
     }
 
-    private Map<Source,Float> normalizeByMax(Map<Source,Float> map) {
+    private <T> Map<T,Float> normalizeByMax(Map<T,Float> map) {
         ArrayList<Float> floats = new ArrayList<Float>(map.values());
         float max = Functions.maxFloats(floats);
         if (max > Float.MIN_VALUE) {
-            for (Source e: map.keySet()) {
+            for (T e: map.keySet()) {
                 map.put(e, map.get(e)/max);
             }
         }
         return map;
     }
 
-    public Map<Entity, Record> updatePrediction(Map<Entity,Record> prediction, Map<Source,Float> weights, RecordCollection recordCollection) {
+    public Map<Entity, Record> updatePrediction(Map<Entity,Record> prediction, Map<String,Float> weights, RecordCollection recordCollection) {
 
         Map<Entity, Record> nextPrediction = new HashMap<Entity, Record>(prediction.size());
         Set<Entity> entities = recordCollection.getEntities();
         int numCompleted = 0;
-        int numTotalEntites = recordCollection.getEntitiesCount();
+        int numTotalEntities = recordCollection.getEntitiesCount();
         String countString;
         
         for (Entity e : entities) {
             if (numCompleted % 100 == 0) {
-                countString = "[CRH] Updated predictions for " + numCompleted + " of " + numTotalEntites + " entities.";
+                countString = "[CRH] Updated predictions for " + numCompleted + " of " + numTotalEntities + " entities.";
                 System.out.println(countString);
             }
             Record newPrediction = new Record(source, e);
@@ -263,20 +271,20 @@ public class CRH extends Algorithm {
         return nextPrediction;
     }
     
-    public float getWeightedMedian(List<Record> records, String attrName, Map<Source, Float> weights) {
+    public float getWeightedMedian(List<Record> records, String attrName, Map<String, Float> weights) {
 
         List<Float> values = new ArrayList<Float>();
         List<Float> wghts = new ArrayList<Float>();
         for (Record r: records) {
             if (r.hasAttribute(attrName)) {
                 values.add(((FloatAttribute) r.getAttribute(attrName)).getFloatValue());
-                wghts.add(weights.get(r.getSource()));
+                wghts.add(weights.get(weightsMapKey(r.getSource(), attrName)));
             }
         }
         return Functions.weightedMedian(wghts,values);
     }
 
-    public float objectiveFunction(Map<Entity,Record> prediction, Map<Source,Float> weights, RecordCollection recordCollection) {
+    public float objectiveFunction(Map<Entity,Record> prediction, Map<String,Float> weights, RecordCollection recordCollection) {
         float objective = 0.0f;
         for (Entity entity : recordCollection.getEntities()) {
             
@@ -288,7 +296,7 @@ public class CRH extends Algorithm {
                     Attribute predictedAttr = predictedRecord.getAttribute(attrName);
                     Attribute thisRecordAttr = record.getAttribute(attrName);
 
-                    objective += weights.get(record.getSource()) * lossFunctionMap.get(lossFunctionMapKey(entity, predictedAttr)).loss(predictedAttr, thisRecordAttr);
+                    objective += weights.get(weightsMapKey(record.getSource(),attrName)) * lossFunctionMap.get(lossFunctionMapKey(entity, predictedAttr)).loss(predictedAttr, thisRecordAttr);
 
                 }
                 
@@ -296,6 +304,51 @@ public class CRH extends Algorithm {
         }
         return objective;
     }
+
+
+
+    /**
+     * Each source has an associated weight, rather than giving each source a 1 vote
+     * when it provides a value, the weight of the vote is the source's associated weight.
+     * @param records - the list of data records
+     * @param attrName - the name of the attribute
+     * @param weights - the source weights
+     * @return - the weighted count of values of the attribute with the given name.
+     */
+    public HashMap<Attribute, Float> getWeightedCount(List<Record> records, String attrName, Map<String,Float> weights) {
+        HashMap<Attribute,Float> votes = new HashMap<Attribute, Float>();
+        for (Record r: records) {
+            if (r.hasAttribute(attrName)) {
+                Attribute a = r.getAttribute(attrName);
+                if (!votes.containsKey(a)) {
+                    votes.put(a,0.0f);
+                }
+                votes.put(a,votes.get(a)+ weights.get(weightsMapKey(r.getSource(),attrName)));
+            }
+        }
+        return votes;
+    }
+
+    /**
+     * Selects the value of the attribute with the highest weighted vote
+     * @param votes - the votes from getWeightedCount
+     * @return - the highest weighted vote
+     */
+    public Attribute getMajorityWeightedVote(Map<Attribute,Float> votes) {
+        float max = Float.MIN_VALUE;
+        Attribute maxAttr = null;
+        for (Attribute a : votes.keySet()) {
+            float aCount = votes.get(a);
+            if (aCount > max) {
+                max = aCount;
+                maxAttr = a;
+            }
+        }
+        if (maxAttr == null)
+            System.out.print("thea");
+        return maxAttr;
+    }
+    
     
     @Override
     public ArrayList<Result> execute(RecordCollection recordCollection) {
@@ -303,7 +356,7 @@ public class CRH extends Algorithm {
         lossFunctionMap = initializeLossFunctionMap(recordCollection);
         
         Map<Entity,Record> predictedTruth = initializePredictions(recordCollection);
-        Map<Source,Float> weights = initializeWeights(recordCollection);
+        Map<String,Float> weights = initializeWeights(recordCollection);
         
         boolean converged = false;
         int numIters = 0;
@@ -318,8 +371,10 @@ public class CRH extends Algorithm {
             
             iterString = "[CRH] Number of completed iterations  " + numIters;
             System.out.println(iterString);
-            
-            Map<Source,Float> prevWeights = new HashMap<Source, Float>();
+            if (numIters == 9)
+                System.out.println(iterString);
+
+            Map<String,Float> prevWeights = new HashMap<String, Float>();
             prevWeights.putAll(weights);
             weights = updateWeights(predictedTruth,recordCollection);
             predictedTruth = updatePrediction(predictedTruth,weights,recordCollection);

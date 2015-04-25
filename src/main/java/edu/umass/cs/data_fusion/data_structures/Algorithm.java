@@ -258,44 +258,5 @@ public abstract class Algorithm {
         return maxAttr;
     }
 
-    /**
-     * Each source has an associated weight, rather than giving each source a 1 vote
-     * when it provides a value, the weight of the vote is the source's associated weight.  
-     * @param records - the list of data records
-     * @param attrName - the name of the attribute
-     * @param weights - the source weights
-     * @return - the weighted count of values of the attribute with the given name.
-     */
-    public HashMap<Attribute, Float> getWeightedCount(List<Record> records, String attrName, Map<Source,Float> weights) {
-        HashMap<Attribute,Float> votes = new HashMap<Attribute, Float>();
-        for (Record r: records) {
-            if (r.hasAttribute(attrName)) {
-                Attribute a = r.getAttribute(attrName);
-                if (!votes.containsKey(a)) {
-                    votes.put(a,0.0f);
-                }
-                votes.put(a,votes.get(a)+ weights.get(r.getSource()));
-            }
-        }
-        return votes;
-    }
-
-    /**
-     * Selects the value of the attribute with the highest weighted vote
-     * @param votes - the votes from getWeightedCount
-     * @return - the highest weighted vote
-     */
-    public Attribute getMajorityWeightedVote(Map<Attribute,Float> votes) {
-        float max = Float.MIN_VALUE;
-        Attribute maxAttr = null;
-        for (Attribute a : votes.keySet()) {
-            float aCount = votes.get(a);
-            if (aCount > max) {
-                max = aCount;
-                maxAttr = a;
-            }
-        }
-        return maxAttr;
-    }
 
 }
