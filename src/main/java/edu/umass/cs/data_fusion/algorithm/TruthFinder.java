@@ -14,16 +14,25 @@ public class TruthFinder extends Algorithm{
     private double gamma;
 
     final private double MAX_ITERATIONS = 1000;
-    final private double MIN_ITERATIONS = 10;
+    final private double MIN_ITERATIONS = 5;
 
     private Source source = new Source(this.getName());
+
+
+    public TruthFinder(String name) {
+        super(name);
+        this.initialTrustworthiness = 0.5; // TODO: Grid search these values
+        this.delta = 0.001;
+        this.rho = 0.3;
+        this.gamma = 0.1;
+    }
     
     public TruthFinder() {
         super("TruthFinder");
         this.initialTrustworthiness = 0.5; // TODO: Grid search these values
         this.delta = 0.001;
         this.rho = 0.3;
-        this.gamma = 0.1;
+        this.gamma = 0.001;
     }
     
     public TruthFinder(double initialTrustworthiness, double delta, double rho, double gamma) {
@@ -253,14 +262,19 @@ public class TruthFinder extends Algorithm{
         return cos;
     }
 
-    public double L1dist(HashMap<Source,Double> previous, HashMap<Source,Double> current) {
+    public static <T> double L1dist(HashMap<T,Double> previous, HashMap<T,Double> current) {
         assert previous.keySet().containsAll(current.keySet());
         double[] previousVec = new double[previous.size()];
         double[] currentVec = new double[previous.size()];
         int i = 0;
-        for (Source s: previous.keySet()) {
+        for (T s: previous.keySet()) {
             previousVec[i] = previous.get(s);
-            currentVec[i] = current.get(s);
+            try {
+                currentVec[i] = current.get(s);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(s.toString());
+            }
             i += 1;
         }
         double dd = Functions.L1dist(previousVec, currentVec);
@@ -271,7 +285,7 @@ public class TruthFinder extends Algorithm{
     // NOTE: While the paper suggests the cosine distance btw the source trustworthiness vectors 
     // is used as a criteria, I did not understand how it would work. They give a delta of 0.01%
     // but what is this a percent of?? It is unclear to me. So instead I use L1dist and threshold less than delta.
-    public boolean converged(HashMap<Source,Double> previous, HashMap<Source,Double> current, double delta) {
+    public static <T> boolean converged(HashMap<T,Double> previous, HashMap<T,Double> current, double delta) {
         return L1dist(previous,current) < delta;
     }
 

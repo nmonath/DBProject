@@ -1,33 +1,33 @@
 package main.java.edu.umass.cs.data_fusion.algorithm;
 
-
+ 
 import main.java.edu.umass.cs.data_fusion.data_structures.*;
-import main.java.edu.umass.cs.data_fusion.util.Functions;
 
 import java.util.*;
 
 // Modified to include source/attribute pairs
-public class ModifiedTruthFinder extends Algorithm{
+public class ModifiedTruthFinder extends TruthFinder {
 
     private double initialTrustworthiness;
     private double delta;
     private double rho;
     private double gamma;
 
-    final private double MAX_ITERATIONS = 10;
+    final private double MAX_ITERATIONS = 1000;
+    final private double MIN_ITERATIONS = 5;
 
     private Source source = new Source(this.getName());
 
     public ModifiedTruthFinder() {
-        super("TruthFinder");
-        this.initialTrustworthiness = 0.8;
-        this.delta = 0.9;
-        this.rho = 0.5;
-        this.gamma = 0.1;
+        super("ModifiedTruthFinder");
+        this.initialTrustworthiness = 0.5; // TODO: Grid search these values
+        this.delta = 0.001;
+        this.rho = 0.3;
+        this.gamma = 0.0001;
     }
 
     public ModifiedTruthFinder(double initialTrustworthiness, double delta, double rho, double gamma) {
-        super("TruthFinder");
+        super("ModifiedTruthFinder");
         this.initialTrustworthiness = initialTrustworthiness;
         this.delta = delta;
         this.rho = rho;
@@ -37,33 +37,40 @@ public class ModifiedTruthFinder extends Algorithm{
     public ArrayList<Result> execute(RecordCollection collection) {
 
         /*
+        The range of values of the similarity function is very sensitive for performance. 
+        Since the range of the stock values dramatically differs from attribute to attribute
+        we perform max-min scaling of attribute values.
+         */
+        normalizeAttributeValues(collection);
+        
+        /*
         Each unique <Entity, AttributeValue> pair is assigned a confidence. Note that if two sources
         present the same value for an attribute this pair will have the same confidence for both sources
         and so we only store it once. 
          */
-        HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> confidence = new HashMap<Entity, HashMap<String,HashMap<Attribute,Double>>>();
+        HashMap<Entity, HashMap<String, HashMap<Attribute, Double>>> confidence = new HashMap<Entity, HashMap<String, HashMap<Attribute, Double>>>();
         
         /*
         The algorithm works iteratively checking for convergence by measuring the cosine similarity 
         between the trustworthiness scores (stored in an arbitrarily ordered vector) 
         of the current round and the previous round
          */
-        HashMap<Pair<Source,String>, Double> previousTrustworthiness = new HashMap<Pair<Source,String>, Double>();
+        HashMap<Pair<Source, String>, Double> previousTrustworthiness = new HashMap<Pair<Source, String>, Double>();
 
 
         /*
         The sources which provide the data items  
          */
         Set<Source> sources = collection.getSources();
-        
-        Set<String> allAttributeNames = collection.getAttributes();
-        
+
+
         /*
          Initialize source trustworthiness
          */
-        for (Source s : sources) 
-            for (String attrName : allAttributeNames)
-                previousTrustworthiness.put(new Pair<Source,String>(s,attrName),initialTrustworthiness);
+        for (Source s : sources)
+            for (Record r : collection.getRecords(s))
+                for (String attrName : r.getAttributes().keySet())
+                    previousTrustworthiness.put(new Pair<Source, String>(s, attrName), initialTrustworthiness);
         
 
         /*
@@ -75,12 +82,16 @@ public class ModifiedTruthFinder extends Algorithm{
         The number of iterators completed so far
          */
         int numIterations = 0;
+
+        String iterationString;
         
         /*
         Repeat this process until convergence or the number of iterations exceeds the limit
          */
-        while (!converged && numIterations < MAX_ITERATIONS) {
-            
+        while ((!converged && numIterations < MAX_ITERATIONS) || numIterations < MIN_ITERATIONS) {
+
+            iterationString = "[ModifiedTruthFinder] Number of completed iterations: " + numIterations;
+            System.out.println(iterationString);
             
             /*
             The algorithm operates over pairs of <Entity, Attribute>
@@ -131,7 +142,7 @@ public class ModifiedTruthFinder extends Algorithm{
                         Set<Source> sourcesWithValue = sourcesWithValue(recordsForEntity, v);
                         double sigma_v = 0.0;
                         for (Source s : sourcesWithValue) {
-                            sigma_v += -Math.log(1 - previousTrustworthiness.get(new Pair<Source,String>(s,v.getName()))); // TODO: I think it will slow us down to instantiate an object for each lookup
+                            sigma_v += -Math.log(1 - previousTrustworthiness.get(new Pair<Source, String>(s, v.getName()))); // TODO: I think it will slow us down to instantiate an object for each lookup
                         }
                         sigma.put(v, sigma_v);
                     }
@@ -149,6 +160,8 @@ public class ModifiedTruthFinder extends Algorithm{
                         }
                         // confidence_v <- 1 / (1 + exp(-gamma*sigmaStar_v)
                         double confidence_v = 1 / (1 + Math.exp(-gamma * sigmaStar_v));
+                        if (Double.isNaN(confidence_v))
+                            System.out.println("[ModifiedTruthFinder] confidence is nan for attribute " + v + " sigma(v) " + sigma.get(v));
                         confidence.get(entity).get(attributeName).put(v, confidence_v);
                     }
                 }
@@ -157,48 +170,56 @@ public class ModifiedTruthFinder extends Algorithm{
             /*
             Calculate the trustworthiness values of the source-attribute pairs for this round.
              */
-            HashMap<Pair<Source,String>, Double> currentTrustworthiness = new HashMap<Pair<Source,String>, Double>();
+            HashMap<Pair<Source, String>, Double> currentTrustworthiness = new HashMap<Pair<Source, String>, Double>();
             for (Source s : sources) {
-                
+
                 // trustworthiness(s,a) <- sum_{v in ValuesGivenBySource} confidence(v)/NumberOfValuesGivenBySource
                 ArrayList<Record> recordsForSource = collection.getRecords(s);
-                
+
                 // attr name -> num appears or trust
-                Map<String,Integer> numValuesForAttr = new HashMap<String, Integer>();
-                Map<String,Double> trustworthiness = new HashMap<String, Double>();
-                
+                Map<String, Integer> numValuesForAttr = new HashMap<String, Integer>();
+                Map<String, Double> trustworthiness = new HashMap<String, Double>();
+
                 for (Record r : recordsForSource) {
-                    for (Attribute a: r.getAttributes().values()) {
+                    for (Attribute a : r.getAttributes().values()) {
                         String aName = a.getName();
                         double trust = confidence.get(r.getEntity()).get(a.getName()).get(a);
-                        if (!trustworthiness.containsKey(aName))  {
-                            trustworthiness.put(a.getName(),0.0);
+                        if (!trustworthiness.containsKey(aName)) {
+                            trustworthiness.put(a.getName(), 0.0);
                         }
                         if (!numValuesForAttr.containsKey(aName)) {
-                            numValuesForAttr.put(aName,0);
+                            numValuesForAttr.put(aName, 0);
                         }
-                        trustworthiness.put(aName,trustworthiness.get(aName)+trust);
-                        numValuesForAttr.put(aName,numValuesForAttr.get(aName) + 1);
+                        trustworthiness.put(aName, trustworthiness.get(aName) + trust);
+                        numValuesForAttr.put(aName, numValuesForAttr.get(aName) + 1);
                     }
                 }
-                for (String attrName: numValuesForAttr.keySet()) {
-                    currentTrustworthiness.put(new Pair<Source, String>(s, attrName),trustworthiness.get(attrName)/numValuesForAttr.get(attrName));
+                for (String attrName : numValuesForAttr.keySet()) {
+                    if (numValuesForAttr.get(attrName) == 0)
+                        System.out.println("[ModifiedTruthFinder] Divided by Zero");
+                    currentTrustworthiness.put(new Pair<Source, String>(s, attrName), trustworthiness.get(attrName) / numValuesForAttr.get(attrName));
                 }
             }
             /*
             Check for convergence
              */
-            converged = converged(previousTrustworthiness,currentTrustworthiness,delta);
+            converged = converged(previousTrustworthiness, currentTrustworthiness, delta);
+            if (converged)
+                System.out.println("[ModifiedTruthFinder] Convergence condition met.");
             previousTrustworthiness = currentTrustworthiness;
             numIterations += 1;
         }
 
+        if (!converged)
+            System.out.println("[ModifiedTruthFinder] Max Iterations condition met.");
+
+        System.out.println("[ModifiedTruthFinder] Algorithm complete, assigning values to each attribute.");
         /*
         Assign a final value to each attribute of each entity  
          */
         Set<Entity> entities = collection.getEntities();
         ArrayList<Result> results = new ArrayList<Result>(entities.size());
-        for (Entity entity: entities) {
+        for (Entity entity : entities) {
             Result res = new Result(this.source, entity);
             Set<String> attributeNames = collection.getAttributes(entity);
             // The value for each attribute it is the one with the highest confidence
@@ -217,42 +238,9 @@ public class ModifiedTruthFinder extends Algorithm{
             }
             results.add(res);
         }
+        System.out.println("[TruthFinder] Done.");
         return results;
     }
 
-
-    public RecordCollection convert(ArrayList<Result> results) {
-        ArrayList<Record> rec = new ArrayList<Record>(results.size());
-        for (Result r : results) {
-            rec.add(new Record(r.getSource(),r.getEntity(),r.getAttributes()));
-        }
-        return new RecordCollection(rec);
-    }
-
-
-
-
-    //TODO: How is this defined???
-    public double similarity(Attribute attr1, Attribute attr2) {
-        if (attr1 instanceof FloatAttribute && attr2 instanceof FloatAttribute)
-            return -((FloatAttribute) attr1).getFloatValue() - ((FloatAttribute) attr2).getFloatValue();
-        else if (attr1 instanceof StringAttribute && attr2 instanceof StringAttribute)
-            return -1.0*Functions.editDistance(((StringAttribute) attr1).getStringValue(),((StringAttribute) attr2).getStringValue());
-        return 0.0;
-    }
-
-    public boolean converged(HashMap<Pair<Source,String>,Double> previous, HashMap<Pair<Source,String>,Double> current, double delta) {
-        assert previous.keySet().containsAll(current.keySet());
-        double[] previousVec = new double[previous.size()];
-        double[] currentVec = new double[previous.size()];
-        int i = 0;
-        for (Pair<Source,String> sa: previous.keySet()) {
-            previousVec[i] = previous.get(sa);
-            currentVec[i] = current.get(sa);
-            i += 1;
-        }
-        return Functions.cosine(previousVec, currentVec) > delta;
-    }
-
-
 }
+
