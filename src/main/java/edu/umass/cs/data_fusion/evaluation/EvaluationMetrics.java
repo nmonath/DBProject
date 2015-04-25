@@ -66,31 +66,33 @@ public class EvaluationMetrics {
     
     public void calcMetrics(){
     	
-    	double totalGold= 0;
+    	double recallDenominator= 0;
     	double match = 0;
     	HashMap<Entity,HashMap<String,Attribute>> resultHash = getResultHash();
-    	double totalOutput = getResultNumAttributes();
+    	double precisionDenominator = 0;
         ArrayList<Record> records = goldRecords.getRecords();
         for(Record r: records){
            Entity entity = r.getEntity();
            HashMap<String,Attribute> attribValues = r.getAttributes();
-           for(String a : r.getAttributes().keySet()){
-        	   totalGold++;
-        	   Attribute goldAttrib = attribValues.get(a);
-               if (resultHash.containsKey(entity)) {
-                   if (resultHash.get(entity).containsKey(a)) {
-                       Attribute resultAttrib = resultHash.get(entity).get(a);
-                       if (matches(entity, resultAttrib, goldAttrib)) {
-                           match++;
+           for(String a : r.getAttributes().keySet()) {
+               Attribute goldAttrib = attribValues.get(a);
+               if (goldAttrib.getType() == AttributeType.CATEGORICAL) {
+                   recallDenominator++;
+                   if (resultHash.containsKey(entity)) {
+                       if (resultHash.get(entity).containsKey(a)) {
+                           Attribute resultAttrib = resultHash.get(entity).get(a);
+                           if (matches(entity, resultAttrib, goldAttrib)) {
+                               match++;
+                           }
+                           precisionDenominator++;
                        }
                    }
                }
            }
-           
         }
        
-    	this.recall = match/totalGold;
-    	this.precision = match/totalOutput;
+    	this.recall = match/recallDenominator;
+    	this.precision = match/precisionDenominator;
     	 
     }
 
