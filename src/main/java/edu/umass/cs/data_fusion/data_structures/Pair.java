@@ -53,4 +53,9 @@ public class Pair<T,U> {
             hashCode = hashCode * 41 + two.hashCode();
         return hashCode;
     }
+    
+    @Override
+    public String toString() {
+        return "Pair(" + one.toString() + ", " + two.toString() + ")";
+    }
 }
