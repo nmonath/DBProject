@@ -84,6 +84,15 @@ public class RecordCollection {
                 attributes.add(a);
         return attributes;
     }
+    
+    public Set<String> getAttributes(Source source) {
+        ArrayList<Record> correspondingRecords = getRecords(source);
+        Set<String> attributes = new HashSet<String>();
+        for (Record r : correspondingRecords)
+            for (String a: r.getAttributes().keySet())
+                attributes.add(a);
+        return attributes;
+    }
 
     /**
      * The number of (entity,attr) pairs in the collection. * 

@@ -66,6 +66,27 @@ public abstract class Algorithm {
         return sourcesWithValue;
     }
     
+    protected int numSourcesWithinEntity(List<Record> records)  {
+        Set<Source> sourcesInEntity = new HashSet<Source>();
+        
+        for (Record r : records) {
+        	sourcesInEntity.add(r.getSource());
+        }
+        return sourcesInEntity.size();
+    }
+    
+    protected int numSourcesWithinEntityWithNonZeroTrustWorthiness(List<Record> records,HashMap<Source, Double> sourceTrustworthiness)  {
+        Set<Source> sourcesInEntity = new HashSet<Source>();
+        
+        for (Record r : records) {
+        	Source s = r.getSource();
+        	if(sourceTrustworthiness.get(s)!=0.0)
+        	   sourcesInEntity.add(s);
+        }
+        return sourcesInEntity.size();
+    }
+    
+    
     /**
      * Returns all of the sources appearing the list of records which DO NOT provide the given
      * attribute value (regardless of which entity the value appears for). Note that 
@@ -103,6 +124,17 @@ public abstract class Algorithm {
         }
         return valuesForAttribute;
     }
+    
+    protected Set<Attribute> entityAttributeValues(List<Record> records, String attributeName) {
+        Set<Attribute> valuesForAttribute = new HashSet<Attribute>();
+        for (Record r: records) {
+            Attribute attr = r.getAttribute(attributeName);
+            Entity e = r.getEntity();
+            if (attr != null)
+                valuesForAttribute.add(attr);
+        }
+        return valuesForAttribute;
+    }
 
     /**
      * Returns all of the values (including duplicates) given for the attribute with the passed in name
@@ -135,6 +167,24 @@ public abstract class Algorithm {
             numValuesForSource += r.getAttributes().size();
         }
         return numValuesForSource;
+    }
+    
+    
+    protected HashMap<Entity,HashMap<String,HashSet<Attribute>>> valuesProvidedBySource(RecordCollection collection, Source source) {
+        ArrayList<Record> recordsForSource = collection.getRecords(source);
+        HashMap<Entity,HashMap<String,HashSet<Attribute>>> entityAttributePair = new HashMap<Entity,HashMap<String,HashSet<Attribute>>>();
+        
+        for (Record r : recordsForSource) {
+        	Entity e = r.getEntity();
+            entityAttributePair.put(r.getEntity(),new HashMap<String,HashSet<Attribute>>());
+        	for (Map.Entry<String,Attribute> entityRecords : r.getAttributes().entrySet()) {
+        		if(!entityAttributePair.get(e).containsKey(entityRecords.getKey()))
+        		    entityAttributePair.get(e).put(entityRecords.getKey(),new HashSet<Attribute>());
+        		entityAttributePair.get(e).get(entityRecords.getKey()).add(entityRecords.getValue());
+        	}
+            
+        }
+        return entityAttributePair;
     }
 
     /**

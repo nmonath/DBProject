@@ -127,10 +127,28 @@ public class Functions {
         }
         return min;
     }
+    
+    public static double min(List<Double> doubles) {
+        double min = Double.MAX_VALUE;
+        for (Double f: doubles) {
+            if (f < min)
+                min =f;
+        }
+        return min;
+    }
 
     public static float max(List<Float> floats) {
         float max = Float.MIN_VALUE;
         for (Float f: floats) {
+            if (f > max)
+                max =f;
+        }
+        return max;
+    }
+    
+    public static double max(List<Double> doubles) {
+        double max = Double.MIN_VALUE;
+        for (Double f: doubles) {
             if (f > max)
                 max =f;
         }
