@@ -15,7 +15,7 @@ public class EvaluationMetricsWithTolerance extends EvaluationMetrics {
     private Map<Pair<Entity,String>,ToleranceMatchFunction> toleranceMatchFunctionMap;
 
     public EvaluationMetricsWithTolerance(ArrayList<Result> results, RecordCollection gold, Map<Pair<Entity,String>,ToleranceMatchFunction> toleranceMatchFunctionMap){
-        super(results, gold, 0.0, 0.0, 0.0, 0.0);
+        super(results, gold, 0.0, 0.0, 0.0,0.0, 0.0);
         this.toleranceMatchFunctionMap = toleranceMatchFunctionMap;
     }
     

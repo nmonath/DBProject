@@ -49,6 +49,7 @@ public class Experiment {
         // Evaluate the data
         evaluator.calcMetrics();
         evaluator.calcErrorRate();
+        evaluator.calcMAD();
         evaluator.calcMNAD();
         evaluator.printResults();
 
