@@ -13,6 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class BookExperiment extends Experiment {
+    
+    private double accuracy;
 
     public BookExperiment(Algorithm algorithm, LoadTSVFile loader, RecordCollection inputData, RecordCollection gold, File outputDir) {
         super(algorithm,false,loader,inputData,gold,outputDir);
@@ -31,6 +33,7 @@ public class BookExperiment extends Experiment {
 
         EvaluateBookDataset bookEval = new EvaluateBookDataset();
         bookEval.calcAccuracy(resultsCollection, gold);
+        accuracy = bookEval.getAccuracy();
         System.out.println("Accuracy: " + bookEval.getAccuracy());
 
         // Just for the html
@@ -40,7 +43,11 @@ public class BookExperiment extends Experiment {
         outputDir.mkdirs();
         HTMLOutput.writeHTMLOutput(loader.getOrderedAttributeNames(), resultsCollection, gold, new File(outputDir, "report.html").getAbsolutePath(), true, evaluator);
         resultsCollection.writeToTSVFile(new File(outputDir, "output.tsv"), loader.getOrderedAttributeNames());
+        writeScoreFile(outputDir, "Accuracy: " + bookEval.getAccuracy());
 
     }
 
+    public double getAccuracy() {
+        return accuracy;
+    }
 }

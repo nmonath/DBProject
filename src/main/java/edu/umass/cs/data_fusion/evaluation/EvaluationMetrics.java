@@ -244,6 +244,17 @@ public class EvaluationMetrics {
         System.out.println("Mean Normalized Absolute Distance: " + mnad);
     }
     
+    public String resultsString() {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("Precision: " + precision);
+        sb.append("Recall: " + recall);
+        sb.append("F1: " + 2.0*precision*recall/(precision+recall));
+        sb.append("Error Rate: " + errorRate);
+        sb.append("Mean Absolute Distance: " + mad);
+        sb.append("Mean Normalized Absolute Distance: " + mnad);
+        return sb.toString();
+    }
+    
     
     private double getResultNumAttributes() {
         double numAttributes = 0;

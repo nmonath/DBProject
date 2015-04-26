@@ -15,8 +15,8 @@ public class TruthFinder extends Algorithm{
     private double rho;
     private double gamma;
 
-    final private double MAX_ITERATIONS = 1000;
-    final private double MIN_ITERATIONS = 10;
+    final private double MAX_ITERATIONS = 20;
+    final private double MIN_ITERATIONS = 5;
 
     private Source source = new Source(this.getName());
 
@@ -196,6 +196,7 @@ public class TruthFinder extends Algorithm{
             Check for convergence
              */
             converged = converged(previousTrustworthiness,currentTrustworthiness,delta);
+            
             if (converged)
                 System.out.println("[TruthFinder] Convergence condition met.");
             previousTrustworthiness = currentTrustworthiness;
@@ -293,7 +294,8 @@ public class TruthFinder extends Algorithm{
     // is used as a criteria, I did not understand how it would work. They give a delta of 0.01%
     // but what is this a percent of?? It is unclear to me. So instead I use L1dist and threshold less than delta.
     public static <T> boolean converged(HashMap<T,Double> previous, HashMap<T,Double> current, double delta) {
-        return L1dist(previous,current) < delta;
+        double dist =  L1dist(previous,current);
+        return dist < delta || Double.isNaN(dist);
     }
 
     // performs the min-max scaling.

@@ -71,8 +71,8 @@ public class AuthorName {
             }
         }
         double denominator = Math.max(1.0, f1Authors.size());
-        return correctness/denominator - base_sim;
-    
+        return correctness/denominator;
+
     }
 
     
@@ -123,21 +123,21 @@ public class AuthorName {
         if (predicted.type2spelling.containsKey(AuthorNameType.LAST) && gold.type2spelling.containsKey(AuthorNameType.LAST)) {
             score += predicted.type2spelling.get(AuthorNameType.LAST).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.LAST)) ? 0.5 : 0.0;
         }
-        // Middle name -- just require that we get the initial correct.
-        if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT)) {
-            score += gold.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
-        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE)) {
-            score += gold.type2spelling.get(AuthorNameType.MIDDLE).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
-        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT)) {
-            score += gold.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
-        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE)) {
-            score += predicted.type2spelling.get(AuthorNameType.MIDDLE).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.MIDDLE)) ? 1.0/6.0 : 0.0;
-        }
+//        // Middle name -- just require that we get the initial correct.
+//        if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT)) {
+//            score += gold.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
+//        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE)) {
+//            score += gold.type2spelling.get(AuthorNameType.MIDDLE).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
+//        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE_INIT)) {
+//            score += gold.type2spelling.get(AuthorNameType.MIDDLE_INIT).toLowerCase().charAt(0) ==  predicted.type2spelling.get(AuthorNameType.MIDDLE).toLowerCase().charAt(0) ? 1.0/6.0 : 0.0;
+//        } else if (predicted.type2spelling.containsKey(AuthorNameType.MIDDLE) && gold.type2spelling.containsKey(AuthorNameType.MIDDLE)) {
+//            score += predicted.type2spelling.get(AuthorNameType.MIDDLE).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.MIDDLE)) ? 1.0/6.0 : 0.0;
+//        }
         // First name -- exact math
         if (predicted.type2spelling.containsKey(AuthorNameType.FIRST) && gold.type2spelling.containsKey(AuthorNameType.FIRST)) {
-            score += predicted.type2spelling.get(AuthorNameType.FIRST).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.FIRST)) ? 2.0/6.0 : 0.0;
+            score += predicted.type2spelling.get(AuthorNameType.FIRST).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.FIRST)) ? 0.5 : 0.0;
         } else if (predicted.type2spelling.containsKey(AuthorNameType.FIRST_INIT) && gold.type2spelling.containsKey(AuthorNameType.FIRST_INIT)) {
-            score += predicted.type2spelling.get(AuthorNameType.FIRST_INIT).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.FIRST_INIT)) ? 2.0/6.0 : 0.0;
+            score += predicted.type2spelling.get(AuthorNameType.FIRST_INIT).equalsIgnoreCase(gold.type2spelling.get(AuthorNameType.FIRST_INIT)) ? 0.5 : 0.0;
         }
         return score;
     }
