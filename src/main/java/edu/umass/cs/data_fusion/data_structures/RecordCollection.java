@@ -142,9 +142,27 @@ public class RecordCollection {
         }
         return valuesForAttribute;
     }
+
+    /**
+     * Returns a map from the string name of categorical attribute to the values in its domain.*
+     * @return
+     */
+    public Map<String,Set<Attribute>> getAttributeDomains() {
+        Set<String> attributes = this.getAttributes();
+        Map<String,Set<Attribute>> domains = new HashMap<String, Set<Attribute>>();
+        for (String attrName : attributes) {
+            Set<Attribute> domain = new HashSet<Attribute>();
+            for (Entity e : this.getEntities()) {
+                domain.addAll(valuesForAttribute(e,attrName));
+            }
+            domains.put(attrName, domain);
+        }
+        return domains;
+    }
     
     public void writeToTSVFile(File file) {
         try {
+            file.getParentFile().mkdirs();
             PrintWriter out = new PrintWriter(file,"UTF-8");
             for (Record r : records) {
                 StringBuilder sb = new StringBuilder(100);
@@ -169,6 +187,7 @@ public class RecordCollection {
 
     public void writeToTSVFile(File file, String[] attributeOrdering) {
         try {
+            file.getParentFile().mkdirs();
             PrintWriter out = new PrintWriter(file,"UTF-8");
             Collections.sort(records, new Comparator<Record>() {
                 @Override
