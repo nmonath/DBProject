@@ -9,8 +9,14 @@ import main.java.edu.umass.cs.data_fusion.data_structures.author.AuthorListAttri
 import java.util.*;
 
 public class EvaluateBookDataset {
+    
+    private double accuracy;
+    
+    public EvaluateBookDataset() {
+        accuracy = 0.0;
+    }
 
-    public static double accuracy(RecordCollection predicted, RecordCollection gold) {
+    public void calcAccuracy(RecordCollection predicted, RecordCollection gold) {
         double accuracy = 0.0;
         double denominator = 0.0;
         for (Entity entity : gold.getEntities()) {
@@ -36,7 +42,11 @@ public class EvaluateBookDataset {
 
             }
         }
-        return accuracy / denominator;
+        this.accuracy =  accuracy / denominator;
+    }
+    
+    public double getAccuracy() {
+        return accuracy;
     }
 
 }

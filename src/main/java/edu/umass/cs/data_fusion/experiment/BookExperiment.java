@@ -29,8 +29,9 @@ public class BookExperiment extends Experiment {
         ArrayList<Result> results = algorithm.execute(inputData);
         RecordCollection resultsCollection = algorithm.convert(results);
 
-        double acc = EvaluateBookDataset.accuracy(resultsCollection,gold);
-        System.out.println("Accuracy: " + acc);
+        EvaluateBookDataset bookEval = new EvaluateBookDataset();
+        bookEval.calcAccuracy(resultsCollection, gold);
+        System.out.println("Accuracy: " + bookEval.getAccuracy());
 
         // Just for the html
         EvaluationMetrics evaluator = new EvaluationMetrics(results,gold);
