@@ -94,7 +94,7 @@ public class ThreeEstimate extends Algorithm{
             }
         	
         	// normalize confidence values
-        	confidence = normalize(confvalues,confidence);
+        	confidence = normalize(confvalues,confidence,this.lamda);
         	
         	
         	//error factor value calculation
@@ -129,7 +129,7 @@ public class ThreeEstimate extends Algorithm{
         	}
         	
         	//normalize error factor values
-        	errorFactor = normalize(errorvalues,errorFactor);
+        	errorFactor = normalize(errorvalues,errorFactor, this.lamda);
         	
         	//source trustworthiness value calculation
         	HashMap<Source, Double> newsourceTrustworthiness = new HashMap<Source, Double>();
@@ -179,7 +179,7 @@ public class ThreeEstimate extends Algorithm{
         	}
         	
         	//normalize trustworthiness
-        	newsourceTrustworthiness = normalizetrustworthiness(trustWorthinessvalues,newsourceTrustworthiness);
+        	newsourceTrustworthiness = normalizetrustworthiness(trustWorthinessvalues,newsourceTrustworthiness,this.lamda);
         	
         	//test for convergence
         	converged = converged(previousTrustworthiness,newsourceTrustworthiness,delta);
@@ -236,7 +236,7 @@ public class ThreeEstimate extends Algorithm{
     
     
 	
-    public HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> normalize(ArrayList<Double> listValues, HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> hashValues){
+    public static HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> normalize(ArrayList<Double> listValues, HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> hashValues, double lambda){
         
     	double min = Functions.min(listValues);
         double max = Functions.max(listValues);
@@ -249,7 +249,7 @@ public class ThreeEstimate extends Algorithm{
             		Double oldValue = attrVal.getValue();
             		Double x1 = (oldValue - min)/(max-min);
             		long x2 = Math.round(x1);
-            		Double newValue =lamda*x1 + (1-lamda)*x2;
+            		Double newValue =lambda*x1 + (1-lambda)*x2;
             		hashValues.get(attributeName).get(attributeName).put(attrVal.getKey(), newValue);
             	}
             }
@@ -260,7 +260,7 @@ public class ThreeEstimate extends Algorithm{
     }
     
     
-    public HashMap<Source,Double> normalizetrustworthiness(ArrayList<Double> listValues,HashMap<Source,Double> hashValues){
+    public static HashMap<Source,Double> normalizetrustworthiness(ArrayList<Double> listValues,HashMap<Source,Double> hashValues, double lamda){
         
     	double min = Functions.min(listValues);
         double max = Functions.max(listValues);
