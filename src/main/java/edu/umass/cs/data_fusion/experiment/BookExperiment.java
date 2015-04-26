@@ -4,67 +4,41 @@ package main.java.edu.umass.cs.data_fusion.experiment;
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
 import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Result;
+import main.java.edu.umass.cs.data_fusion.evaluation.EvaluateBookDataset;
 import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetrics;
-import main.java.edu.umass.cs.data_fusion.evaluation.EvaluationMetricsWithTolerance;
-import main.java.edu.umass.cs.data_fusion.load.LoadBooks;
-import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
+import main.java.edu.umass.cs.data_fusion.load.LoadTSVFile;
 import main.java.edu.umass.cs.data_fusion.util.HTMLOutput;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 
-// SEE THE NEW Experiment.java code!
+public class BookExperiment extends Experiment {
 
-public class BookExperiment {
-
-    private Algorithm algorithm;
-    private String inputFilename = new File("data", "book.txt").getAbsolutePath();
-    private String goldFilename = new File("data", "book_golden.txt").getAbsolutePath();
-    private String outputDirname = new File("output", new Date(System.currentTimeMillis()).toString()).getAbsolutePath();
-
-    public BookExperiment(Algorithm algorithm) {
-        this.algorithm = algorithm;
+    public BookExperiment(Algorithm algorithm, LoadTSVFile loader, RecordCollection inputData, RecordCollection gold, File outputDir) {
+        super(algorithm,false,loader,inputData,gold,outputDir);
     }
 
-    public BookExperiment(Algorithm algorithm, String inputFilename, String goldFilename, String outputDirname) {
-        this.algorithm = algorithm;
-        this.inputFilename = inputFilename;
-        this.goldFilename = goldFilename;
-        this.outputDirname = outputDirname;
+    public BookExperiment(Algorithm algorithm, LoadTSVFile loader, File inputFile, File goldFile, File outputDir) {
+        this(algorithm, loader, loader.load(inputFile), loader.loadGold(goldFile), outputDir);
     }
 
-    public BookExperiment(Algorithm algorithm, String dataDir, String outputDirname) {
-        this.algorithm = algorithm;
-        this.inputFilename = new File(dataDir,inputFilename).getAbsolutePath();
-        this.goldFilename = new File(dataDir,goldFilename).getAbsolutePath();
-        this.outputDirname = outputDirname;
-    }
 
+    @Override
     public void run() {
-        LoadBooks loader = new LoadBooks();
-        RecordCollection collection = loader.load(new File(inputFilename));
-
         // Run the algorithm
-        ArrayList<Result> results = algorithm.execute(collection);
-
-        // Load the gold data
-        RecordCollection gold = loader.loadGold(new File(goldFilename));
-
-        // Evaluate the data
-        EvaluationMetrics eval = new EvaluationMetrics(results, gold);
-        eval.calcMetrics();
-        eval.calcErrorRate();
-        eval.calcMNAD();
-        eval.printResults();
-
-
-        // Write out the output
-        new File(outputDirname).mkdirs();
+        ArrayList<Result> results = algorithm.execute(inputData);
         RecordCollection resultsCollection = algorithm.convert(results);
-        HTMLOutput.writeHTMLOutput(LoadBooks.names,resultsCollection, gold, new File(outputDirname, "report.html").getAbsolutePath(), true,eval);
-        resultsCollection.writeToTSVFile(new File(outputDirname, "output.tsv"), LoadBooks.names);
-        // TODO: Write Score to a file
+
+        double acc = EvaluateBookDataset.accuracy(resultsCollection,gold);
+        System.out.println("Accuracy: " + acc);
+
+        // Just for the html
+        EvaluationMetrics evaluator = new EvaluationMetrics(results,gold);
+
+        // Write the output
+        outputDir.mkdirs();
+        HTMLOutput.writeHTMLOutput(loader.getOrderedAttributeNames(), resultsCollection, gold, new File(outputDir, "report.html").getAbsolutePath(), true, evaluator);
+        resultsCollection.writeToTSVFile(new File(outputDir, "output.tsv"), loader.getOrderedAttributeNames());
 
     }
 

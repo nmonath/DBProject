@@ -2,6 +2,8 @@ package main.java.edu.umass.cs.data_fusion.algorithm;
 
  
 import main.java.edu.umass.cs.data_fusion.data_structures.*;
+import main.java.edu.umass.cs.data_fusion.data_structures.author.AuthorListAttribute;
+import main.java.edu.umass.cs.data_fusion.data_structures.author.AuthorName;
 import main.java.edu.umass.cs.data_fusion.util.Functions;
 
 import java.util.*;
@@ -14,7 +16,7 @@ public class TruthFinder extends Algorithm{
     private double gamma;
 
     final private double MAX_ITERATIONS = 1000;
-    final private double MIN_ITERATIONS = 5;
+    final private double MIN_ITERATIONS = 10;
 
     private Source source = new Source(this.getName());
 
@@ -29,10 +31,10 @@ public class TruthFinder extends Algorithm{
     
     public TruthFinder() {
         super("TruthFinder");
-        this.initialTrustworthiness = 0.5; // TODO: Grid search these values
+        this.initialTrustworthiness = 0.8; // TODO: Grid search these values
         this.delta = 0.001;
-        this.rho = 0.3;
-        this.gamma = 0.001;
+        this.rho = 0.5;
+        this.gamma = 0.1;
     }
     
     public TruthFinder(double initialTrustworthiness, double delta, double rho, double gamma) {
@@ -160,6 +162,9 @@ public class TruthFinder extends Algorithm{
                         // sigmaStar_v <- sigma_v + rho * (sum_{v' in valuesForGivenAttribute, v' != v} sigma_v' * (similarity(v,v')))
                         double sigmaStar_v = sigma.get(v);
                         for (Attribute vPrime : valuesForGivenAttribute) {
+                            if (sigma.get(vPrime) == null)
+                                System.out.println("null");
+                            
                             if (!v.equals(vPrime)) {
                                 sigmaStar_v += rho * sigma.get(vPrime) * similarity(v, vPrime);
                             }
@@ -244,6 +249,8 @@ public class TruthFinder extends Algorithm{
             return -Math.abs(one - two);
         }else if (attr1 instanceof StringAttribute && attr2 instanceof StringAttribute)
             return -1.0*Functions.editDistance(((StringAttribute) attr1).getStringValue(),((StringAttribute) attr2).getStringValue());
+        else if (attr1 instanceof AuthorListAttribute && attr2 instanceof AuthorListAttribute)
+            return AuthorName.accuracy(((AuthorListAttribute) attr1).getAuthors(), ((AuthorListAttribute) attr2).getAuthors());
         return 0.0;
     }
     

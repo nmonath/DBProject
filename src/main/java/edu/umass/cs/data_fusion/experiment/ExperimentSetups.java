@@ -1,6 +1,7 @@
 package main.java.edu.umass.cs.data_fusion.experiment;
 
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
+import main.java.edu.umass.cs.data_fusion.load.LoadBooks;
 import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
 import main.java.edu.umass.cs.data_fusion.load.LoadWeather;
 
@@ -22,5 +23,9 @@ public class ExperimentSetups {
     }
     public static Experiment getWeatherExperiment(Algorithm algorithm, File outputDir) {
         return new Experiment(algorithm,false,new LoadWeather(),new File(new File("data", "weather"), "weather_data_set.txt"),new File(new File("data", "weather"), "weather_ground_truth.txt"),outputDir);
+    }
+    
+    public static Experiment getBookExperiment(Algorithm algorithm, File outputDir) {
+        return new BookExperiment(algorithm,new LoadBooks(),new File(new File("data", "book"), "book.txt"),new File(new File("data", "book"), "book_golden.txt"),outputDir);
     }
 }

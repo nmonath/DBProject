@@ -15,12 +15,12 @@ import java.util.ArrayList;
 public class Experiment {
 
 
-    private Algorithm algorithm;
-    private boolean evaluationWithSlack;
-    private RecordCollection inputData;
-    private RecordCollection gold;
-    private File outputDir;
-    private LoadTSVFile loader;
+    protected Algorithm algorithm;
+    protected boolean evaluationWithSlack;
+    protected RecordCollection inputData;
+    protected RecordCollection gold;
+    protected File outputDir;
+    protected LoadTSVFile loader;
     
     public Experiment(Algorithm algorithm, boolean evaluationWithSlack, LoadTSVFile loader, RecordCollection inputData, RecordCollection gold, File outputDir) {
         this.algorithm = algorithm;
