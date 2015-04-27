@@ -32,6 +32,7 @@ public class LoadWeather extends LoadTSVFile {
 	        line = reader.readLine();
 	        int lineNo = 0;
 	        String lineCount = "Lines Read: " + lineNo;
+			System.out.print(lineCount);
 	        while (line != null) {
                 String[] fields = line.split("\t");
                 
@@ -45,7 +46,7 @@ public class LoadWeather extends LoadTSVFile {
         			StringAttribute strAttr = new StringAttribute(orderedAttributeNames[0], rawValue, AttributeType.CATEGORICAL);
                     rec.addAttribute(strAttr);
 
-                    System.out.print(name+"\t" +rawValue+"\t" );
+                    //System.out.print(name+"\t" +rawValue+"\t" );
         			
         		}
         		else //continuous
@@ -56,12 +57,18 @@ public class LoadWeather extends LoadTSVFile {
         			FloatAttribute floatAttr = new FloatAttribute(orderedAttributeNames[1], value, AttributeType.CONTINUOUS);
                     rec.addAttribute(floatAttr);
 
-                    System.out.print(name+"\t" +rawValue+"\t" );
+                    //System.out.print(name+"\t" +rawValue+"\t" );
         		}
                 records.add(rec);
 
                 line = reader.readLine();
-                lineNo += 1;
+				lineNo += 1;
+				if (lineNo % 100 == 0) {
+					for (int i = 0; i < lineCount.length(); i++)
+						System.out.print("\b");
+					System.out.print(lineCount);
+				}
+                
 	        }
             System.out.println("\n Done Loading.");
             return new RecordCollection(records);
@@ -99,7 +106,7 @@ public class LoadWeather extends LoadTSVFile {
 					StringAttribute strAttr = new StringAttribute(orderedAttributeNames[0], rawValue, AttributeType.CATEGORICAL);
 					rec.addAttribute(strAttr);
 
-					System.out.print(name+"\t" +rawValue+"\t" );
+					//System.out.print(name+"\t" +rawValue+"\t" );
 
 				}
 				else //continuous
@@ -110,14 +117,18 @@ public class LoadWeather extends LoadTSVFile {
 					FloatAttribute floatAttr = new FloatAttribute(orderedAttributeNames[1], value,AttributeType.CONTINUOUS);
 					rec.addAttribute(floatAttr);
 
-					System.out.print(name+"\t" +rawValue+"\t" );
+					//System.out.print(name+"\t" +rawValue+"\t" );
 				}
 				records.add(rec);
 
 				line = reader.readLine();
+				
 				lineNo += 1;
-
-				System.out.println(lineCount);
+				if (lineNo % 100 == 0) {
+					for (int i = 0; i < lineCount.length(); i++)
+						System.out.print("\b");
+					System.out.print(lineCount);
+				}
 			}
 			System.out.println("\n Done Loading.");
 			return new RecordCollection(records);
