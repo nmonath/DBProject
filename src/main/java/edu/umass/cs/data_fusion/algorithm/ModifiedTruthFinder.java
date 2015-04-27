@@ -13,7 +13,7 @@ public class ModifiedTruthFinder extends TruthFinder {
     private double rho;
     private double gamma;
 
-    final private double MAX_ITERATIONS = 1000;
+    final private double MAX_ITERATIONS = 20;
     final private double MIN_ITERATIONS = 5;
 
     private Source source = new Source(this.getName());

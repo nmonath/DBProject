@@ -246,11 +246,11 @@ public class EvaluationMetrics {
     
     public String resultsString() {
         StringBuilder sb = new StringBuilder(100);
-        sb.append("Precision: " + precision);
-        sb.append("Recall: " + recall);
-        sb.append("F1: " + 2.0*precision*recall/(precision+recall));
-        sb.append("Error Rate: " + errorRate);
-        sb.append("Mean Absolute Distance: " + mad);
+        sb.append("Precision: " + precision + "\n");
+        sb.append("Recall: " + recall + "\n");
+        sb.append("F1: " + 2.0 * precision * recall / (precision + recall) + "\n");
+        sb.append("Error Rate: " + errorRate + "\n");
+        sb.append("Mean Absolute Distance: " + mad + "\n");
         sb.append("Mean Normalized Absolute Distance: " + mnad);
         return sb.toString();
     }

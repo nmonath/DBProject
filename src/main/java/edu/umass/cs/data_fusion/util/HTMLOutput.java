@@ -47,8 +47,8 @@ public class HTMLOutput {
             List<Record> gld = gold.getRecords(e);
             if (pred.size() == 1 && (gld.size() == 1 || gld.size() == 0))
                 sb.append(tableRow(pred.get(0), (gld.size() == 1) ? gld.get(0) : null,orderedNames,eval));
-            else
-                System.err.println("There is a problem printing the html output for entity: " + e);
+//            else
+//                System.err.println("There is a problem printing the html output for entity: " + e);
         }
         sb.append("</table></html>");
         return sb.toString();

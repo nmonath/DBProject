@@ -26,9 +26,9 @@ public class HyperparameterTuning {
     
     public static void tuneTruthFinder(boolean useModified, boolean evaluateWithSlack, LoadTSVFile loader, File outputDir, RecordCollection dataset, RecordCollection gold) {
 
-        double[] initialTrustworthinesses = {0.5,0.6,0.7,0.8,0.9};
-        double[] deltas = {0.001,0.0001};
-        double[] rhos = {0.2,0.3,0.4,0.5,0.6};
+        double[] initialTrustworthinesses = {0.5,0.7,0.8};
+        double[] deltas = {0.001};
+        double[] rhos = {0.4,0.5,0.6,0.7};
         double[] gammas = {0.1,0.01,0.001,0.0001};
 
         
@@ -60,19 +60,19 @@ public class HyperparameterTuning {
             }
         }
 
-        Collections.sort(errorRate, new Comparator<Pair<String, Double>>() {
-            @Override
-            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
-                return (int) Math.ceil((o2.two - o1.two)*100);
-            }
-        });
-
-        Collections.sort(mnad, new Comparator<Pair<String, Double>>() {
-            @Override
-            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
-                return (int) Math.ceil((o2.two - o1.two)*100);
-            }
-        });
+//        Collections.sort(errorRate, new Comparator<Pair<String, Double>>() {
+//            @Override
+//            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
+//                return (int) Math.ceil((o2.two - o1.two)*100);
+//            }
+//        });
+//
+//        Collections.sort(mnad, new Comparator<Pair<String, Double>>() {
+//            @Override
+//            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
+//                return (int) Math.ceil((o2.two - o1.two)*100);
+//            }
+//        });
         printHyperparameterReport(errorRate,outputDir);
         printHyperparameterReport(mnad,outputDir);
     } 
@@ -114,11 +114,10 @@ public class HyperparameterTuning {
 
     public static void tuneTruthFinderOnBooks(boolean useModified, File outputDir, RecordCollection dataset, RecordCollection gold) {
 
-        double[] initialTrustworthinesses = {0.5,0.6,0.7,0.8,0.9};
-        double[] deltas = {0.001,0.0001};
-        double[] rhos = {0.2,0.3,0.4,0.5,0.6};
+        double[] initialTrustworthinesses = {0.5,0.7,0.8};
+        double[] deltas = {0.001};
+        double[] rhos = {0.4,0.5,0.6,0.7};
         double[] gammas = {0.1,0.01,0.001,0.0001};
-
 
         LoadBooks loader = new LoadBooks();
 
@@ -148,12 +147,12 @@ public class HyperparameterTuning {
             }
         }
 
-        Collections.sort(accuracy, new Comparator<Pair<String, Double>>() {
-            @Override
-            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
-                return (int) Math.ceil((o2.two - o1.two)*100);
-            }
-        });
+//        Collections.sort(accuracy, new Comparator<Pair<String, Double>>() {
+//            @Override
+//            public int compare(Pair<String, Double> o1, Pair<String, Double> o2) {
+//                return (int) Math.ceil((o2.two - o1.two)*100);
+//            }
+//        });
         
         printHyperparameterReport(accuracy,outputDir);
     }
@@ -184,7 +183,7 @@ public class HyperparameterTuning {
         RecordCollection collection = loader.load(new File(new File("data", "weather"), "weather_data_set.txt"));
         RecordCollection gold = loader.loadGold(new File(new File("data", "weather"), "weather_ground_truth.txt"));
         File outputDir = new File("hyperparameters-normal-tf", "weather");
-        tuneTruthFinder(false,true,loader,outputDir,collection,gold);
+        tuneTruthFinder(false,false,loader,outputDir,collection,gold);
     }
 
     public static void tuneModifiedTruthFinderOnWeather() {
@@ -192,7 +191,7 @@ public class HyperparameterTuning {
         RecordCollection collection = loader.load(new File(new File("data", "weather"), "weather_data_set.txt"));
         RecordCollection gold = loader.loadGold(new File(new File("data", "weather"), "weather_ground_truth.txt"));
         File outputDir = new File("hyperparameters-modified-tf", "weather");
-        tuneTruthFinder(true,true,loader,outputDir,collection,gold);
+        tuneTruthFinder(true,false,loader,outputDir,collection,gold);
     }
     
     
