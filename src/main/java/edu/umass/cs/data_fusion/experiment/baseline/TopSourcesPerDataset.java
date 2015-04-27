@@ -34,8 +34,8 @@ public class TopSourcesPerDataset {
             errorRate.add(new Pair<String, Double>(s.getName(), exp.getErrorRate()));
             mnad.add(new Pair<String,Double>(s.getName(),exp.getMnad()));
         }
-        printReport(errorRate,outputDir);
-        printReport(mnad,outputDir);
+        printReport(errorRate,outputDir, "errorRate.txt");
+        printReport(mnad,outputDir, "mnad.txt");
 
     }
 
@@ -51,10 +51,10 @@ public class TopSourcesPerDataset {
             exp.run();
             accuracy.add(new Pair<String, Double>(s.getName(), exp.getAccuracy()));
         }
-        printReport(accuracy,outputDir);
+        printReport(accuracy,outputDir, "accuracy.txt");
     }
 
-    public static void printReport(List<Pair<String,Double>> results, File outputDir) {
+    public static void printReport(List<Pair<String,Double>> results, File outputDir, String filename) {
         StringBuilder sb = new StringBuilder(1000);
         int i = 0;
         for (Pair<String, Double> pair : results) {
@@ -63,7 +63,7 @@ public class TopSourcesPerDataset {
         }
         System.out.println(sb.toString());
         try {
-            PrintWriter printWriter = new PrintWriter(new File(outputDir, "source_results.txt"));
+            PrintWriter printWriter = new PrintWriter(new File(outputDir, filename));
             printWriter.println(sb.toString());
             printWriter.close();
         } catch (Exception e) {

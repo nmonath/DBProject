@@ -73,12 +73,12 @@ public class HyperparameterTuning {
 //                return (int) Math.ceil((o2.two - o1.two)*100);
 //            }
 //        });
-        printHyperparameterReport(errorRate,outputDir);
-        printHyperparameterReport(mnad,outputDir);
+        printHyperparameterReport(errorRate,outputDir, "errorrate.txt");
+        printHyperparameterReport(mnad,outputDir, "mnad.txt");
     } 
     
     
-    public static void printHyperparameterReport(List<Pair<String,Double>> results, File outputDir) {
+    public static void printHyperparameterReport(List<Pair<String,Double>> results, File outputDir, String filename) {
         StringBuilder sb = new StringBuilder(1000);
         int i = 0;
         for (Pair<String, Double> pair : results) {
@@ -87,7 +87,7 @@ public class HyperparameterTuning {
         }
         System.out.println(sb.toString());
         try {
-            PrintWriter printWriter = new PrintWriter(new File(outputDir, "hyperparameter_search.txt"));
+            PrintWriter printWriter = new PrintWriter(new File(outputDir, filename));
             printWriter.println(sb.toString());
             printWriter.close();
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class HyperparameterTuning {
 //            }
 //        });
         
-        printHyperparameterReport(accuracy,outputDir);
+        printHyperparameterReport(accuracy,outputDir, "accuracy.txt");
     }
 
 
