@@ -36,11 +36,10 @@ public class EvaluateBookDataset {
                 Record predictedRecord = predictedRecords.get(0);
                 AuthorListAttribute predAuthorList = ((AuthorListAttribute) predictedRecord.getAttribute("Author(s)"));
                 
-                if (predAuthorList.equals(goldAuthorList))
+                if (predAuthorList != null && predAuthorList.equals(goldAuthorList))
                     accuracy+=1.0;
-                denominator+=1.0;
-
             }
+            denominator+=1.0;
         }
         this.accuracy =  accuracy / denominator;
     }
