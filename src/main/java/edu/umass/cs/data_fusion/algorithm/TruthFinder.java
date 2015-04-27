@@ -31,10 +31,11 @@ public class TruthFinder extends Algorithm{
     
     public TruthFinder() {
         super("TruthFinder");
-        this.initialTrustworthiness = 0.8; // TODO: Grid search these values
+        //Initial Trustworthiness: 0.500000, Delta: 0.001000, Rho: 0.700000, Gamma: 0.010000
+        this.initialTrustworthiness = 0.5;
         this.delta = 0.001;
-        this.rho = 0.5;
-        this.gamma = 0.1;
+        this.rho = 0.7;
+        this.gamma = 0.01;
     }
     
     public TruthFinder(double initialTrustworthiness, double delta, double rho, double gamma) {
