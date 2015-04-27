@@ -21,14 +21,15 @@ public class TwoEstimates extends Algorithm {
     private double lambda;
     private double delta;
 
-    final private double MAX_ITERATIONS = 10;
+    final private double MAX_ITERATIONS = 1000;
+    final private double MIN_ITERATIONS = 10;
 
     private Source source = new Source(this.getName());
     
     public TwoEstimates() {
         super("TwoEstimates");
         this.initialTrustworthiness = 0.8;
-        this.delta = 0.9;
+        this.delta = 0.001;
         this.lambda = 0.5;
     }
     
@@ -60,7 +61,7 @@ public class TwoEstimates extends Algorithm {
         String iterationString;
         
         
-        while (!converged && numIterations < MAX_ITERATIONS) {
+        while ((!converged && numIterations < MAX_ITERATIONS) || numIterations < MIN_ITERATIONS) {
         	
         	iterationString = "[2-Estimates] Number of completed iterations: " + numIterations;
         	System.out.println(iterationString);
