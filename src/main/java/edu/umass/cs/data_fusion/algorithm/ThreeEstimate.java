@@ -27,7 +27,13 @@ public class ThreeEstimate extends Algorithm{
         this.epsilon = epsilon;
     }
     
-    
+    public ThreeEstimate() {
+        super("ThreeEstimates");
+        this.initialTrustworthiness = 0.8; 
+        this.delta = 0.001;
+        this.lamda = 0.1;
+        this.epsilon = 0.1;
+    }
 	
 	public ArrayList<Result> execute(RecordCollection collection) {
 		
@@ -250,7 +256,7 @@ public class ThreeEstimate extends Algorithm{
             		Double x1 = (oldValue - min)/(max-min);
             		long x2 = Math.round(x1);
             		Double newValue =lambda*x1 + (1-lambda)*x2;
-            		hashValues.get(attributeName).get(attributeName).put(attrVal.getKey(), newValue);
+            		hashValues.get(entityName).get(attributeName).put(attrVal.getKey(), newValue);
             	}
             }
         }
