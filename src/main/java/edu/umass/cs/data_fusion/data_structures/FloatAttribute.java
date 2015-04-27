@@ -57,6 +57,10 @@ public class FloatAttribute extends Attribute {
 	public float getFloatValue() {
         return this.floatValue;
     }
+	
+	public void setFloatValue(float newVal) {
+		this.floatValue = newVal;
+	}
 
 	/**
 	 * Returns true iff the raw string was correctly parsed into a float value
