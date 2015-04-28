@@ -114,7 +114,6 @@ public class CRH extends Algorithm {
                                 floats.add(value);
                         }
                         float median = Functions.getMedian(floats);
-                        float var = Functions.variance(floats); // TODO: Store this somewhere
                         initialPrediction.addAttribute(new FloatAttribute(attrName,median,type));
                     }
                 }
@@ -344,8 +343,6 @@ public class CRH extends Algorithm {
                 maxAttr = a;
             }
         }
-        if (maxAttr == null)
-            System.out.print("thea");
         return maxAttr;
     }
     
@@ -371,8 +368,6 @@ public class CRH extends Algorithm {
             
             iterString = "[CRH] Number of completed iterations  " + numIters;
             System.out.println(iterString);
-            if (numIters == 9)
-                System.out.println(iterString);
 
             Map<String,Float> prevWeights = new HashMap<String, Float>();
             prevWeights.putAll(weights);
