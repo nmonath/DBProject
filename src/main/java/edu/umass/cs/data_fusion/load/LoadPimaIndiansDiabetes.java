@@ -13,11 +13,11 @@ public class LoadPimaIndiansDiabetes extends LoadUCIDataset {
     };
 
     public static AttributeDataType[] dataTypes = {
+            AttributeDataType.STRING,AttributeDataType.FLOAT,AttributeDataType.FLOAT,
             AttributeDataType.FLOAT,AttributeDataType.FLOAT,AttributeDataType.FLOAT,
             AttributeDataType.FLOAT,AttributeDataType.FLOAT,AttributeDataType.FLOAT,
             AttributeDataType.FLOAT,AttributeDataType.FLOAT,AttributeDataType.FLOAT,
-            AttributeDataType.FLOAT,AttributeDataType.FLOAT,AttributeDataType.FLOAT,
-            AttributeDataType.FLOAT, AttributeDataType.FLOAT, AttributeDataType.STRING
+            AttributeDataType.FLOAT, AttributeDataType.STRING, AttributeDataType.STRING
     };
 
     public static AttributeType[] types = {
