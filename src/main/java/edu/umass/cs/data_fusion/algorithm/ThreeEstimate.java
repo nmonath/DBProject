@@ -63,10 +63,13 @@ public class ThreeEstimate extends Algorithm{
         }
         
         HashMap<Entity,HashMap<String,HashMap<Attribute,Double>>> confidence = new HashMap<Entity, HashMap<String,HashMap<Attribute,Double>>>();
-        boolean converged = false;
+        boolean hasConverged = false;
         int numIterations = 0;
-        while ((!converged && numIterations < MAX_ITERATIONS) || numIterations < MIN_ITERATIONS) {
-        	
+        String iterationString;
+        //while (numIterations < MIN_ITERATIONS) {
+        while(numIterations < MIN_ITERATIONS){
+            iterationString = "[3 Estimates] Number of completed iterations: " + numIterations;
+            System.out.println(iterationString);
         	// confidence value calculation
         	ArrayList<Double> confvalues  = new ArrayList<Double>();
         	for (Entity entity : entities) {
@@ -74,6 +77,7 @@ public class ThreeEstimate extends Algorithm{
         	    Set<String> attributeNames = collection.getAttributes(entity);
         	    ArrayList<Record> recordsForEntity = collection.getRecords(entity);
         	    int numSourcesInEntities = numSourcesWithinEntity(recordsForEntity);
+        	    numSourcesInEntities = Math.max(1, numSourcesInEntities);
                 for (String attributeName : attributeNames) {
 
                 	confidence.get(entity).put(attributeName, new HashMap<Attribute, Double>());
@@ -95,6 +99,7 @@ public class ThreeEstimate extends Algorithm{
                         double conf = (pos+neg)/(double)numSourcesInEntities;
                         confidence.get(entity).get(attributeName).put(v,conf);
                         confvalues.add(conf);
+                        //System.out.println("conf "+conf);
                     }
                 }
             }
@@ -108,6 +113,7 @@ public class ThreeEstimate extends Algorithm{
         	for (Entity entity : entities) {
         		ArrayList<Record> recordsForEntity = collection.getRecords(entity);
         		int norm = numSourcesWithinEntityWithNonZeroTrustWorthiness(recordsForEntity,previousTrustworthiness);
+        		norm = Math.max(norm,1);
         		Set<String> attributeNames = collection.getAttributes(entity);
         		for (String attributeName : attributeNames) {
         			Set<Attribute> valuesForGivenAttribute = valuesForAttribute(recordsForEntity, attributeName);
@@ -130,6 +136,7 @@ public class ThreeEstimate extends Algorithm{
                         double error = (pos+neg)/(double)norm;
                         errorFactor.get(entity).get(attributeName).put(v,error);
                         errorvalues.add(error);
+                        //System.out.println("Error "+error);
                    }
         		}
         	}
@@ -178,21 +185,29 @@ public class ThreeEstimate extends Algorithm{
         			
         			
         		}
+        		norm = Math.max(1, norm);
         		double trustworthiness = (pos+neg)/(double)norm;
         		newsourceTrustworthiness.put(s,trustworthiness);
         		trustWorthinessvalues.add(trustworthiness);
-        		
+        		//System.out.println("Trustworthiness "+trustworthiness);
         	}
         	
         	//normalize trustworthiness
         	newsourceTrustworthiness = normalizetrustworthiness(trustWorthinessvalues,newsourceTrustworthiness,this.lamda);
         	
         	//test for convergence
-        	converged = converged(previousTrustworthiness,newsourceTrustworthiness,delta);
+        	hasConverged = converged(previousTrustworthiness,newsourceTrustworthiness,delta);
+            if (hasConverged)
+                System.out.println("[3 Estimates] Convergence condition met.");
             previousTrustworthiness = newsourceTrustworthiness;
             numIterations += 1;
 	
         }
+        
+        if (!hasConverged)
+            System.out.println("[3 Estimates] Max Iterations condition met.");
+
+        System.out.println("[3 Estimates] Algorithm complete, assigning values to each attribute.");
         
         
         ArrayList<Result> results = new ArrayList<Result>(entities.size());
@@ -215,7 +230,7 @@ public class ThreeEstimate extends Algorithm{
             }
             results.add(res);
         }
-        
+        System.out.println("[3 Estimates] Done.");
         return results;
 		
 		
@@ -253,7 +268,14 @@ public class ThreeEstimate extends Algorithm{
             	String attributeName = attributeValues.getKey();
             	for(Map.Entry<Attribute,Double> attrVal:attributeValues.getValue().entrySet()){
             		Double oldValue = attrVal.getValue();
-            		Double x1 = (oldValue - min)/(max-min);
+            		Double x1 = 0.0;
+            		Double diff = max-min;
+            		if(diff == 0.0) {
+            		    x1 = (oldValue - min);
+            		}
+            		else{
+            		    x1 = (oldValue - min)/(max-min);
+            		}
             		long x2 = Math.round(x1);
             		Double newValue =lambda*x1 + (1-lambda)*x2;
             		hashValues.get(entityName).get(attributeName).put(attrVal.getKey(), newValue);
