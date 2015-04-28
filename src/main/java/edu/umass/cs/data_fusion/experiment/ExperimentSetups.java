@@ -1,8 +1,11 @@
 package main.java.edu.umass.cs.data_fusion.experiment;
 
 import main.java.edu.umass.cs.data_fusion.data_structures.Algorithm;
+import main.java.edu.umass.cs.data_fusion.load.LoadAdult;
 import main.java.edu.umass.cs.data_fusion.load.LoadBooks;
+import main.java.edu.umass.cs.data_fusion.load.LoadCreditApproval;
 import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
+import main.java.edu.umass.cs.data_fusion.load.LoadPimaIndiansDiabetes;
 import main.java.edu.umass.cs.data_fusion.load.LoadWeather;
 
 import java.io.File;
@@ -28,4 +31,17 @@ public class ExperimentSetups {
     public static Experiment getBookExperiment(Algorithm algorithm, File outputDir) {
         return new BookExperiment(algorithm,new LoadBooks(),new File(new File("data", "book"), "book.txt"),new File(new File("data", "book"), "book_golden.txt"),outputDir);
     }
+    
+    public static Experiment getAdultExperiment(Algorithm algorithm, File outputDir) {
+        return new Experiment(algorithm,false, new LoadAdult(), new File(new File("data", "adult"), "adult_noisy.tsv"),new File(new File("data", "adult"), "adult_gold.tsv"),outputDir);
+    }
+
+    public static Experiment getCreditApprovalExperiment(Algorithm algorithm, File outputDir) {
+        return new Experiment(algorithm,false, new LoadCreditApproval(), new File(new File("data", "credit"), "crx_noisy.tsv"),new File(new File("data", "credit"), "crx.tsv"),outputDir);
+    }
+
+    public static Experiment getPimaIndiansDiabetesExperiments(Algorithm algorithm, File outputDir) {
+        return new Experiment(algorithm,false, new LoadPimaIndiansDiabetes(), new File(new File("data", "pima-indians-diabetes"), "pima-indians-diabetes_noisy.tsv"),new File(new File("data", "pima-indians-diabetes"), "pima-indians-diabetes.tsv"),outputDir);
+    }
+    
 }
