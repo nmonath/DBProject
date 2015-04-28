@@ -344,8 +344,6 @@ public class CRH extends Algorithm {
                 maxAttr = a;
             }
         }
-        if (maxAttr == null)
-            System.out.print("thea");
         return maxAttr;
     }
     
