@@ -30,7 +30,7 @@ public class CreateAdultDataset {
         //synthetic data sources
         ArrayList<SyntheticSource> sources = new ArrayList<SyntheticSource>();
         for (int i = 0; i < 20; i ++ ) {
-            double theta = random.nextDouble();
+            double theta = random.nextDouble()*0.2 + 0.8;
             double sigma = random.nextDouble()*2.0;
             sources.add(new SyntheticSource(String.format("synth_%d_%g_%g",i,theta,sigma), theta,sigma));
         }
