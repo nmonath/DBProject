@@ -159,7 +159,19 @@ public class RecordCollection {
         }
         return domains;
     }
-    
+
+    public List<Attribute> allValuesForAttribute(Entity entity, String attributeName) {
+        List<Record> records1 = getRecords(entity);
+        List<Attribute> valuesForAttribute = new ArrayList<Attribute>(100);
+        for (Record r: records1) {
+            Attribute attr = r.getAttribute(attributeName);
+            if (attr != null)
+                valuesForAttribute.add(attr);
+        }
+        return valuesForAttribute;
+    }
+
+
     public void writeToTSVFile(File file) {
         try {
             file.getParentFile().mkdirs();

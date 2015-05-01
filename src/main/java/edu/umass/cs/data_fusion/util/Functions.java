@@ -1,10 +1,7 @@
 package main.java.edu.umass.cs.data_fusion.util;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Functions {
 
@@ -205,6 +202,30 @@ public class Functions {
         }
         System.out.println("[weightedMedian] Something went wrong, returning NaN.");
         return Float.NaN;
+    }
+    
+    public static <T> Set<T> setMinus(Set<T> one, Set<T> two) {
+        Set<T> oneCopy = new HashSet<T>();
+        oneCopy.addAll(one);
+        oneCopy.removeAll(two);
+        return oneCopy;
+    }
+
+    
+    public static double logSumExp(List<Double> doubles) {
+        
+        if (doubles.size() == 0)
+            return Double.MIN_VALUE;
+        
+        if (doubles.size() == 1)
+            return doubles.get(0);
+        
+        double c = max(doubles);
+        float res = 0.0f;
+        for (Double d : doubles) {
+            res += Math.exp(d - c);
+        }
+        return c +  Math.log(res);
     }
     
     public static void main(String[] args) {
