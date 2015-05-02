@@ -178,7 +178,10 @@ public class Functions {
         Collections.sort(idx, new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
-                return (int) Math.ceil(values.get(o1) - values.get(o2));
+                if (values.get(o1) == values.get(o2))
+                    return 0;
+                else 
+                    return (values.get(o1) > values.get(o2)) ? 1 : -1 ;
             }
         });
 
