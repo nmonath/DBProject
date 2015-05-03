@@ -655,10 +655,75 @@ where Equal($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is
 
 We also plan to relax the evaluation metric. Instead of assuming that the algorithm will output the exact ground truth value for an attribute, we will allow the value to vary within a small interval. 
 
+\section{Data Sets} \label{sec:data_sets}
 
-\section{Current Progress}
+\section{Experiments}
 
-We have defined the framework, which can be used for all of the algorithms. We have implemented the Majority Voting, Maximum Likelihood Estimation, TruthFinder, and the proposed extension to TruthFinder. We have begun our implementation of the Conflict Resolution on Heterogenous Data algorithm. Our framework in place easily facilitates the ensemble methods.  We are in the process evaluating these methods. 
+\subsection{Data Preprocessing}
+
+The stock and book datasets presented in Section \ref{sec:data_sets} requires additional preprocessing to clean the data before it can be used as input to the fusion algorithms. Schema mapping was applied to the data by the data set creators; each source presents data for the same set of attributes. However, the formatting of attribute values is too diverse and noisy to be used as is.  The {\sc CRH} and {\sc TruthFinder} algorithms include operations measuring the similarity of attribute values. For attributes with numeric values, distance measures such as absolute distance and squared distance are used.  There are values for numeric attributes in the stock dataset which cannot be parsed by Java's built in String to numeric converters, such as $7,453,234$ and $\$45\text{M usd}$. To convert these and other values from strings to numbers, we used a deterministic rule based approach, which matches regular expressions to parse the data. For numeric attributes, we handle four or more digit numbers separated by commas; percentages; monetary figures with text denotations for thousands, millions, and billions of dollars; and scientific notation. The gold data is also provided in this format and the same regular expressions are used to parse it as well. Similarly, algorithms presented in \cite{dong:integrating} and \cite{yin:truth} operate on the \emph{author name} attribute of the book dataset with the structure of first, middle and last names. The dataset is not labeled with this structure and the names are not given in a consistent order of name components. Additionally, lists of authors are not delimited in a consistent way and in fact often do not have delimiters. It was not clear to us how each paper converted the raw text into structured author names. We wrote regular expressions for  11 common arrangements of first, middle and last names (including first and middle initials). We parse the raw text in a greedy fashion, that is we start at the first character in the text string, match the longest regular expression pattern and repeat from the first character after the match. The gold data for the book dataset provides the author names in a consistent format. The code for this processing is available in the GitHub repository for our project\footnote{\tt https://github.com/nmonath/DBProject}. We did our best to make the regular expressions effective without over tuning them to the datasets used for evaluation. The regular expressions were necessary to match the evaluation results presented in the literature; their quality can also have a great impact on system performance. We would suggest authors in the future use a fixed set of regular expressions or provide a preprocessed version of the data so that system performance in the evaluation metrics will not be impacted by the regular expressions. 
+
+\subsection{Attribute Domains and Data Types}
+
+In the following presentation of results, we distinguish between attributes with  \emph{categorical} and \emph{continuous} domains. It is important to note that categorical attributes may still have numeric values. The similarity measure in algorithms such as {\sc TruthFinder} can operate on the numeric values of categorical attributes. The data type of the attribute (i.e. numeric, string, list of author names, etc) as well as the domain (categorical or continuous) will impact how the algorithm is evaluated. 
+
+\subsection{Evaluation Metrics}
+
+Each of the datasets provides a gold or ground truth labeling of the attribute values for a portion of the entities. Following \cite{li:truth,li:resolving,waguih:truth,dong:integrating}, we compare the output of the data fusion algorithms on the same portion of the entities to the gold data. We measure the system performance on categorical attributes using precision, recall, F1 and accuracy and the performance on continuous attributes using  the mean absolute distance and mean normalized absolute distance. 
+
+\subsubsection{Categorical Attribute Evaluation}
+
+Precision and recall are defined in the standard way. We take the predicted output to be the set of records in the result of the algorithm about entities  that appear in the gold data. Precision is the number of correct attribute values in the predicted output divided by the number of values in the predicted output. Recall is the number of correct attribute values in the predicted output divided by the number of values in the gold data. F1 is  geometric mean of precision and recall. 
+
+
+\begin{equation}
+\mathsf {Precision =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} \mathsf{Equal}(a_g,a_o)}{\sum_{e \in E}  |(Attr(e))| }}
+\end{equation}
+
+
+ \begin{equation}
+\mathsf {Recall =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} \mathsf{Equal}(a_g,a_o)} {\sum_{e \in E}  |(Attr^g(e))| }}
+\end{equation}
+
+where $\mathsf{Equal}$($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is considered to be equal to value of $a_o$  and 0 otherwise.
+
+
+Accuracy is defined in the exact same way as recall. Furthermore, each algorithm  provides a value for each attribute of each entity and the values for precision and recall will be the same (and so the value of F1 will be the same as well). For these reasons, in the following tables we present only accuracy not precision, recall and F1. Also note that the papers \cite{li:resolving} presents error rate rather than accuracy, error rate is one minus the accuracy. 
+
+\subsubsection{Categorical Attribute Evaluation with Tolerance}
+
+Categorical attributes with numeric values in the stock data set are evaluated with slack in \cite{li:truth}. Consider an entity $e$ with an attribute $a$. Let $V_e(a)$ be the set of values presented by the various sources about the attribute $a$ of entity $e$. The $\mathsf{Equal}$ function in the above equation is defined as:
+
+\begin{align}
+\mathsf{Equal}&(a_g,a_o) =\\ \nonumber
+&[\alpha_g - \lambda \cdot  \mathsf{Median}(V_e(a_o)) \leq \alpha_o \leq \alpha_g + \lambda \cdot  \mathsf{Median}(V_e(a_o))]
+\end{align}
+
+where $\lambda = 0.1$ is a tolerance factor and $\alpha_g$ and $\alpha_o$ are the values of the attribute $a_g$ and $a_o$ respectively. This definition only applies to the categorical attributes in the stock dataset. In all other datasets, the $\mathsf{Equal}$ function is defined as an exact match.
+
+\subsubsection{Continuous Attribute Evaluation}
+
+As presented in \cite{li:resolving}, system performance on continuous attributes is measured by the mean absolute distance and mean normalized absolute distance. Mean absolute distance (MAD) is measured as the average of the absolute distance between the value of each pair of entity $e$ and attribute $a$ in the gold data and predicted data. That is:
+
+\begin{equation}
+MAD = \frac{1}{N} \sum_{e \in E} \sum_{a \in Attr(E)} | \alpha_g - \alpha_o |
+\end{equation}
+
+where $N$ is the number of entity attribute pairs, $\alpha_g$ is the value in the gold set and $\alpha_o$ is the value in the algorithm output. 
+
+The mean normalized absolute distance (MNAD) is defined in a similar way, except with each distance normalized by the variance of all the distance for that attribute. For an attribute $a$, we define $\sigma^2_a$ to be the variance of the set $\{ abs(\alpha_{e,g}-\alpha_{e,g}) |$ where $\alpha_{e,g}, \alpha_{e,o}$ are values for  $a$ for entity $e \in E$\} 
+
+\begin{equation}
+MNAD = \frac{1}{N} \sum_{e \in E} \sum_{a \in Attr(E)} \frac{| \alpha_g - \alpha_o |}{\sigma^2_a}
+\end{equation}
+
+\subsection{Hyperparameters}
+
+The data sets do not provide a development set for tuning hyper parameters. The papers in the literature present results on the entire set of data and do not appear to hold out data for tuning. For all of the datasets except the book dataset, adjustments to the hyperparameters  had a minor impact on performance (cite numbers). We tuned the hyperparameters  using a grid search and selected the values which gave performance scores which best matched the work in the literature. 
+
+\subsection{Results}
+
+
 
 
 \bibliographystyle{abbrv}
