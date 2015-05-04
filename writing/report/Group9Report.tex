@@ -325,7 +325,15 @@ where $Z$ is the number of values (across all entities) provided by $S$ and $\si
 \sigma(x) = \frac{1}{1 + \exp{(-x)}}
 \end{equation}
 
-The final value assigned to an entity's attribute is the value with the highest confidence. The algorithm is listed in Algorithm \ref{alg:tf} 
+The final value assigned to an entity's attribute is the value with the highest confidence. The algorithm is listed in Algorithm \ref{alg:tf}.
+
+We implemented three different similarity functions. For string valued attributes, we use an edit distance or Levenshtein distance with a penalty of 1 unit for each insertion, deletion or swap. To convert the edit distance into a similarity function, we negative the distance. 
+
+
+For numeric valued attributes, we use a normalized L1 distance measure. The normalization is done with Min-Max scaling on the values presented by the various sources for a given attribute of a given entity. The normalization lessens the skewing of the distance measure by the varying orders of magnitude of the different attributes. Again, to convert the distance into a similarity function, we negative the value. 
+
+In the book dataset, we use a similarity function for the list of author names  attribute similar to \cite{li:integrating}. The similarity is the Jaccard similarity between the lists, that is  the similarity between a list of names $\alpha_1$ and a list $\alpha_2$  is the number of names which appear identically in both lists divided by the length of the longer list. 
+
 
 \begin{algorithm}
 \caption{TruthFinder}
@@ -636,25 +644,6 @@ We are still working on this model, particularly how to define the loss function
 \label{fig:attrt}
 \end{figure}
 
-\subsection{Evaluation Methods}
-We evaluate the source fusion methods mainly with two measures , precision and recall. These methods have been popular in other fields like information retrieval and machine learning where the effectiveness of an algorithm is measured with respect to the intersection between values output by them and the actual ground truth values. 
-We define them more precisely as shown below.
-
-\begin{equation}
-\mathsf {Precision =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} Equal(a_g,a_o)}{\sum_{e \in E}  |(Attr(e))| }}
-\end{equation}
-
-
-
-
- \begin{equation}
-\mathsf {Recall =\frac {\sum_{e \in E}  \sum_{\substack{a_g \in Attr^g(e) \\ a_o \in Attr(e)}} Equal(a_g,a_o)} {\sum_{e \in E}  |(Attr^g(e))| }}
-\end{equation}
-
-where Equal($a_g$,$a_o$) is an indicator function that is 1 if value of $a_g$ is equal to value of $a_o$  and 0 otherwise.
-
-We also plan to relax the evaluation metric. Instead of assuming that the algorithm will output the exact ground truth value for an attribute, we will allow the value to vary within a small interval. 
-
 \section{Data Sets} \label{sec:data_sets}
 
 \section{Experiments}
@@ -722,6 +711,12 @@ MNAD = \frac{1}{N} \sum_{e \in E} \sum_{a \in Attr(E)} \frac{| \alpha_g - \alpha
 The data sets do not provide a development set for tuning hyper parameters. The papers in the literature present results on the entire set of data and do not appear to hold out data for tuning. For all of the datasets except the book dataset, adjustments to the hyperparameters  had a minor impact on performance (cite numbers). We tuned the hyperparameters  using a grid search and selected the values which gave performance scores which best matched the work in the literature. 
 
 \subsection{Results}
+
+The gold data for the book dataset provides only the author names for each book. An assignment of author names is considered correct only if the authors  match the gold data in first and last name (ignoring middle). The book dataset measures how accurately Regarding the books dataset we nearly match the accuracy of {\sc TruthFinder } to the number presented in \cite{li:integrating}. We present a value of $0.84$ and \cite{li:integrating} gives a value of $0.83$. This could be caused by changes in hyperparameters or the preprocessing/parsing of the author names. As there are only 100 records in the gold data, our implementation differs by only one record from the published number. 
+
+The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on each data set. 
+
+
 
 
 
