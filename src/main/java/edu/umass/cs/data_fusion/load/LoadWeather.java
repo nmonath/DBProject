@@ -66,6 +66,7 @@ public class LoadWeather extends LoadTSVFile {
 				if (lineNo % 100 == 0) {
 					for (int i = 0; i < lineCount.length(); i++)
 						System.out.print("\b");
+					lineCount = "Lines Read: " + lineNo;
 					System.out.print(lineCount);
 				}
                 
@@ -127,6 +128,7 @@ public class LoadWeather extends LoadTSVFile {
 				if (lineNo % 100 == 0) {
 					for (int i = 0; i < lineCount.length(); i++)
 						System.out.print("\b");
+					lineCount = "Lines Read: " + lineNo;
 					System.out.print(lineCount);
 				}
 			}
