@@ -36,9 +36,9 @@ public class EntropyWeightedCRH extends CRH {
                 AttributeType type = Attribute.getType(count.keySet());
                 if (type == AttributeType.CATEGORICAL) {
                     float entropy =  entropies.get(e).get(attrName);
-                    if (entropy == 0.0f)
+                    if (entropy <= 0.0f)
                         entropy = 1.0f;
-                    map.put(lossFunctionMapKey(e,attrName), new ZeroKLoss( 1.0f / entropy));
+                    map.put(lossFunctionMapKey(e,attrName), new ZeroKLoss(  1.0f / entropy));
                 } else {
                     AttributeDataType dataType = Attribute.getDataType(count.keySet());
                     if (dataType == AttributeDataType.FLOAT) {
@@ -50,9 +50,9 @@ public class EntropyWeightedCRH extends CRH {
                         }
                         float var = Functions.variance(floats);
                         float entropy =  entropies.get(e).get(attrName);
-                        if (entropy == 0.0f)
+                        if (entropy <=0.0f)
                             entropy = 1.0f;
-                        map.put(lossFunctionMapKey(e,attrName), new WeightedAbsoluteWeightedDeviation((float) Math.sqrt(var) +  0.1f, 1.0f / entropy)); // add 0.1 as in CRH to prevent div by 0
+                        map.put(lossFunctionMapKey(e,attrName), new WeightedAbsoluteWeightedDeviation((float) Math.sqrt(var) +  0.1f,  entropy)); // add 0.1 as in CRH to prevent div by 0
                     }
                 }
             }

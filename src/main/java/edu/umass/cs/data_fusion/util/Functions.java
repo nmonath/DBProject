@@ -178,10 +178,10 @@ public class Functions {
         Collections.sort(idx, new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
-                if (values.get(o1) == values.get(o2))
+                if (values.get(o1).equals(values.get(o2)))
                     return 0;
                 else 
-                    return (values.get(o1) > values.get(o2)) ? 1 : -1 ;
+                    return (values.get(o1).compareTo(values.get(o2)));
             }
         });
 
@@ -223,8 +223,10 @@ public class Functions {
         if (doubles.size() == 1)
             return doubles.get(0);
         
-        double c = max(doubles);
-        float res = 0.0f;
+        double max = max(doubles);
+        double min = min(doubles);
+        double c = (max > Math.abs(min)) ? max : min;
+        double res = 0.0;
         for (Double d : doubles) {
             res += Math.exp(d - c);
         }

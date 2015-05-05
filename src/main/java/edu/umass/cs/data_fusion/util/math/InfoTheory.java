@@ -18,7 +18,7 @@ public class InfoTheory {
                 
                 List<Attribute> attributes = collection.allValuesForAttribute(e,attrName);
                 if (attributes.size() > 0) {
-                    if (attributes.get(0).getDataType() == AttributeDataType.FLOAT) {
+                    if (attributes.get(0).getDataType() == AttributeDataType.FLOAT && attributes.get(0).getType() == AttributeType.CONTINUOUS) {
                         List<Float> floats = new ArrayList<Float>();
                         for (Attribute a : attributes) {
                             floats.add(( (FloatAttribute) a).getFloatValue());
