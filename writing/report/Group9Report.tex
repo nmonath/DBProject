@@ -32,6 +32,8 @@
 \usepackage[noend]{algpseudocode}
 \algrenewcomment[1]{\(\triangleright\) #1}
 \usepackage{hyperref}
+\usepackage[table]{xcolor}
+
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -388,80 +390,6 @@ In the book dataset, we use a similarity function for the list of author names  
 
 
 
-
-
-\subsubsection{Maximum Likelihood Estimation}
-Wang et al. \cite{wang2012truth} proposed a  method to jointly estimate the maximum likelihood of both source trustworthiness and attribute value correctness. Expectation maximization (EM) algorithm is used for estimating these values.  This algorithm only deals with positive Boolean-valued attributes, however categorical attribute values can be cast into this framework. A pair of parameters is associated with each source. Let $t(s)$ denotes the probability that a source reports a value to be true when its value is actually true and $f(s)$ denotes the probability that a source reports a value to be true when its value is actually false.  Let ${t_a}$ and ${f_a}$ denote the conditional probability of attribute value $a$ being true given the source probabilities $t(s)$ and $f(s)$.  The algorithm works by alternately computing the attribute value probabilities based on source probabilities in the expectation step and then using these probabilities to update the source parameters in the maximization step.  The confidence values associated with each attribute are also computed in the expectation step. This is continued until convergence.  The pseudo code for this algorithm is shown in \ref{alg:ml} .
-
-\clearpage
-\begin{algorithm}
-\caption{Maximum Likelihood Estimation}
-\begin{algorithmic}[1]
-\small
-\Function{MLE}{$R$, $\beta$, $\delta$, $r$} \\
-\Comment{Inputs: The collection of records $R$ and the hyper parameters.} \\
-\Comment{Output: Returns the fused data $\hat{R}$} \\
-
-
-\For{\textbf{each} $s$ \textbf{in} $S$}
-\State $ k(s) \leftarrow \frac{|a_i^s|}{\sum_s|a_i^s|} $
-\State $ t(s) \leftarrow \frac{r  \cdot k(s)}{\beta} $
-\State $ f(s) \leftarrow \frac{(1-r) \cdot k(s)}{1-\beta} $
-\EndFor
-
-\\
-\While{\textbf{not} Converged($\mathsf{a}, {b},\delta$)}
-\State $\mathsf{CONF_{sum}} \leftarrow 0 $
-\For{\textbf{each}  $e$ \textbf{in} $E$}
-\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
-\State $ t_a \leftarrow 1 $
-\State $ f_a \leftarrow 1 $
-
-\For{\textbf{each} $s$ \textbf{in} $S$}
- \If{$a$ \textbf{in} $s$ }  
-\State $ t_a \leftarrow t_a  \cdot t(s) $
-\State $ f_a \leftarrow f_a   \cdot f(s) $
-\Else
-\State $ t_a \leftarrow t_a  \cdot (1-t(s)) $
-\State $ f_a \leftarrow f_a   \cdot (1-f(s)) $
-\EndIf
-\EndFor
-\State $ \mathsf{CONF}(a) \leftarrow \frac{t_a \cdot \beta}{t_a \cdot \beta + f_a \cdot (1-\beta)} $
-\State $\mathsf{CONF_{sum}} \leftarrow \mathsf{CONF_{sum}} + \mathsf{CONF}(a) $
-\EndFor
-\EndFor
-
-\For{\textbf{each} $s$ \textbf{in} $S$}
-\State $\mathsf{CONF_s}(sum) \leftarrow \sum_i CONF(a_i^s)  $
-\State $ t(s) \leftarrow \frac{\mathsf{CONF}_s(sum)}{\mathsf{CONF}_{sum}}  $
-\State $ f(s) \leftarrow  |a_i^s| - \frac{\mathsf{CONF_s}(sum)}{\sum_s|a_i^s| - \mathsf{CONF_{sum}}}  $
-\EndFor
-
-
-\EndWhile
-
-\\
-
-\For{\textbf{each}  $e$ \textbf{in} $E$}
-\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
- \If{CONF(a) > 0.5}
-  \State Add record for $e$ with attributes $a$ to $\hat{R}$.
-\EndIf
-\EndFor
-\EndFor
-\\
-
-\State \textbf{return} $\hat{R}$
-\EndFunction
-\end{algorithmic}
-\label{alg:ml}
-\end{algorithm}  
-
-
-
-
-
-
 \subsubsection{Conflict Resolution on Heterogenous Data}
 
 Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. The algorithm poses data fusion as the following optimization problem: 
@@ -720,14 +648,71 @@ The data sets do not provide a development set for tuning hyper parameters. The 
 
 \subsection{Results}
 
-The gold data for the book dataset provides only the author names for each book. An assignment of author names is considered correct only if the authors  match the gold data in first and last name (ignoring middle). The book dataset measures how accurately Regarding the books dataset we nearly match the accuracy of {\sc TruthFinder } to the number presented in \cite{li:integrating}. We present a value of $0.84$ and \cite{li:integrating} gives a value of $0.83$. This could be caused by changes in hyperparameters or the preprocessing/parsing of the author names. As there are only 100 records in the gold data, our implementation differs by only one record from the published number. 
+The gold data for the book dataset provides only the author names for each book. An assignment of author names is considered correct only if the authors  match the gold data in first and last name (ignoring middle). The book dataset measures how accurately Regarding the books dataset we nearly match the accuracy of {\sc TruthFinder } to the number presented in \cite{dong:integrating}. We present a value of $0.84$ and \cite{dong:integrating} gives a value of $0.83$. This could be caused by changes in hyperparameters or the preprocessing/parsing of the author names. As there are only 100 records in the gold data, our implementation differs by only one record from the published number. 
 
 The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on each data set. 
 
+\definecolor{shadecolor}{rgb}{0.82,0.82,0.82}
+\definecolor{tableShade}{gray}{0.9}
+\colorlet{tableheadcolor}{black!90} % Table header colour = 25% gray
+\newcommand{\headcol}{\rowcolor{tableheadcolor}} %
+\rowcolors{3}{tableShade}{white}  %% start alternating shades from 3rd row
 
+\begin{table*}[t]
+\centering
+\begin{tabular}{|c|c|ccc|ccc|ccc|}
+\hline
+\headcol \color{white} Algorithm & \multicolumn{10}{|c|}{  \color{white} Dataset} \\
+\hline
+\headcol &  \color{white} {Book} & \multicolumn{3}{c}{  \color{white} Single Day Stock}  & \multicolumn{3}{|c|}{ \color{white} Entire Stock} & \multicolumn{3}{|c|}{ \color{white}  Weather }\\
+\hline
+\headcol &  \color{white} Acc. &  \color{white} Acc. &  \color{white} MAD &  \color{white} MNAD &  \color{white} Acc. &  \color{white} MAD &  \color{white} MNAD & \color{white} Acc. &  \color{white} MAD &  \color{white} MNAD \\
+\hline
+ Majority Voting & \\
+ Mean & \\
+ Median & \\
+\sc TruthFinder & \\
+\sc 2-Estimates & \\
+\sc 3-Estimates & \\
+\sc CRH & \\
+\hline 
+\hline
+\sc ModifiedTruthFinder & \\
+\sc ModifiedCRH & \\
+\sc Ensemble & \\
+\hline
+\end{tabular}
+\caption{Results on Real World Datasets}
+\label{tbl:vars}
+\end{table*}
 
-
-
+\begin{table*}[t]
+\centering
+\begin{tabular}{|c|ccc|ccc|ccc|}
+\hline
+\headcol \color{white} Algorithm & \multicolumn{9}{|c|}{  \color{white} Dataset} \\
+\hline
+\headcol &  \multicolumn{3}{c}{  \color{white} Adult}  & \multicolumn{3}{c}{  \color{white} Credit Approval}  & \multicolumn{3}{|c|}{ \color{white} Pima Indians Diabetes} \\
+\hline
+\headcol &  \color{white} Acc. & \color{white} MAD &  \color{white} MNAD &  \color{white} Acc. &  \color{white} MAD &  \color{white} MNAD & \color{white} Acc. &  \color{white} MAD &  \color{white} MNAD \\
+\hline
+ Majority Voting & \\
+ Mean & \\
+ Median & \\
+\sc TruthFinder & \\
+\sc 2-Estimates & \\
+\sc 3-Estimates & \\
+\sc CRH & \\
+\hline 
+\hline
+\sc ModifiedTruthFinder & \\
+\sc ModifiedCRH & \\
+\sc Ensemble & \\
+\hline
+\end{tabular}
+\caption{Results on Synthetic Datasets}
+\label{tbl:vars}
+\end{table*}
 
 \bibliographystyle{abbrv}
 \bibliography{references}  
