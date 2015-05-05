@@ -70,6 +70,8 @@ public class SimpleLCA extends Algorithm {
             int numEntities = entities.size();
             int printFreq = (int) Math.min(100,numEntities/10);
             
+            List<Double> confValues = new ArrayList<Double>(1000);
+            
             for (Entity entity : entities) {
                 
                 if (numEntitiesComplete % printFreq == 0) {
@@ -96,19 +98,20 @@ public class SimpleLCA extends Algorithm {
                             double log =  Math.log(exp-1);
                             C_v += log + trustworthiness.get(s);
                         }
-                        C_sum += C_v;
+                        confValues.add(C_v);
                         confidences.get(confidenceMapKey(entity,attrName)).put(val, C_v);
                     }
                 }
                 
                 numEntitiesComplete++;
             }
+            double log_C_sum = Functions.logSumExp(confValues);
             System.out.println("[SimpleLCA] Completed " + numEntitiesComplete + " of " + numEntities + " entities");
             System.out.println("[SimpleLCA] Normalizing confidence values");
             for (Entity entity : entities) {
                 for (String attrName : attrNames) {
                     for (Attribute attr : confidences.get(confidenceMapKey(entity,attrName)).keySet()) {
-                        double C_v = confidences.get(confidenceMapKey(entity,attrName)).get(attr) / C_sum;
+                        double C_v = confidences.get(confidenceMapKey(entity,attrName)).get(attr) - log_C_sum;
                         confidences.get(confidenceMapKey(entity,attrName)).put(attr, C_v);
                     }
                 }
@@ -142,7 +145,7 @@ public class SimpleLCA extends Algorithm {
                         denominator += 1;
                     }
                 }
-                T_s = Functions.logSumExp(values) / denominator;
+                T_s = Functions.logSumExp(values) - Math.log(denominator);
                 nextTrustworthiness.put(s, T_s);
                 
                 numSourcesComplete++;
