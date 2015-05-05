@@ -30,10 +30,22 @@ public class RunModifiedCRH {
         july7 = null;
         System.gc();
 
-        // Weather 
+        // Weather
         Experiment weather = ExperimentSetups.getWeatherExperiment(new ModifiedCRH(), new File(new File("output", "ModifiedCRH"), "weather"));
         weather.run();
         weather = null;
+        System.gc();
+
+        // Adult
+        Experiment adult = ExperimentSetups.getAdultExperiment(new ModifiedCRH(), new File(new File("output", "ModifiedCRH"), "adult"));
+        adult.run();
+        adult = null;
+        System.gc();
+
+        // Credit
+        Experiment credit = ExperimentSetups.getCreditApprovalExperiment(new ModifiedCRH(), new File(new File("output", "ModifiedCRH"), "credit"));
+        credit.run();
+        credit = null;
         System.gc();
     }
 }

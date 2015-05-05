@@ -29,5 +29,23 @@ public class RunMedian {
         weather.run();
         weather = null;
         System.gc();
+
+        // Adult
+        Experiment adult = ExperimentSetups.getAdultExperiment(new BaselineMedian(), new File(new File("output", "median"), "adult"));
+        adult.run();
+        adult = null;
+        System.gc();
+
+        // Credit
+        Experiment credit = ExperimentSetups.getCreditApprovalExperiment(new BaselineMedian(), new File(new File("output", "median"), "credit"));
+        credit.run();
+        credit = null;
+        System.gc();
+
+        // Pima Indians
+//        Experiment pima = ExperimentSetups.getPimaIndiansDiabetesExperiments(new BaselineMedian(), new File(new File("output", "median"), "pima-indians-diabetes"));
+//        pima.run();
+//        pima = null;
+//        System.gc();
     }
 }

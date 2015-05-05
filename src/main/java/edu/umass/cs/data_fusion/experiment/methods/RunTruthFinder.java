@@ -2,6 +2,7 @@ package main.java.edu.umass.cs.data_fusion.experiment.methods;
 
 
 import main.java.edu.umass.cs.data_fusion.algorithm.CRH;
+import main.java.edu.umass.cs.data_fusion.algorithm.ModifiedTruthFinder;
 import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
 import main.java.edu.umass.cs.data_fusion.experiment.Experiment;
 import main.java.edu.umass.cs.data_fusion.experiment.ExperimentSetups;
@@ -30,10 +31,30 @@ public class RunTruthFinder {
         july7 = null;
         System.gc();
 
-        // Weather 
+        // Weather
         Experiment weather = ExperimentSetups.getWeatherExperiment(new TruthFinder(), new File(new File("output", "normal-tf"), "weather"));
         weather.run();
         weather = null;
         System.gc();
+
+        // Adult
+        Experiment adult = ExperimentSetups.getAdultExperiment(new TruthFinder(), new File(new File("output", "normal-tf"), "adult"));
+        adult.run();
+        adult = null;
+        System.gc();
+
+        // Credit
+        Experiment credit = ExperimentSetups.getCreditApprovalExperiment(new TruthFinder(), new File(new File("output", "normal-tf"), "credit"));
+        credit.run();
+        credit = null;
+        System.gc();
+
+
+        // Pima Indians
+//        Experiment pima = ExperimentSetups.getPimaIndiansDiabetesExperiments(new TruthFinder(), new File(new File("output", "normal-tf"), "pima-indians-diabetes"));
+//        pima.run();
+//        pima = null;
+//        System.gc();
+
     }
 }

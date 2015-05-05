@@ -1,5 +1,6 @@
 package main.java.edu.umass.cs.data_fusion.experiment.methods;
 
+import main.java.edu.umass.cs.data_fusion.algorithm.BaselineMedian;
 import main.java.edu.umass.cs.data_fusion.algorithm.ModifiedTruthFinder;
 import main.java.edu.umass.cs.data_fusion.algorithm.TruthFinder;
 import main.java.edu.umass.cs.data_fusion.experiment.Experiment;
@@ -35,5 +36,23 @@ public class RunModifiedTruthFinder {
         weather.run();
         weather = null;
         System.gc();
+
+        // Adult
+        Experiment adult = ExperimentSetups.getAdultExperiment(new ModifiedTruthFinder(), new File(new File("output", "modified-tf"), "adult"));
+        adult.run();
+        adult = null;
+        System.gc();
+
+        // Credit
+        Experiment credit = ExperimentSetups.getCreditApprovalExperiment(new ModifiedTruthFinder(), new File(new File("output", "modified-tf"), "credit"));
+        credit.run();
+        credit = null;
+        System.gc();
+
+//        // Pima Indians
+//        Experiment pima = ExperimentSetups.getPimaIndiansDiabetesExperiments(new ModifiedTruthFinder(), new File(new File("output", "modified-tf"), "pima-indians-diabetes"));
+//        pima.run();
+//        pima = null;
+//        System.gc();
     }
 }

@@ -10,7 +10,6 @@ import java.io.File;
 public class RunCRH {
     
     public static void main(String[] args) {
-        
         // Books
         Experiment books = ExperimentSetups.getBookExperiment(new CRH(), new File(new File("output", "CRH"), "books"));
         books.run();
@@ -34,5 +33,25 @@ public class RunCRH {
         weather.run();
         weather = null;
         System.gc();
+
+        
+        // Adult
+        Experiment adult = ExperimentSetups.getAdultExperiment(new CRH(), new File(new File("output", "CRH"), "adult"));
+        adult.run();
+        adult = null;
+        System.gc();
+        
+        // Credit 
+        Experiment credit = ExperimentSetups.getCreditApprovalExperiment(new CRH(), new File(new File("output", "CRH"), "credit"));
+        credit.run();
+        credit = null;
+        System.gc();
+
+//        // Pima Indians
+//        Experiment pima = ExperimentSetups.getPimaIndiansDiabetesExperiments(new CRH(), new File(new File("output", "CRH"), "pima-indians-diabetes"));
+//        pima.run();
+//        pima = null;
+//        System.gc();
+
     }
 }

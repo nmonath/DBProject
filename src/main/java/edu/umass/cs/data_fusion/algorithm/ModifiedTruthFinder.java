@@ -20,11 +20,10 @@ public class ModifiedTruthFinder extends TruthFinder {
 
     public ModifiedTruthFinder() {
         super("ModifiedTruthFinder");
-        //Initial Trustworthiness: 0.500000, Delta: 0.001000, Rho: 0.500000, Gamma: 0.100000 
         this.initialTrustworthiness = 0.5;
         this.delta = 0.001;
-        this.rho = 0.5;
-        this.gamma = 0.1;
+        this.rho = 0.6;
+        this.gamma = 0.000100;
     }
 
     public ModifiedTruthFinder(double initialTrustworthiness, double delta, double rho, double gamma) {
