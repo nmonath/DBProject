@@ -157,17 +157,15 @@ Another related research area is the collection of labels from crowdsourcing \ci
 We expect our work to differ from the previous work in that we will model source trustworthiness not only globally, i.e. for all attributes, but also locally for each attribute. In doing so, we hope to capture a more fine grained representation of source trustworthiness. We will also attempt to ensemble existing algorithms using a variety of techniques such as weighted ensemble. We hope to use semi-supervised techniques in situations where more domain-knowledge could be useful. Most of the models presented previous works such as \cite{pasternack:latent} and \cite{li:resolving} do not attempt to measure the dependence of attributes on other attributes. We hope to investigate if there is a trac
  way to capture these dependencies and if we can use them to improve data fusion methods.
 
-\section{Models}
+\section{Problem Description}
 
-\subsection{Problem Description}
+We provide the following formalism for the problem of data fusion. A $record$, $r$, is provided by a $source$, $s$, about an $entity$, $e$. A $source$ is a supplier of data. For example, Expedia is a source for flight data, and Yahoo Finance is a source of stock data.  An $entity$ is a real world object about which a $source$ provides data. The entities about which Expedia provides data are flights and Yahoo Finance provides data about a company's stock price. An entity has a unique identifier. In the case of flight data this would be the flight number. In the case of stock data, this would be the company's ticker symbol. A $record$ contains one or more $attributes$, $a_1,\ a_2,\dots,\ a_n$, of an entity. Each $attribute$ has a specific domain. In the case of flights, the attribute $time$ $delay$ might be an integer and for stocks, the $opening$ $price$ might have a domain of positive real numbers.  The domain of an attribute may also be binary (true/false) or categorical. We refer to the collection of records provided by a source $s$ as $R_s$. The $schema$ of a record is the set of attributes which each entity is expected to contain. TODO: Specify the difference between Categorical and Continuous
 
-We provide the following formalism for the problem of data fusion. A $record$, $r$, is provided by a $source$, $s$, about an $entity$, $e$. A $source$ is a supplier of data. For example, Expedia is a source for flight data, and Yahoo Finance is a source of stock data.  An $entity$ is a real world object about which a $source$ provides data. The entities about which Expedia provides data are flights and Yahoo Finance provides data about a company's stock price. An entity has a unique identifier. In the case of flight data this would be the flight number. In the case of stock data, this would be the company's ticker symbol. A $record$ contains one or more $attributes$, $a_1,\ a_2,\dots,\ a_n$, of an entity. Each $attribute$ has a specific domain. In the case of flights, the attribute $time$ $delay$ might be an integer and for stocks, the $opening$ $price$ might have a domain of positive real numbers.  The domain of an attribute may also be binary (true/false) or categorical. We refer to the collection of records provided by a source $s$ as $R_s$. The $schema$ of a record is the set of attributes which each entity is expected to contain.
-
-Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusio}n is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
+Given a set of sources $S$ and a collection of records $R_s$ for each $s \in S$, the problem of \emph{data fusion} is to combine all collections $R_s$ into a single collection $\hat{R}$ which estimates the true assignment of values to the attributes for entities.  Each of the following algorithms provides a different technique for converting a set of $R_s$ collections into $\hat{R}$. 
 
 \vspace {1cm}
 
-\subsection{Data Sets}
+\section{Data Sets}
 To evaluate our algorithms we consider different data sets. These data sets are: \emph{stock data set}, \emph{books data set}, \emph{weather data set}, \emph{credit approval data set} and \emph{adult data set}. The \emph{adult} and \emph{credit approval} data set are synthetic data sets where errors have been introduced for testing purposes. The data sets also provided a gold standard against which the results from the data fusion algorithms could be evaluated. Table \ref{fig:stock} shows an overview of the different data sets.\\
 The \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}} was introduced in \cite{li:truth}. Some statistics of the data set is shown in table \ref{fig:stock}. This stock data set contains stock information obtained in July 2011 by using 55 different sources like \emph{Google Finance, Bloomberg} or \emph{NASDAQ}. From each of these sources 1000 stocks were considered. In July 2011 on each weekday the stock data of each stock was collected from each of the 55 sources. Different sources had different numbers of attributes. The \emph{clean stock data set} which we use contains 16 attributes per stock which had the best coverage across the sources. Among these 16 attributes are: \emph{change in \%, opening price, todays high/low, market capacity, dividend, etc}. For the \emph{stock data}, \emph{Xian Li et al.} \cite{li:truth} also generated a gold standard for evaluation.
 The flight data set contains flight information which was collected during December 2011. Data was collected from 38 sources and 1200 flights were considered. The clean flight data set includes 6 attributes.
@@ -197,14 +195,14 @@ for categorical attributes which specified the probability that the value of the
     \label{fig:stock}%
 \end{figure}
 
-\subsection{Existing Methods}
+\section{Existing Methods}
 
-\subsubsection{Majority Voting}
+\subsection{Majority Voting}
 
 A simple approach to data fusion is collect all of the candidate values provided by the sources for a particular attribute of an entity and assign the attribute the value that appears most frequently. While general idea appears in all of the following   algorithms,  it is flawed in that it ignores information about the data sources, uncertainty of the attributes and the relationships between  attributes.
 
 
-\subsubsection{2-Estimate}
+\subsection{2-Estimate}
 The {\sc 2- Estimate} algorithm was proposed by Galland et al. in \cite{galland:corro}. This algorithm is related to a probabilistic model to estimate the source trustworthiness and the confidence of an attribute value. To compute the value confidence the algorithm takes the disagreeing sources into consideration. First, the confidence of a value is computed by analyzing agreeing and disagreeing sources of that value. After that the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the source trustworthiness by looking at the confidence of the different values provided by that source. After normalizing the source trustworthiness this process is repeated until convergence. Listing \ref{alg:2e} shows the algorithm in pseudocode.
 
 In the following algorithm, $\mathsf{Provides}(s,\alpha)$ is an indicator function, which is 1 if a source provides the value $\alpha$ for attribute $a$ and 0 otherwise, and $\mathsf{Provides}(s,a)$ is an indicator function, which is 1 if a source provides any value for attribute $a$ and 0 otherwise. 
@@ -306,7 +304,7 @@ $Attr(e)$ & \{Open Price, Avg Price, $\dots$\} \\
 \label{tbl:varExs}
 \end{table}
 
-\subsubsection{TruthFinder}
+\subsection{TruthFinder}
 
 Yin et al present a Bayesian approach to data fusion in \cite{yin:truth}.  The likelihood of an entity's attribute having a particular value is a function of both the trustworthiness of the source providing the value as well as the values presented by other sources. The model is based on the idea that a source is trustworthy if it frequently provides a correct value and a value is often correct for an attribute if the providing source is trustworthy. However, as the algorithm is unsupervised we model the trustworthiness of a source as a function of the likelihood of correctness of the attributes it provides. 
 
@@ -390,7 +388,7 @@ In the book dataset, we use a similarity function for the list of author names  
 
 
 
-\subsubsection{Conflict Resolution on Heterogenous Data}
+\subsection{Conflict Resolution on Heterogenous Data}
 
 Li et al present an extension of the {\sc TruthFinder} algorithm in the recent paper \cite{li:resolving} which achieves state of the art results. The algorithm poses data fusion as the following optimization problem: 
 
@@ -423,6 +421,11 @@ The assignment of each attribute's value for each entity is done by selecting th
 
 The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergence condition is met. For each entity $e$, the $\alpha^{(*)}$ from the last iteration of the algorithm is the value assigned to the attribute $a$. This algorithm is summarized in Algorithm \ref{alg:crh}. 
 
+For categorical attributes, the zero-one loss function is used. The zero-one loss returns a value of 0 if its two inputs are equal and 1 otherwise. For continuous attributes, the absolute weighted deviation is used as a loss function. For a given attribute $a$ of an entity $e$, the absolute weighted deviation is defined in the following way: 
+
+\begin{equation}
+\ell_a*(\alpha^{(*)}, \alpha^{(s)}) = \frac{|\alpha^{(*)} - \alpha^{(s)}|}{\mathsf{standard\_deviation}(\{\alpha^{(s')} | s' \in S\})}
+\end{equation}
 
 \begin{algorithm}
 \small
@@ -434,7 +437,7 @@ The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergenc
 
 \State Initialize $W$ \\
 
-\State Initialize a value $\alpha^{(*)}$ for each attribute $a$ of each entity $e$ using Majority Voting or another method. 
+\State Initialize a value $\alpha^{(*)}$ for each attribute $a$ of each entity $e$ using Majority Voting for categorical attributes and as the Median for continuous attributes.  
 
 \While{\textbf{not} Converged($W, \delta$)}
 \For{\textbf{each}  $e$ \textbf{in} $E$}
@@ -462,21 +465,21 @@ The algorithm alternates updating $W$ and each $\alpha^{(*)}$ until a convergenc
 \end{algorithm}  
 
 
-\subsection{Proposed Methods}
+\section{Modified Algorithms}
 
-We are in the process of developing extensions to these techniques. Our extensions fall into three main categories: ensemble methods; source-attribute pairwise trustworthiness, and attribute dependence. Based on our literature survey, we do not believe that these topics have been thoroughly investigated thus far. 
-
-\vspace{1 cm}
-\subsubsection{Ensemble Methods}
+\subsection{Ensemble Methods}
 
 Ensembling existing techniques will consider a group of algorithms $\mathcal{A}_1,\mathcal{A}_2,\dots,\mathcal{A}_N$. Each algorithm $\mathcal{A}_i$ takes the as input an $R_s$ for each source $s \in S$ and outputs a collection of records $\hat{R}_{\mathcal{A}_i}$. 
 
 Our first attempt at an ensemble method is to apply the majority voting algorithm on the outputs $\hat{R}_{\mathcal{A}_1}$, $\hat{R}_{\mathcal{A}_2}$, $\dots$,$\hat{R}_{\mathcal{A}_N}$. In this case, each of the algorithms acts a source. We will follow substitute majority voting with the other algorithms. In this way, we have a nested structure in which we learn a \emph{trustworthiness} of each algorithm. This approach is often referred to as \emph{stacking} in the literature. 
 
-\subsubsection{Source Attribute Trustworthiness}
+\subsection{Source Attribute Trustworthiness}
 
-As pointed out in \cite{li:truth}, a data source may reliably provide values for a particular attribute of an entity, but may unreliably provide values for another attribute. In response to this, we give extensions of existing algorithms which model the trustworthiness of a source--attribute pair.  The {\sc TruthFinder} algorithm can be extended by redefining the $\mathsf{CONF}$ and $\mathsf{TRUST}$ functions in the following way: 
+As pointed out in \cite{li:truth}, a data source may reliably provide values for a particular attribute of an entity, but may unreliably provide values for another attribute. In response to this, we give extensions of both the {\sc TruthFinder} and {\sc CRH} algorithms which model the trustworthiness of a source--attribute pair. 
 
+\subsubsection{Modified TruthFinder}
+
+ The {\sc TruthFinder} algorithm can be extended to model source-attribute trustworthiness by  redefining the $\mathsf{CONF}$ and $\mathsf{TRUST}$ functions in the following way: 
 
 \begin{equation}
 \mathsf{CONF(\alpha_i^{(s)})} = \sum_{s' \in S} \mathsf{Provides}(s',\alpha_i^{(s)}) \cdot \ln(1-\mathsf{TRUST}(s',a_i))
@@ -487,8 +490,9 @@ As pointed out in \cite{li:truth}, a data source may reliably provide values for
 \mathsf{TRUST}(s,a_i) = \frac{1}{|E|} \sum_{e \in E} \sigma(\gamma \cdot \mathsf{CONF}(\alpha_i^{(s)}))
 \end{equation}
 
-where, with a slightly abuse of notation, $\alpha_i^{(s)}$ refers to the value supplied for attribute $a_i$ for each $e$ in the summation. The  $\mathsf{TRUST}$ is now parameterized at the attribute level; the trustworthiness of an attribute from a source is the average of the confidence values for those given attributes. The rest of the {\sc TruthFinder} algorithm remains unchanged. 
+where, with a slightly abuse of notation, $\alpha_i^{(s)}$ refers to the value supplied for attribute $a_i$ for each $e$ in the summation. The  $\mathsf{TRUST}$ is now parameterized at the attribute level; the trustworthiness of an attribute from a source is the average of the confidence values for those given attributes. The rest of the {\sc TruthFinder} algorithm remains unchanged. We refer to this algorithm as the {\sc ModifiedTruthFinder} algorithm in the results section. 
 
+\subsubsection{Modified CRH}
 
 In a similar way, the algorithm presented by Li et al in \cite{li:resolving} can be extended to represent source-attribute trustworthiness. The modified objective function includes a term $w_{s,a}$ for the trustworthiness of the source-attribute pair in place of $w_s$ the source trustworthiness. 
 
@@ -507,6 +511,28 @@ w_{s,a} = - \log \left ( \frac{\sum_{e \in E} \ell_a(\alpha^{(*)}, \alpha^{(s)})
 \begin{align}
 \alpha^{(*)} = \argmin_\alpha \sum_{s \in S} w_{s,a} \cdot \ell_a(\alpha^{(*)}, \alpha^{(s)})
 \end{align}
+
+\subsection{Value Uncertainty}
+
+For a given attribute of a particular entity, it may be the case that many of the sources provide the same (or similar) values or it may be the case that the sources provide a disparate set of values. For categorical attributes, we would desire a data fusion algorithm to distinguish the correct value when a small number of values are given by the sources. We might, however, understand that the algorithm will not perform as well when a large number of different values are given--for instance if each source presents a different categorical value. In this way, we might consider the former case ``more important'' and the later less so. If we consider the values provided by the sources for a particular attribute to be drawn from a discrete probability distribution, $P(X)$, we can calculate the entropy of this distribution. The entropy $H(X)$ of the distribution is a measure of uncertainty, such that a low entropy indicates that the sources largely agree on the value(s) and a high entropy indicates there is much disagreement. We propose a modification to the CRH algorithm, which weights each categorical loss function by the $1 / H(X)$,  
+
+For the continuous attributes, lets assume that the values provided by sources are drawn from some continuous density $p(x)$. We can estimate the entropy of this distribution, $h(x)$. In this case however, if the entropy were high, we would want to very carefully change the predicted value so that the prediction is no worse than initial estimate of the median, as the distribution of values is more difficult to decipher. If the entropy is low on the other hand, the algorithm has a more fine grained notion of what the value should be, and so the restriction to stay near the median is less significant. In this way, we propose a modification to the CRH algorithm, which weights each categorical loss function by the $h(X)$.
+
+We additionally tried weighting the categorical losses by $H(X)$ rather than $1/H(X)$ and the continuous losses  $1/h(x)$ by $h(x)$. However, the above configuration had the best performance. 
+
+Specifically, we replace the loss function in CRH with $\ell_a'$ such that: 
+
+\begin{equation}
+\ell'_a(\alpha^{(*)}, \alpha^{(s)}) = \left\{
+     \begin{array}{lr}
+       \frac{1}{H(a)} \ell_a(\alpha^{(*)}, \alpha^{(s)})  & \text{ if $a$ is categorical} \\
+       h(a) \ell_a(\alpha^{(*)}, \alpha^{(s)})  & \text{ if $a$ is continuous} \\
+     \end{array}
+   \right.
+\end{equation}
+
+
+To estimate the entropy of a continuous distribution we use the $m$-spacings entropy estimate from \cite{learned2003ica}. 
 
 
 \subsubsection{Attribute Dependence}
@@ -582,6 +608,71 @@ We are still working on this model, particularly how to define the loss function
 
 \section{Data Sets} \label{sec:data_sets}
 
+
+\begin{table*}[t]
+\small
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Dataset} & \bf Continuous Attributes & \bf  Categorical Attributes \\
+\hline
+Book &  & Title, Author names \\
+\hline
+Stock & Volume, Shares Outstanding, Market Cap & Percent Change, Last Trading Price, Open Price, Change \$, \\
+& &  Today's High,  Today's Low, Previous Close, 52wk High, \\
+& & 52wk Low,  P/E, Yield, Dividend, EPS \\
+\hline
+Weather & High Temperature, Low Temperature & Descriptive Condition  \\
+\hline
+Adult & Age, fnlwgt, capital-gain, & Workclass, education, education-num,  \\
+& capital-loss, hours-per-week & marital-status, occupation, relationship, race, \\
+& & sex, native-country, income-class \\
+\hline
+Credit Approval &  A2, A3, A8, A11, A14, A15 & A1, A3, A4, A5, A6, \\
+& & A7, A9, A10, A12, \\
+& & A13, A16 \\
+\hline
+\end{tabular}
+\caption{Specification of which attributes are continuous and which are categorical}
+\end{table*}
+
+
+\begin{table*}[t]
+\small
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Dataset} & \bf Numeric Attrs & \bf  String Attrs & \bf Author Name Attrs\\
+\hline
+Book &  & Title &Author names \\
+\hline
+Stock & Volume, Shares Outstanding, & &\\
+& Market Cap, Percent Change, & & \\
+&  Last Trading Price, Open Price, && \\
+& Change \$, Today's High, && \\
+& Today's Low, Previous Close, && \\
+& 52wk High, 52wk Low, && \\
+& P/E, Yield, Dividend, EPS & & \\
+\hline
+Weather &  High Temperature, Low Temperature & Descriptive Condition & \\
+\hline
+Adult & Age, fnlwgt, capital-gain, & Workclass, education, education-num, & \\
+& capital-loss, hours-per-week & marital-status, occupation, relationship, race, &\\
+& & sex, native-country, income-class & \\
+\hline
+Credit Approval &  A2, A3, A8, A11, A14, A15 & A1, A3, A4, A5, A6,  & \\
+& & A7, A9, A10, A12,  & \\
+& & A13, A16  & \\
+\hline
+\end{tabular}
+\caption{Specification of the data type of each attribute}
+\end{table*}
+
+\subsection{Weather Dataset}
+
+In the data obtained from \cite{li:resolving} we could not distinguish between the high and low temperatures and so ended up having a single attribute for temperature. No entity had more than one value for this attribute from a given source and so this is ok. 
+
+
 \section{Experiments}
 
 \subsection{Data Preprocessing}
@@ -650,8 +741,7 @@ The data sets do not provide a development set for tuning hyper parameters. The 
 
 The gold data for the book dataset provides only the author names for each book. An assignment of author names is considered correct only if the authors  match the gold data in first and last name (ignoring middle). The book dataset measures how accurately Regarding the books dataset we nearly match the accuracy of {\sc TruthFinder } to the number presented in \cite{dong:integrating}. We present a value of $0.84$ and \cite{dong:integrating} gives a value of $0.83$. This could be caused by changes in hyperparameters or the preprocessing/parsing of the author names. As there are only 100 records in the gold data, our implementation differs by only one record from the published number. 
 
-The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on each data set. 
-
+The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on both the single day and the entire data set. 
 \definecolor{shadecolor}{rgb}{0.82,0.82,0.82}
 \definecolor{tableShade}{gray}{0.9}
 \colorlet{tableheadcolor}{black!90} % Table header colour = 25% gray
@@ -713,6 +803,19 @@ The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the
 \caption{Results on Synthetic Datasets}
 \label{tbl:vars}
 \end{table*}
+
+
+\subsection{Initial Experiments}
+
+\subsubsection{Upperbound}
+
+\subsubsection{Best Sources per Dataset}
+
+
+\section{Discussion}
+
+\subsection{Source Trustworthiness}
+
 
 \bibliographystyle{abbrv}
 \bibliography{references}  
