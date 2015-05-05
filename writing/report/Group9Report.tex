@@ -171,8 +171,8 @@ The \emph{stock data set}\footnote{\url{http://lunadong.com/fusionDataSets.html}
 The flight data set contains flight information which was collected during December 2011. Data was collected from 38 sources and 1200 flights were considered. The clean flight data set includes 6 attributes.
 Furthermore we considered the \emph{books data set}. This data set was used in \cite{yin:truth}. The data set contains information on 1,263 books which were provided by 894 different bookstores. The data was collected in 2007. Each book has on average 5.4 different sets of authors. The goal on this data set is to find the correct authors for each book.
 Another data set which was used to evaluate the algorithms was the \emph{weather data set}. This data set contains data on weather from 9 different sources which was collected during one day in March 2010.
-We also used two synthetic data sets. These data sets are the \emph{credit approval data set} and the \emph{adult data set}. The data sets are available at the \emph{Machine Learning Repository}\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Adult}}
-\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Credit+Approval}}. We used the original data sets as gold standard and produced synthetic data sets with noise. For the noisy data sets we defined synthetic sources. Each of the sources has two parameters: a parameter for continuous attributes which introduces Gaussian noise to continuous values, and a parameter 
+We also used three synthetic data sets. These data sets are the \emph{credit approval data set}, \emph{prima indians diabetes data set} and the \emph{adult data set}. The data sets are available at the \emph{Machine Learning Repository}\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Adult}}
+\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Credit+Approval}} \footnote{\url{https://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes}}. We used the original data sets as gold standard and produced synthetic data sets with noise. For the noisy data sets we defined synthetic sources. Each of the sources has two parameters: a parameter for continuous attributes which introduces Gaussian noise to continuous values, and a parameter 
 for categorical attributes which specified the probability that the value of the attribute would be changed during the creation of the synthetic data set.
 
 %todo: change vertical padding
@@ -188,6 +188,7 @@ for categorical attributes which specified the probability that the value of the
  Weather & 9 &   2100 & 3 &  high, low temp   \\
  Credit & 100 &   690 & 16 &  - hidden -   \\
  Adult & 20 &   32561 & 12 &  Age, gender   \\
+ Diabetes &  20&   768 & 8 &  BMI, blood pressure   \\
 \hline
 \end{tabular}
 }
