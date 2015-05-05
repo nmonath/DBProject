@@ -304,6 +304,89 @@ $Attr(e)$ & \{Open Price, Avg Price, $\dots$\} \\
 \label{tbl:varExs}
 \end{table}
 
+
+
+\subsection{3-Estimates}
+The {\sc 3-Estimates} algorithm was proposed by Galland et al. in \cite{galland:corro}. This algorithm is an extension of the 2-Estimates algorithm described earlier. Instead of using just the source trustworthiness and the confidence of an attribute value, a new parameter called error factor for each attribute is also used. First, the confidence of a value is computed by analyzing the trustworthiness and error factor of agreeing and disagreeing sources of that value. After that, the value confidence is normalized with a \emph{normalization function}. Then the algorithm recomputes the error factor value of each attribute by looking at the confidence of the different values provided by that source as well as its trustworthiness value.Finally, after normalizing the error factor,  the source trustworthiness is recomputed as a function of both attribute level confidence and error factor values. This process is repeated until convergence. Listing \ref{alg:3e} shows the algorithm in pseudocode.
+
+In the following algorithm, $\mathsf{ProvidA}(s,\alpha)$ is an indicator function, which is 1 if a source provides any value for attribute $a$ with value $\alpha$ and 0 otherwise. $\mathsf{ProvE}(s,e)$ is an indicator function which takes the value 1 if Source $s$ provides values for Entity $e$ and 0 otherwise. $\mathsf{T}(s)$ is another indicator function which takes the value 1 if Source $s$ has a trustworthiness value which is not equal to $0$ and 0 otherwise. Similarly $\mathsf{E}(a)$  takes a value 1 if an attribute value $a$ has a value which is not equal to 0 and 0 otherwise.
+
+\begin{algorithm}[H]
+	\small
+\caption{3-Estimates}
+\label{alg:3e} 
+\begin{algorithmic}[1]
+	\Function{3-Estimates}{$R$, $\delta$, $\lambda$, $t_0$, $e_0$} \\
+	\Comment{Inputs: The collection of records $R$ and the hyper parameters.} \\
+\Comment{Output: Returns the fused data $\hat{R}$} \\
+	\For{\textbf{each} $s$ \textbf{in} $S$}
+		\State  $\mathsf{TRUST}(s) \gets t_0$
+	\EndFor
+	\For{\textbf{each} $e \in E$}
+		\For{\textbf{each} $a \in Attr(e)$}
+			\State $\mathsf{\epsilon}(\alpha) \gets e_0 $
+		\EndFor
+	\EndFor
+
+\While{\textbf{not} $Converged$($\mathsf{TRUST},\ \delta$)}
+	\For{\textbf{each} $e \in E$}
+		\For{\textbf{each} $a \in Attr(e)$}
+		  \State $pos \leftarrow \sum_{s\in S} \mathsf{ProvA}(s,a){(1- \mathsf{TRUST}(s) \mathsf{\epsilon}(\alpha) )}$
+		  \State $neg \leftarrow \sum_{s\in S} (1-\mathsf{ProvA}(s,a)){\mathsf{TRUST}(s) \mathsf{\epsilon}(\alpha)}$
+			\State $\mathsf{CONF}(\alpha) \gets \frac{pos + neg}{\sum_{s \in S} \mathsf{ProvA}(s,\alpha)}$ 
+		\EndFor
+	\EndFor
+	\State $\mathsf{CONF} \leftarrow {\sc Normalize}(\mathsf{CONF},\lambda)$
+
+	\For{\textbf{each} $e \in E$}
+                 \State $\mathsf{norm}  \gets {\sum_{s \in S} \mathsf{ProvE}(s,e) \mathsf{T}(s)} $
+		\For{\textbf{each} $a \in Attr(e)$}
+    			\State $pos \gets \sum_{a\in Attr(\cdot)}{\mathsf{ProvA}(s,\alpha) \mathsf{T}(s) \frac{1- \mathsf{CONF}(\alpha)}      {\mathsf{TRUST}(s)}}$
+                          \State $neg \gets \sum_{a\in Attr(\cdot)}{(1 - \mathsf{ProvA}(s,\alpha)) \mathsf{T}(s) \frac{\mathsf{CONF}(\alpha)}
+{\mathsf{TRUST}(s)}}$ 
+			\State $\mathsf{\epsilon}(\alpha) \gets \frac{pos + neg}{norm}$ 
+		\EndFor
+	\EndFor
+
+
+	\State $\mathsf{\epsilon} \gets Normalize(\mathsf{\epsilon},\lambda)$
+
+	\For{\textbf{each} $s \in S$}
+		        \State $pos \gets \sum_{a\in Attr(\cdot)}{\mathsf{ProvA}(s,\alpha) \mathsf{E}(\alpha) \frac{1- \mathsf{CONF}(\alpha)}      {\mathsf{\epsilon}(\alpha)}}$
+                          \State $neg \gets \sum_{e\in Entities(s)}  \sum_{a\in Attr(\cdot)}{(1 - \mathsf{ProvA}(s,\alpha)) \mathsf{E}(\alpha) \frac{\mathsf{CONF}(\alpha)}
+{\mathsf{\epsilon}(\alpha)}}$ 
+		       \State $\mathsf{norm}  \gets \sum_{e\in Entities(s)}  \sum_{a\in Attr(\cdot)}  \mathsf{E(\alpha)} $
+		
+		        \State $\mathsf{TRUST}(s) \gets \frac{pos + neg}{norm}$ 
+	\EndFor
+         \State $\mathsf{TRUST} \gets Normalize(\mathsf{TRUST},\lambda)$
+
+
+	\State Initialize $\hat{R}$ to an empty collection of records
+	\For{\textbf{each}  $e$ \textbf{in} $E$}
+		\For{\textbf{each} $a$ \textbf{in} $Attr(e)$}
+		\State $\hat{\alpha} \leftarrow \argmax_{\alpha} \mathsf{CONF}(\alpha)$
+		\EndFor
+		\State Add record for $e$ with attrs \& vals $(a, \hat{\alpha})$ to $\hat{R}$.
+	\EndFor
+
+\EndWhile
+\State \textbf{return} $\hat{R}$
+\EndFunction
+
+ \\
+
+\Function{Normalize}{$A$, $\lambda$} \\
+\Comment{Inputs: A vector $A$ and value $\lambda$} \\
+\Comment{Outputs: A normalized version $A$.} \\
+
+\State \textbf{return} $\lambda \cdot \left (\frac{A - \min(A)}{\max(A)-\min(A)} \right) + (1-\lambda) \cdot ${\sc Round}$( A )$
+
+\EndFunction
+\end{algorithmic}
+\end{algorithm}  
+
+
 \subsection{TruthFinder}
 
 Yin et al present a Bayesian approach to data fusion in \cite{yin:truth}.  The likelihood of an entity's attribute having a particular value is a function of both the trustworthiness of the source providing the value as well as the values presented by other sources. The model is based on the idea that a source is trustworthy if it frequently provides a correct value and a value is often correct for an attribute if the providing source is trustworthy. However, as the algorithm is unsupervised we model the trustworthiness of a source as a function of the likelihood of correctness of the attributes it provides. 
