@@ -7,10 +7,7 @@ import main.java.edu.umass.cs.data_fusion.data_structures.RecordCollection;
 import main.java.edu.umass.cs.data_fusion.data_structures.Source;
 import main.java.edu.umass.cs.data_fusion.experiment.BookExperiment;
 import main.java.edu.umass.cs.data_fusion.experiment.Experiment;
-import main.java.edu.umass.cs.data_fusion.load.LoadBooks;
-import main.java.edu.umass.cs.data_fusion.load.LoadStocks;
-import main.java.edu.umass.cs.data_fusion.load.LoadTSVFile;
-import main.java.edu.umass.cs.data_fusion.load.LoadWeather;
+import main.java.edu.umass.cs.data_fusion.load.*;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -103,6 +100,22 @@ public class TopSourcesPerDataset {
         bestSourcesPerDataset(false, loader, outputDir, collection, gold);
     }
     
+    public static void runOnAdult() {
+        LoadAdult loader = new LoadAdult();
+        RecordCollection collection = loader.load(new File(new File("data", "adult"), "adult_noisy.tsv"));
+        RecordCollection gold = loader.loadGold(new File(new File("data", "adult"), "adult_gold.tsv"));
+        File outputDir = new File("top_sources", "adult");
+        bestSourcesPerDataset(false, loader, outputDir, collection, gold);
+    }
+    
+    public static void runOnCredit() {
+        LoadCreditApproval loader = new LoadCreditApproval();
+        RecordCollection collection = loader.load(new File(new File("data", "credit"), "crx_noisy.tsv"));
+        RecordCollection gold = loader.loadGold(new File(new File("data", "credit"), "crx.tsv"));
+        File outputDir = new File("top_sources", "credit");
+        bestSourcesPerDataset(false, loader, outputDir, collection, gold);
+    }
+    
     
     public static void main(String[] args) {
         runOnBooks();
@@ -112,6 +125,10 @@ public class TopSourcesPerDataset {
         runOnFullStock();
         System.gc();
         runOnWeather();
+        System.gc();
+        runOnAdult();
+        System.gc();
+        runOnCredit();
         System.gc();
     }
 
