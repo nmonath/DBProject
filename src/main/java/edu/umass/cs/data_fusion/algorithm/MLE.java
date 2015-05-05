@@ -13,8 +13,14 @@ public class MLE extends Algorithm {
     final private double r;
     final private double delta;
     
-    final private int MAX_ITERATIONS = 1000;
+    final private int MAX_ITERATIONS = 10;
+    final private int MIN_ITERATIONS = 10;
+
     private Source source = new Source(this.getName());
+
+    public MLE () {
+        this(0.5,0.5,1.0);
+    }
     
     public MLE (double beta1, double r, double delta) {
         super("MLE");
@@ -25,6 +31,7 @@ public class MLE extends Algorithm {
 
     @Override
     public ArrayList<Result> execute(RecordCollection recordCollection) {
+        System.out.println(infoString(recordCollection));
         HashMap<Source, Double> f = new HashMap<Source, Double>();
         HashMap<Source, Double> aprev = new HashMap<Source, Double>();
         HashMap<Source, Double> bprev = new HashMap<Source, Double>();
@@ -49,11 +56,18 @@ public class MLE extends Algorithm {
         double C_sum = 0.0;
         boolean converged = false;
         int numIterations = 0;
-        while (!converged && numIterations < MAX_ITERATIONS) {
+        String iterationString;
+
+
+
+        while ((!converged && numIterations < MAX_ITERATIONS) || numIterations < MIN_ITERATIONS) {
             
             // E Step
             for (Entity entity : recordCollection.getEntities()) {
 
+                iterationString = "[MLE] Number of completed iterations: " + numIterations;
+                System.out.println(iterationString);
+                
                 confidence.put(entity, new HashMap<String, HashMap<Attribute, Double>>());
 
                 Set<String> attributeNames = recordCollection.getAttributes(entity);
@@ -100,7 +114,10 @@ public class MLE extends Algorithm {
                 bnext.put(s, (numberOfValuesGivenBySource.get(s) - C_s_sum) / (numberOfTotalValues - C_sum));
             }
             converged = hasConverged(aprev, bprev, anext, bnext, delta);
+            if (converged)
+                System.out.println("[MLE] Convergence condition met");
 
+            numIterations += 1;
         }
         
         /*
@@ -133,6 +150,6 @@ public class MLE extends Algorithm {
 
     // TODO: How is this defined?
     private boolean hasConverged(HashMap<Source, Double> aprev, HashMap<Source, Double> bprev, HashMap<Source, Double> anext, HashMap<Source, Double> bnext, double delta) {
-        return false;
+        return (TruthFinder.L1dist(aprev,anext) + TruthFinder.L1dist(bprev,bnext)) < delta;
     }
 }
