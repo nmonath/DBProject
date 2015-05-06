@@ -184,7 +184,7 @@ Furthermore we considered the \emph{books data set}. This data set was used in \
 
 Another data set which was used to evaluate the algorithms was the \emph{weather data set}, which was first presented in \cite{li:resolving}. This data set contains data on weather from 9 different sources which was collected during one day in March 2010. The data set lists both \emph{high} and \emph{low temperature} attributes. However, we could not distinguish between the two in the dataset and so had a single attribute for temperature. No source presented more than one value for this attribute for a given entity. As shown in Section \ref{sec:results}, we were able to reproduce the results presented in \cite{li:resolving} and we believe this change to be acceptable. 
 
-\subsection{Synthetic Data: Adult and Credit Approval}
+\subsection{Synthetic Data: Adult and Credit Approval} \label{sec:synth}
 
 We also used two synthetic data sets. These data sets are the \emph{adult data set} and the \emph{credit approval data set}. The data sets are available at the \emph{Machine Learning Repository}\footnote{\url{https://archive.ics.uci.edu/ml/datasets/Adult}}
 \footnote{\url{https://archive.ics.uci.edu/ml/datasets/Credit+Approval}}. We used the original data sets as gold standard and produced synthetic data sets with noise. For the noisy data sets we defined synthetic sources. Each of the sources has two parameters: a parameter $\sigma$ for continuous attributes which introduces Gaussian noise to continuous values, and a parameter $\theta$ for categorical attributes which specified the probability that the value of the attribute would be changed during the creation of the synthetic data set. 
@@ -195,7 +195,7 @@ We also used two synthetic data sets. These data sets are the \emph{adult data s
 {%\footnotesize
 \begin{tabular}{  | c | c | c | c  | c | c |}		
 \hline
-\textbf{Dataset} & \textbf{Src} &  \textbf{Entitys} & \textbf{Attrs}  & \textbf{Example Attr}  \\
+\textbf{Dataset} & \textbf{Src} &  \textbf{Entities} & \textbf{Attrs}  & \textbf{Example Attr}  \\
 \hline
  Stock & 55 &   1000 & 16 &  open Price, dividend   \\
  Books & 894 &   1263 & 2 &  titel, author(s)   \\
@@ -245,26 +245,26 @@ Credit Approval &  A2, A3, A8, A11, A14, A15 & A1, A3, A4, A5, A6, \\
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
-\textbf{Dataset} & \bf Numeric Attrs & \bf  String Attrs & \bf Author Name Attrs\\
+\textbf{Dataset} & \bf Numeric Attrs & \bf  String Attrs & \bf List Attrs\\
 \hline
-Book &  & Title &Author names \\
+Book & ---  & Title &Author names \\
 \hline
-Stock & Volume, Shares Outstanding, & &\\
+Stock & Volume, Shares Outstanding, &   &  \\
 & Market Cap, Percent Change, & & \\
 &  Last Trading Price, Open Price, && \\
-& Change \$, Today's High, && \\
+& Change \$, Today's High, & ---  & --- \\
 & Today's Low, Previous Close, && \\
 & 52wk High, 52wk Low, && \\
 & P/E, Yield, Dividend, EPS & & \\
 \hline
-Weather &  High Temperature, Low Temperature & Descriptive Condition & \\
+Weather &  High Temperature, Low Temperature & Descriptive Condition & ---  \\
 \hline
-Adult & Age, fnlwgt, capital-gain, & Workclass, education, education-num, & \\
-& capital-loss, hours-per-week & marital-status, occupation, relationship, race, &\\
+Adult & Age, fnlwgt, capital-gain, & Workclass, education, education-num, &   \\
+& capital-loss, hours-per-week & marital-status, occupation, relationship, race, & ---\\
 & & sex, native-country, income-class & \\
 \hline
 Credit Approval &  A2, A3, A8, A11, A14, A15 & A1, A3, A4, A5, A6,  & \\
-& & A7, A9, A10, A12,  & \\
+& & A7, A9, A10, A12,  & ---  \\
 & & A13, A16  & \\
 \hline
 \end{tabular}
@@ -278,6 +278,10 @@ Credit Approval &  A2, A3, A8, A11, A14, A15 & A1, A3, A4, A5, A6,  & \\
 \subsection{Majority Voting}
 
 A simple approach to data fusion is to collect all of the candidate values provided by the sources for a particular attribute of an entity and assign the attribute the value that appears most frequently. While general idea appears in all of the following   algorithms,  it is flawed in that it ignores information about the data sources, uncertainty of the attributes and the relationships between  attributes.
+
+\subsection{Mean \& Median}
+
+For continuous attributes, a competitive baseline algorithm is selecting the mean or median of the values proposed by the sources for a given entity's attribute. This data fusion baseline does not apply to cateogircal attributes. 
 
 
 \subsection{2-Estimates}
@@ -704,7 +708,7 @@ To estimate the entropy of a continuous distribution we use the $m$-spacings ent
 
 \subsection{Data Preprocessing}
 
-The stock and book datasets presented in Section \ref{sec:data_sets} requires additional preprocessing to clean the data before it can be used as input to the fusion algorithms. Schema mapping was applied to the data by the data set creators; each source presents data for the same set of attributes. However, the formatting of attribute values is too diverse and noisy to be used as is.  The {\sc CRH} and {\sc TruthFinder} algorithms include operations measuring the similarity of attribute values. For attributes with numeric values, distance measures such as absolute distance and squared distance are used.  There are values for numeric attributes in the stock dataset which cannot be parsed by Java's built in String to numeric converters, such as $7,453,234$ and $\$45\text{M usd}$. To convert these and other values from strings to numbers, we used a deterministic rule based approach, which matches regular expressions to parse the data. For numeric attributes, we handle four or more digit numbers separated by commas; percentages; monetary figures with text denotations for thousands, millions, and billions of dollars; and scientific notation. The gold data is also provided in this format and the same regular expressions are used to parse it as well. Similarly, algorithms presented in \cite{dong:integrating} and \cite{yin:truth} operate on the \emph{author name} attribute of the book dataset with the structure of first, middle and last names. The dataset is not labeled with this structure and the names are not given in a consistent order of name components. Additionally, lists of authors are not delimited in a consistent way and in fact often do not have delimiters. It was not clear to us how each paper converted the raw text into structured author names. We wrote regular expressions for  11 common arrangements of first, middle and last names (including first and middle initials). We parse the raw text in a greedy fashion, that is we start at the first character in the text string, match the longest regular expression pattern and repeat from the first character after the match. The gold data for the book dataset provides the author names in a consistent format. We did our best to make the regular expressions effective without over tuning them to the datasets used for evaluation. The regular expressions were necessary to match the evaluation results presented in the literature; their quality can also have a great impact on system performance. We would suggest authors in the future use a fixed set of regular expressions or provide a preprocessed version of the data so that system performance in the evaluation metrics will not be impacted by the regular expressions. 
+The stock and book datasets presented in Section \ref{sec:data_sets} requires additional preprocessing to clean the data before it can be used as input to the fusion algorithms. Schema mapping was applied to the data by the data set creators; each source presents data for the same set of attributes. However, the formatting of attribute values is too diverse and noisy to be used as is.  The {\sc CRH} and {\sc TruthFinder} algorithms include operations measuring the similarity of attribute values. For attributes with numeric values, distance measures such as absolute distance and squared distance are used.  There are values for numeric attributes in the stock dataset which cannot be parsed by standard String to numeric converters, such as $7,453,234$ and $\$45\text{M usd}$. To convert these and other values from strings to numbers, we used a deterministic rule based approach, which matches regular expressions to parse the data. For numeric attributes, we handle four or more digit numbers separated by commas; percentages; monetary figures with text denotations for thousands, millions, and billions of dollars; and scientific notation. The gold data is also provided in this format and the same regular expressions are used to parse it as well. Similarly, algorithms presented in \cite{dong:integrating} and \cite{yin:truth} operate on the \emph{author name} attribute of the book dataset with the structure of first, middle and last names. The dataset is not labeled with this structure and the names are not given in a consistent order of name components. Additionally, lists of authors are not delimited in a consistent way and in fact often do not have delimiters. It was not clear to us how each paper converted the raw text into structured author names. We wrote regular expressions for  11 common arrangements of first, middle and last names (including first and middle initials). We parse the raw text in a greedy fashion, that is we start at the first character in the text string, match the longest regular expression pattern and repeat from the first character after the match. The gold data for the book dataset provides the author names in a consistent format. We did our best to make the regular expressions effective without over tuning them to the datasets used for evaluation. The regular expressions were necessary to match the evaluation results presented in the literature; their quality can also have a great impact on system performance. We would suggest authors in the future use a fixed set of regular expressions or provide a preprocessed version of the data so that system performance in the evaluation metrics will not be impacted by the regular expressions. 
 
 \subsection{Attribute Domains and Data Types}
 
@@ -796,7 +800,8 @@ Credit & 0.999  & 0.0 & 0.0 \\
 
 \subsubsection{Best Sources per Dataset}
 
-For each dataset, we calculated measured the performance of each source in terms of our evaluation metrics. We report the top 5 performing sources on each data set in terms of the accuracy evaluation metric.  
+For each dataset, we calculated measured the performance of each source in terms of our evaluation metrics. We report the top 5 performing sources on each data set in terms of the accuracy evaluation metric.  Note that in the results for the synthetic dataset, the sources have the name $synth\_id\_\theta\_\sigma$. The $id$ is the id number for the source, the $\theta$ and $\sigma$ are the noise parameters described in Section \ref{sec:synth}. 
+
 
 \begin{table*}[t]
 \centering
@@ -805,7 +810,11 @@ For each dataset, we calculated measured the performance of each source in terms
 \headcol \multicolumn{2}{c}{\color{white} Books} &  \multicolumn{2}{c}{\color{white} Single Day Stocks} &  \multicolumn{2}{c}{\color{white} Entire Stock} &  \multicolumn{2}{c}{\color{white} Weather} \\
 \headcol \color{white} Source & \color{white} Accuracy & \color{white} Source & \color{white} Accuracy & \color{white} Source & \color{white} Accuracy & \color{white} Source & \color{white} Accuracy \\
 \hline
-A1Books &  0.68 \\Revaluation Books & 0.63	\\Papamedia.com & 0.49	 \\paperbackworld.de & 0.38	  \\Caiman & 0.34	 \\
+A1Books &  0.68 &  nasdaq-com & 1 & nasdaq-com & 1 & 4 & 0.6017 \\
+Revaluation Books & 0.63 &  msn-money & 0.9539 &  msn-money & 0.9438 & 5 & 0.5810	\\
+Papamedia.com & 0.49 &  yahoo-finance & 0.9411 &  yahoo-finance & 0.9308 & 6 & 0.5121\\
+paperbackworld.de & 0.38 &  finapps-forbes-com & 0.8822 &  finapps-forbes-com & 0.8728 & 1 & 0.3707\\
+Caiman & 0.34 &  tmx-quotemedia & 0.8609 &  tmx-quotemedia & 0.8604 & 2 & 0.3431 \\
  \hline
  \end{tabular}
 \caption{The Top 5 Sources in terms of Accuracy on each of the Real World Datasets.}
@@ -819,6 +828,7 @@ A1Books &  0.68 \\Revaluation Books & 0.63	\\Papamedia.com & 0.49	 \\paperbac
 \headcol \multicolumn{2}{c}{\color{white} Adult} &  \multicolumn{2}{c}{\color{white}  Credit Approval} \\
 \headcol \color{white} Source & \color{white} Accuracy & \color{white} Source & \color{white} Accuracy \\
 \hline
+ synth\_8\_0.104491\_1.25029 & 0.823499594 &   synth\_23\_0.801935\_1.38459 & 0.487459901 \\ synth\_6\_0.146602\_0.0464762 & 0.793288727 &  synth\_18\_0.814300\_0.696840 & 0.483522893 \\ synth\_5\_0.274954\_0.257794 & 0.700729927 &  synth\_8\_0.820898\_1.25029 & 0.482793817 \\ synth\_3\_0.385189\_1.96968 & 0.629663423 &  synth\_6\_0.829320\_0.0464762 & 0.478273549 \\ synth\_9\_0.410796\_1.55262 & 0.605231144 & synth\_14\_0.826788\_0.166125 & 0.47287839 \\
 \hline
 \end{tabular}
 \caption{The Top 5 Sources in terms of Accuracy on each of the Synthetic Datasets.}
@@ -878,6 +888,7 @@ The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the
 \hline
 \sc ModifiedTruthFinder & \\
 \sc ModifiedCRH & \\
+\sc EntropyWeightedCRH & \\
 \sc Ensemble & \\
 \hline
 \end{tabular}
@@ -914,6 +925,10 @@ The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the
 \end{table*}
 
 \section{Discussion}
+
+\subsection{Implementation Notes}
+
+We have implemented all of the algorithms presented in this report and all results presented are based on our implementations. Our project was implemented in Java. In implementing the CRH algorithm, we referred to the MATLAB source code provided by the authors\footnote{URL} to ensure our implementation was correct.  
 
 \subsection{Source Trustworthiness}
 
