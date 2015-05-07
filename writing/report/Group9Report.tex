@@ -704,6 +704,10 @@ Specifically, we replace the loss function in CRH with $\ell_a'$ such that:
 
 To estimate the entropy of a continuous distribution we use the $m$-spacings entropy estimate from \cite{learned2003ica}. Apart from the above change to the loss function, the rest of the CRH algorithm remains unchanged. We refer to this algorithm as {\sc EntropyWeightedCRH} in the results section. 
 
+\subsection{Closed/Open World Assumptions}
+All algorithms expect 2 and 3-Estimates have open world assumptions. 
+
+
 \section{Experiments}
 
 \subsection{Data Preprocessing}
@@ -949,7 +953,7 @@ Figures \ref{fig:precision} and \ref{fig:mnad} show a visual representation of t
 \label{tbl:synthresults}
 \end{table*}
 
-\section{Discussion}
+\section{Discussion/Future Work}
 
 \subsection{Implementation Notes}
 
@@ -1001,7 +1005,7 @@ As demonstrated by Chow et al. \cite{chow1968approximating}, the best approximat
 I(X_i,X_j) = \sum_{x_i,x_j} P(x_i,x_j) log\frac{P(x_i,x_j)}{P(x_i) P(x_j)}
 \end{equation}
 
-We can then perform inference on the approximated tree representation.
+Inference can be performed on the approximated tree representation. We didn't implement this model due to its complexity and data sparsity issues. It would be interesting to see how attribute dependence could help with this task.
 
 \begin{figure}
 \centering
@@ -1018,7 +1022,7 @@ We can then perform inference on the approximated tree representation.
 \end{figure}
 
 \section{Conclusion}
-The large amount of data in the web and other sources has sparked an interest in the database community to identify trustworthy data sources and generate clean data which could be used as input to various tasks. Automated techniques to achieve this purpose can be very useful in dealing with large amounts of data and also removes humans from the loop  which makes the process cost-effective and efficient.  In this paper, we identified a set of algorithms to achieve data fusion based on earlier work in this area and tried to reproduce their results on Stock, Book, Weather datasets available for this task as well as on synthetic dataset generated from UCI machine learning repository. We implemented TruthFinder \cite{yin:truth}, 2 and 3 Estimates \cite{galland:corro} ,  CRH  \cite{li:resolving} algorithms. These algorithms calculate the confidence scores of the individual values provided by sources as well as source trustworthiness. We were able to reproduce most of the results from original papers in almost all datasets. However, we found that though CRH is considered to the state of the art algorithm, it is not a $clear$ $winner$. Some of the other algorithms like $TruthFinder$ performs comparably or better than CRH in some of the datasets. We also proposed a modification to existing $TruthFinder$ and $CRH$ algorithms by incorporating attribute level trustworthiness instead of source level trustworthiness. These modifications performed comparably to the baseline. Apart from these, we also tried ensembling all the algorithms to see if combining the different algorithms improves the results. This performed comparably to the baseline.  Overall , We were able to  successfully replicate a number of baselines from the various related papers providing a uniform platform to perform effective comparison.   
+The large amount of data in the web and other sources has sparked an interest in the database community to identify trustworthy data sources and generate clean data which could be used as input to various tasks. Automated techniques to achieve this purpose can be very useful in dealing with large amounts of data and also removes humans from the loop  which makes the process cost-effective and efficient.  In this paper, we identified a set of algorithms to achieve data fusion based on earlier work in this area and tried to reproduce their results on Stock, Book, Weather datasets available for this task as well as on synthetic dataset generated from UCI machine learning repository. We implemented TruthFinder \cite{yin:truth}, 2 and 3 Estimates \cite{galland:corro} ,  CRH  \cite{li:resolving} algorithms. These algorithms calculate the confidence scores of the individual values provided by sources as well as source trustworthiness. We were able to reproduce most of the results from original papers in almost all datasets. However, we found that though CRH is considered to the state of the art algorithm, it is not a $clear$ $winner$. Some of the other algorithms like $TruthFinder$ performs comparably or better than CRH in some of the datasets. We also proposed a modification to existing $TruthFinder$ and $CRH$ algorithms by incorporating attribute level trustworthiness instead of source level trustworthiness. These modifications performed comparably to the baseline. Apart from these, we also tried ensembling all the algorithms to see if combining the different algorithms improves the results. This performed comparable to the baseline. Overall, we were able to successfully replicate a number of baselines from the various related papers providing a uniform platform to perform effective comparison.   
 
 
 \bibliographystyle{abbrv}
