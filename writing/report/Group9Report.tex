@@ -868,9 +868,15 @@ The data sets do not provide a development set for tuning hyper parameters. The 
 
 The gold data for the book dataset provides only the author names for each book. An assignment of author names is considered correct only if the authors  match the gold data in first and last name (ignoring middle). The book dataset measures how accurately Regarding the books dataset we nearly match the accuracy of {\sc TruthFinder } to the number presented in \cite{dong:integrating}. We present a value of $0.84$ and \cite{dong:integrating} gives a value of $0.83$. This could be caused by changes in hyperparameters or the preprocessing/parsing of the author names. As there are only 100 records in the gold data, our implementation differs by only one record from the published number. 
 
-The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on both the single day and the entire data set. 
+The paper \cite{li:truth} presents results on a single day, July 7, 2011, of the stock dataset. Other papers such as \cite{li:resolving} evaluate on every day of the stock dataset. We present results on both the single day and the entire data set. On the full stock dataset, the accuracy of each algorithm is very similar to the results presented in \cite{li:resolving}, for instance our implementation of CRH gets an accuracy of 0.9357 and the reported value gets 0.93. Our implementations of {\sc TruthFinder} and {\sc 3-Estimates} obtain a accuracy score greater than what is reported in the paper, but the differences are very small $\sim0.02$ and could be accounted for by differences in hyper parameters or regular expression parsing. Our results are similar to, but not the same as, those presented in \cite{li:truth}. The difference is that \cite{li:truth} does not distinguish between continuous and categorical attributes in the way \cite{li:resolving} does and we do in this report.  
 
-Figures \ref{fig:precision} and \ref{fig:mnad} show a visual representation of the precision and MNAD error of different algorithms when performing data fusion on the stock data set.
+On the weather dataset, our results are again similar to \cite{li:truth} for the accuracy  metric. Our {\sc CRH} implementation gets an accuracy of 0.6258 and the reported value was 0.6241. Our {\sc 3-Estimates} implementation  achieves an accuracy of 0.536 and the reported value was 0.519. On this dataset, our values for MAD match the reported values for MNAD. This is why we report both MAD and MNAD for each dataset. 
+
+We also present results on the synthetic datasets, \emph{adult} and \emph{credit approval}. Not surprisingly given the amount of noise introduced in each dataset, the \emph{credit approval} dataset proves to be the more challenging. The performance of the algorithms on the synthetic datasets is generally aligned with performance on the real world data. In both the real world datasets and the synthetic datasets, no algorithm consistently achieves the top performance. {\sc CRH}, {\sc ModifiedCRH}, and {\sc EntropyWeightedCRH} are often one of the top performing algorithms.   
+
+Figures \ref{fig:precision} and \ref{fig:mnad} show a visual representation of the precision and MNAD error of different algorithms when performing data fusion on the stock data set. Complete results are given in Tables \label{tbl:realworldresults} and \label{tbl:synthresults}.
+
+
 
 \begin{figure}
 \centering
@@ -949,7 +955,7 @@ Figures \ref{fig:precision} and \ref{fig:mnad} show a visual representation of t
 
 \subsection{Implementation Notes}
 
-We have implemented all of the algorithms presented in this report and all results presented are based on our implementations. Our project was implemented in Java. In implementing the CRH algorithm, we referred to the MATLAB source code provided by the authors\footnote{URL} to ensure our implementation was correct.  
+We have implemented all of the algorithms presented in this report and all results presented are based on our implementations. Our project was implemented in Java. In implementing the CRH algorithm, we referred to the MATLAB source code provided by the authors\footnote{http://www.cse.buffalo.edu/~jing/doc/CRH.zip} to ensure our implementation was correct.  
 
 \subsection{Source Trustworthiness}
 
