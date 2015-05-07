@@ -26,7 +26,7 @@ public class EvaluateBookDataset {
 
             assert goldRecords.size() == 1;
             assert predictedRecords.size() == 1 || predictedRecords.size() == 0;
-
+            
             Record goldRecord = goldRecords.get(0);
 
             AuthorListAttribute goldAuthorList = (AuthorListAttribute) goldRecord.getAttribute("Author(s)");
@@ -35,7 +35,7 @@ public class EvaluateBookDataset {
 
                 Record predictedRecord = predictedRecords.get(0);
                 AuthorListAttribute predAuthorList = ((AuthorListAttribute) predictedRecord.getAttribute("Author(s)"));
-                
+
                 if (predAuthorList != null && predAuthorList.equals(goldAuthorList))
                     accuracy+=1.0;
             }

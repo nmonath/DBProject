@@ -30,7 +30,7 @@ public class TwoEstimates extends Algorithm {
         super("TwoEstimates");
         this.initialTrustworthiness = 0.8;
         this.delta = 0.001;
-        this.lambda = 0.5;
+        this.lambda = 0.1;
     }
     
     public TwoEstimates(double initialTrustworthiness, double delta, double lambda) {
@@ -143,7 +143,7 @@ public class TwoEstimates extends Algorithm {
             	for (Record r : recordsForSource) {
                     for (Attribute a: r.getAttributes().values()) {
                     	//is attr of source same as confidence attr?
-                    	
+                    
                     	//yes
                     	if(a.equals(confidence.get(r.getEntity()).get(a.getName())))
                     	{

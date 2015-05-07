@@ -32,7 +32,10 @@ public class BaselineMean extends Algorithm{
                       for (Attribute attr: attributes) {
                           values.add(( (FloatAttribute) attr).getFloatValue());
                       }
-                      float mean = Functions.mean(values);
+                      float mean = 0;
+                      if(values.size()!=0) {
+                         mean = Functions.mean(values);
+                      }
                       res.addAttribute(new FloatAttribute(attrName,mean,AttributeType.CONTINUOUS));
                   } else {
                       System.out.println("[BaselineMean] Sorry only continuous Float attributes are support with this fusion algorithm.");

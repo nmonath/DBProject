@@ -31,7 +31,7 @@ public class ThreeEstimate extends Algorithm{
         super("ThreeEstimates");
         this.initialTrustworthiness = 0.8; 
         this.delta = 0.001;
-        this.lamda = 0.1;
+        this.lamda = 0.9;
         this.epsilon = 0.1;
     }
 	
